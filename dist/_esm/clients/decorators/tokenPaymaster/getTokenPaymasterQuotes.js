@@ -1,0 +1,82 @@
+/**
+ * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
+ *
+ * @param userOp - The UserOperation to get paymaster quotes for
+ * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+ * @param tokenList - Array of ERC20 token addresses to get quotes for
+ *
+ * @returns A promise of {@link TokenPaymasterQuotesResponse}
+ *
+ * @example
+ * ```typescript
+ * // Configure client with paymaster RPC
+ * const paymasterClient = createBicoPaymasterClient({
+ *     paymasterUrl
+ * })
+ *
+ * // Token addresses to get quotes for
+ * const tokenList = [
+ *   "0x...", // USDT
+ *   "0x..."  // USDC
+ * ];
+ *
+ * // Get paymaster quotes
+ * const quotes = await paymasterClient.getTokenPaymasterQuotes(userOp, tokenList);
+ *
+ * // Example response:
+ * // {
+ * //   mode: "ERC20",
+ * //   paymasterAddress: "0x...",
+ * //   feeQuotes: [{
+ * //     symbol: "USDT",
+ * //     decimal: 6,
+ * //     tokenAddress: "0x...",
+ * //     maxGasFee: 5000000,
+ * //     maxGasFeeUSD: 5,
+ * //     exchangeRate: 1,
+ * //     logoUrl: "https://...",
+ * //     premiumPercentage: "0.1",
+ * //     validUntil: 1234567890
+ * //   }],
+ * //   unsupportedTokens: []
+ * // }
+ * ```
+ */
+export const getTokenPaymasterQuotes = async (client, parameters) => {
+    const { userOp, tokenList } = parameters;
+    const quote = await client.request({
+        method: "pm_getFeeQuoteOrData",
+        params: [
+            {
+                sender: userOp.sender,
+                nonce: userOp.nonce.toString(),
+                factory: userOp.factory,
+                factoryData: userOp.factoryData,
+                callData: userOp.callData,
+                maxFeePerGas: userOp.maxFeePerGas.toString(),
+                maxPriorityFeePerGas: userOp.maxPriorityFeePerGas.toString(),
+                verificationGasLimit: BigInt(userOp.verificationGasLimit).toString(),
+                callGasLimit: BigInt(userOp.callGasLimit).toString(),
+                preVerificationGas: BigInt(userOp.preVerificationGas).toString(),
+                paymasterPostOpGasLimit: userOp.paymasterPostOpGasLimit?.toString() ?? "0",
+                paymasterVerificationGasLimit: userOp.paymasterVerificationGasLimit?.toString() ?? "0"
+            },
+            {
+                mode: "ERC20",
+                sponsorshipInfo: {
+                    smartAccountInfo: {
+                        name: "BICONOMY",
+                        version: "2.0.0"
+                    }
+                },
+                tokenInfo: {
+                    tokenList
+                },
+                expiryDuration: 6000,
+                calculateGasLimits: true
+            }
+        ]
+    });
+    return quote;
+};
+//# sourceMappingURL=getTokenPaymasterQuotes.js.map

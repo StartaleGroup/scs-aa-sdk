@@ -1,0 +1,1 @@
+{"version":3,"file":"toInitData.d.ts","sourceRoot":"","sources":["../../../../src/sdk/account/utils/toInitData.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,OAAO,EAAE,GAAG,EAAE,MAAM,MAAM,CAAA;AACxC,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,eAAe,CAAA;AAE5C;;;;GAIG;AACH,eAAO,MAAM,UAAU,GAAI,KAAK,OAAO,KAAG;IAAE,MAAM,EAAE,OAAO,CAAC;IAAC,IAAI,EAAE,GAAG,CAAA;CAOrE,CAAA"}
