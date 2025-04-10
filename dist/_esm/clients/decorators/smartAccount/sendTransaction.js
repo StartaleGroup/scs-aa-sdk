@@ -11,7 +11,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { sendTransaction } from '@biconomy/abstractjs'
+ * import { sendTransaction } from '@scs-aa-sdk'
  *
  * const hash = await sendTransaction(nexusClient, {
  *   to: '0x...',

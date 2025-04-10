@@ -22,7 +22,7 @@ export type InstallModulesParameters<TSmartAccount extends SmartAccount | undefi
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModules } from '@biconomy/abstractjs'
+ * import { installModules } from '@scs-aa-sdk'
  *
  * const userOpHash = await installModules(nexusClient, {
  *   modules: [

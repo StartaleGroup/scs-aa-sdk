@@ -12,7 +12,7 @@ import { toUninstallModuleCalls } from "./uninstallModule.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModules } from '@biconomy/abstractjs'
+ * import { uninstallModules } from '@scs-aa-sdk'
  *
  * const userOpHash = await uninstallModules(nexusClient, {
  *   modules: [

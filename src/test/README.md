@@ -1,4 +1,4 @@
-# @biconomy/abstractjs Testing Framework
+# @scs-aa-sdk Testing Framework
 
 ## Testing Setup
 

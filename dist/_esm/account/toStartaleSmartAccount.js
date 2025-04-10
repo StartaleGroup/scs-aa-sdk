@@ -19,7 +19,7 @@ import { toSigner } from "./utils/toSigner.js";
  * @returns Startale Smart Account. {@link StartaleSmartAccount}
  *
  * @example
- * import { toStartaleAccount } from '@biconomy/abstractjs'
+ * import { toStartaleAccount } from '@scs-aa-sdk'
  * import { createWalletClient, http } from 'viem'
  * import { mainnet } from 'viem/chains'
  *

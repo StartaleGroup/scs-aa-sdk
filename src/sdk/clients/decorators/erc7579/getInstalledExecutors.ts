@@ -60,7 +60,7 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getInstalledExecutors } from '@biconomy/abstractjs'
+ * import { getInstalledExecutors } from '@scs-aa-sdk'
  *
  * const [executors, nextCursor] = await getInstalledExecutors(nexusClient, {
  *   pageSize: 10n

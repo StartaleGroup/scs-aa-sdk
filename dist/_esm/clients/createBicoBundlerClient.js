@@ -12,7 +12,7 @@ import { smartAccountActions } from "./decorators/smartAccount/index.js";
  * @returns A Bico Bundler Client
  *
  * @example
- * import { createBicoBundlerClient, http } from '@biconomy/abstractjs'
+ * import { createBicoBundlerClient, http } from '@scs-aa-sdk'
  * import { mainnet } from 'viem/chains'
  *
  * const bundlerClient = createBicoBundlerClient({ chain: mainnet });

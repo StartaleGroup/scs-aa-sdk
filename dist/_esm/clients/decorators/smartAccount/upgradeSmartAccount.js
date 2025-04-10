@@ -12,7 +12,7 @@ import { ACCOUNT_IMPLEMENTATION_ADDRESS } from "../../../constants/index.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { upgradeSmartAccount } from '@biconomy/abstractjs'
+ * import { upgradeSmartAccount } from '@scs-aa-sdk'
  *
  * const userOpHash = await upgradeSmartAccount(nexusClient, {
  *   // Optional custom implementation address

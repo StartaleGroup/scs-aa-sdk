@@ -21,7 +21,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { accountId } from '@biconomy/abstractjs'
+ * import { accountId } from '@scs-aa-sdk'
  *
  * const id = await accountId(nexusClient)
  * console.log(id) // 'example_account_id'

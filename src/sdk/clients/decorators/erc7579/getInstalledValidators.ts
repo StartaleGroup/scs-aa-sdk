@@ -60,7 +60,7 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getInstalledValidators } from '@biconomy/abstractjs'
+ * import { getInstalledValidators } from '@scs-aa-sdk'
  *
  * const [validators, nextCursor] = await getInstalledValidators(nexusClient, {
  *   pageSize: 10n

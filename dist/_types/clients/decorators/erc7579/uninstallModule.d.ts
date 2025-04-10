@@ -19,7 +19,7 @@ export type UninstallModuleParameters<TSmartAccount extends SmartAccount | undef
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModule } from '@biconomy/abstractjs'
+ * import { uninstallModule } from '@scs-aa-sdk'
  *
  * const userOpHash = await uninstallModule(nexusClient, {
  *   module: {

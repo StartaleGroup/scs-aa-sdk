@@ -24,7 +24,7 @@ type StringOrStrings = string | string[];
  *
  * @example
  *
- * import { getCustomChain, createSmartAccountClient } from "@biconomy/abstractjs"
+ * import { getCustomChain, createSmartAccountClient } from "@scs-aa-sdk"
  *
  * const customChain = getCustomChain(
  *   "My Custom Chain",

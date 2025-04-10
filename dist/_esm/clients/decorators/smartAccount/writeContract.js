@@ -10,7 +10,7 @@ import { sendTransaction } from "./sendTransaction.js";
  * @throws {Error} If the 'to' address is missing in the request.
  *
  * @example
- * import { writeContract } from '@biconomy/abstractjs'
+ * import { writeContract } from '@scs-aa-sdk'
  * import { encodeFunctionData } from 'viem'
  *
  * const encodedCall = encodeFunctionData({

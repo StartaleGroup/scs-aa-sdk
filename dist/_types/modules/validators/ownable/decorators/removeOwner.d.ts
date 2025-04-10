@@ -34,7 +34,7 @@ export type RemoveOwnerParameters<TModularSmartAccount extends ModularSmartAccou
  *
  * @example
  * ```typescript
- * import { removeOwner } from '@biconomy/abstractjs'
+ * import { removeOwner } from '@scs-aa-sdk'
  *
  * const userOpHash = await removeOwner(nexusClient, {
  *   owner: '0x...'

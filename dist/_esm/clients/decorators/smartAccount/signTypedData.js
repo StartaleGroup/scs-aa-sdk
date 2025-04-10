@@ -13,7 +13,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { signTypedData } from '@biconomy/abstractjs'
+ * import { signTypedData } from '@scs-aa-sdk'
  * import { keccak256, encodeAbiParameters, parseAbiParameters } from 'viem'
  *
  * const domain = {

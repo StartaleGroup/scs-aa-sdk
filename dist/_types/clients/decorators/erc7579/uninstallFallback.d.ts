@@ -19,7 +19,7 @@ export type UninstallFallbackParameters<TSmartAccount extends SmartAccount | und
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallFallback } from '@biconomy/abstractjs'
+ * import { uninstallFallback } from '@scs-aa-sdk'
  *
  * const userOpHash = await uninstallFallback(nexusClient, {
  *   module: {

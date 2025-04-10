@@ -52,7 +52,7 @@ type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
  * @returns A Bico Bundler Client
  *
  * @example
- * import { createBicoBundlerClient, http } from '@biconomy/abstractjs'
+ * import { createBicoBundlerClient, http } from '@scs-aa-sdk'
  * import { mainnet } from 'viem/chains'
  *
  * const bundlerClient = createBicoBundlerClient({ chain: mainnet });

@@ -30,7 +30,7 @@ declare const abi: {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getFallbackBySelector } from '@biconomy/abstractjs'
+ * import { getFallbackBySelector } from '@scs-aa-sdk'
  *
  * const [callType, handlerAddress] = await getFallbackBySelector(nexusClient, {
  *   selector: '0x12345678'

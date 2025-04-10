@@ -12,7 +12,7 @@ import type { SmartAccount } from "viem/account-abstraction";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { signMessage } from '@biconomy/abstractjs'
+ * import { signMessage } from '@scs-aa-sdk'
  *
  * const signature = await signMessage(nexusClient, {
  *   message: 'Hello, Biconomy!'

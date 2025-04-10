@@ -34,7 +34,7 @@ declare const abi: readonly [{
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { isModuleInstalled } from '@biconomy/abstractjs'
+ * import { isModuleInstalled } from '@scs-aa-sdk'
  *
  * const isInstalled = await isModuleInstalled(nexusClient, {
  *   module: {

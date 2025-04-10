@@ -9,9 +9,9 @@ import type { Hex } from "viem";
  *
  * @example
  * ```typescript
- * import { getVersion } from '@biconomy/abstractjs'
+ * import { getVersion } from '@scs-aa-sdk'
  *
- * console.log(`Using Biconomy SDK version: ${getVersion()}`)
+ * console.log(`Using SCS SDK version: ${getVersion()}`)
  * ```
  */
 export declare function getVersion(): string;
@@ -30,7 +30,7 @@ export declare function getVersion(): string;
  *
  * @example
  * ```typescript
- * import { semverCompare } from '@biconomy/abstractjs'
+ * import { semverCompare } from '@scs-aa-sdk'
  *
  * // Returns negative number (a < b)
  * semverCompare("1.2.3", "1.3.0")
@@ -55,7 +55,7 @@ export declare const semverCompare: (a: string, b: string) => number;
  *
  * @example
  * ```typescript
- * import { versionMeetsRequirement } from '@biconomy/abstractjs'
+ * import { versionMeetsRequirement } from '@scs-aa-sdk'
  *
  * // Returns true (current version exceeds required)
  * versionMeetsRequirement("1.3.0", "1.2.0")
@@ -80,7 +80,7 @@ export declare const versionMeetsRequirement: (currentVersion: string, requiredV
  *
  * @example
  * ```typescript
- * import { isVersionOlder } from '@biconomy/abstractjs'
+ * import { isVersionOlder } from '@scs-aa-sdk'
  *
  * // Returns true (current version is older than reference)
  * isVersionOlder("1.2.0", "1.3.0")
@@ -105,7 +105,7 @@ export declare const isVersionOlder: (currentVersion: string, referenceVersion: 
  *
  * @example
  * ```typescript
- * import { isVersionNewer } from '@biconomy/abstractjs'
+ * import { isVersionNewer } from '@scs-aa-sdk'
  *
  * // Returns true (current version is newer than reference)
  * isVersionNewer("1.3.0", "1.2.3")

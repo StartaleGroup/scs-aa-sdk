@@ -18,7 +18,7 @@ export type GetPreviousModuleParameters<TSmartAccount extends SmartAccount | und
  * @throws {Error} If the module type is unknown or the module is not found.
  *
  * @example
- * import { getPreviousModule } from '@biconomy/abstractjs'
+ * import { getPreviousModule } from '@scs-aa-sdk'
  *
  * const previousModuleAddress = await getPreviousModule(nexusClient, {
  *   module: {

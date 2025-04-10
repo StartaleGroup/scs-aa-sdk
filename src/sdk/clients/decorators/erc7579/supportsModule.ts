@@ -73,7 +73,7 @@ export function parseModuleTypeId(type: ModuleType): bigint {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsModule } from '@biconomy/abstractjs'
+ * import { supportsModule } from '@scs-aa-sdk'
  *
  * const isSupported = await supportsModule(nexusClient, {
  *   type: 'executor'

@@ -24,7 +24,7 @@ declare const abi: {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getActiveHook } from '@biconomy/abstractjs'
+ * import { getActiveHook } from '@scs-aa-sdk'
  *
  * const activeHook = await getActiveHook(nexusClient)
  * console.log(activeHook) // '0x...'
