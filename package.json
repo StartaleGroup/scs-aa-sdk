@@ -1,6 +1,6 @@
 {
   "name": "scs-smart-account-sdk",
-  "version": "0.0.1-alpha.01",
+  "version": "0.0.1-alpha.02",
   "author": "SCS",
   "repository": "github:StartaleLabs/scs-aa-sdk",
   "main": "./dist/_cjs/index.js",
