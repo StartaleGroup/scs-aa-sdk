@@ -1,6 +1,6 @@
 {
-  "name": "scs-smart-account-sdk",
-  "version": "0.0.1-alpha.2",
+  "name": "startale-aa-sdk",
+  "version": "0.0.1",
   "author": "SCS",
   "repository": {
     "type": "git",
@@ -53,7 +53,20 @@
     ".": {
       "types": "./dist/_types/index.d.ts",
       "import": "./dist/_esm/index.js",
+      "require": "./dist/_cjs/index.js",
       "default": "./dist/_cjs/index.js"
+    },
+    "./smart-sessions": {
+      "types": "./dist/_types/modules/validators/smartSessions/index.d.ts",
+      "import": "./dist/_esm/modules/validators/smartSessions/index.js",
+      "require": "./dist/_cjs/modules/validators/smartSessions/index.js",
+      "default": "./dist/_cjs/modules/validators/smartSessions/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/_types/*"],
+      "smart-sessions": ["./dist/_types/modules/validators/smartSessions/*"]
     }
   },
   "commitlint": {

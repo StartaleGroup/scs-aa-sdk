@@ -16,7 +16,7 @@ import {
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { getTestAccount, killNetwork } from "../../../../test/testUtils"
-import { type NexusAccount, toNexusAccount } from "../../../account"
+import { type StartaleSmartAccount, toStartaleSmartAccount } from "../../../account"
 import {
   type NexusClient,
   createSmartAccountClient
@@ -35,9 +35,9 @@ describe("modules.toSmartSessionsModule", () => {
   let eoaAccount: LocalAccount
   let redeemerAccount: LocalAccount
   let redeemerAddress: Address
-  let nexusClient: NexusClient
-  let nexusAccountAddress: Address
-  let nexusAccount: NexusAccount
+  let startaleSmartAccountClient: NexusClient
+  let startaleSmartAccountAddress: Address
+  let startaleSmartAccount: StartaleSmartAccount
   let sessionDetails: GrantPermissionResponse
   let publicClient: PublicClient
 
@@ -55,7 +55,7 @@ describe("modules.toSmartSessionsModule", () => {
       transport: http(infra.network.rpcUrl)
     })
 
-    nexusAccount = await toNexusAccount({
+    startaleSmartAccount = await toStartaleSmartAccount({
       signer: eoaAccount,
       chain,
       transport: http(infra.network.rpcUrl)
@@ -63,14 +63,14 @@ describe("modules.toSmartSessionsModule", () => {
 
     const { testClient } = await toClients(infra.network)
 
-    nexusClient = createSmartAccountClient({
+    startaleSmartAccountClient = createSmartAccountClient({
       bundlerUrl,
-      account: nexusAccount,
+      account: startaleSmartAccount,
       mock: true
     })
-    nexusAccountAddress = await nexusAccount.getAddress()
+    startaleSmartAccountAddress = await startaleSmartAccount.getAddress()
     await testClient.setBalance({
-      address: nexusAccountAddress,
+      address: startaleSmartAccountAddress,
       value: parseEther("100")
     })
   })
@@ -82,17 +82,17 @@ describe("modules.toSmartSessionsModule", () => {
     const smartSessionsModule = toSmartSessionsModule({ signer: eoaAccount })
 
     // Install the smart sessions module on the Nexus client's smart contract account
-    const hash = await nexusClient.installModule({
+    const hash = await startaleSmartAccountClient.installModule({
       module: smartSessionsModule
     })
 
     // Wait for the module installation transaction to be mined and check its success
     const { success: installSuccess } =
-      await nexusClient.waitForUserOperationReceipt({ hash })
+      await startaleSmartAccountClient.waitForUserOperationReceipt({ hash })
 
     expect(installSuccess).toBe(true)
 
-    const smartSessionsClient = nexusClient.extend(smartSessionActions())
+    const smartSessionsClient = startaleSmartAccountClient.extend(smartSessionActions())
 
     sessionDetails = await smartSessionsClient.grantPermission({
       redeemer: redeemerAddress,
@@ -107,8 +107,8 @@ describe("modules.toSmartSessionsModule", () => {
   })
 
   test("use a permission", async () => {
-    const emulatedAccount = await toNexusAccount({
-      accountAddress: nexusAccount.address,
+    const emulatedAccount = await toStartaleSmartAccount({
+      accountAddress: startaleSmartAccount.address,
       signer: redeemerAccount,
       chain,
       transport: http(infra.network.rpcUrl)
@@ -127,7 +127,7 @@ describe("modules.toSmartSessionsModule", () => {
       calls: [{ to: COUNTER_ADDRESS, data: "0x273ea3e3" }],
       mode: "ENABLE_AND_USE"
     })
-    const receiptOne = await nexusClient.waitForUserOperationReceipt({
+    const receiptOne = await startaleSmartAccountClient.waitForUserOperationReceipt({
       hash: userOpHashOne
     })
     if (!receiptOne.success) {
@@ -136,8 +136,8 @@ describe("modules.toSmartSessionsModule", () => {
   })
 
   test("use a permission a second time", async () => {
-    const emulatedAccount = await toNexusAccount({
-      accountAddress: nexusAccount.address,
+    const emulatedAccount = await toStartaleSmartAccount({
+      accountAddress: startaleSmartAccount.address,
       signer: redeemerAccount,
       chain,
       transport: http(infra.network.rpcUrl)
@@ -157,7 +157,7 @@ describe("modules.toSmartSessionsModule", () => {
       mode: "USE"
     })
 
-    const receiptTwo = await nexusClient.waitForUserOperationReceipt({
+    const receiptTwo = await startaleSmartAccountClient.waitForUserOperationReceipt({
       hash: userOpHashTwo
     })
     expect(receiptTwo.success).toBe(true)
