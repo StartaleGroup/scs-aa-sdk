@@ -13,7 +13,7 @@ import { toNetwork } from "../../../test/testSetup"
 import type { MasterClient, NetworkConfig } from "../../../test/testUtils"
 import { getTestAccount, toTestClient, topUp } from "../../../test/testUtils"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createBicoBundlerClient
 } from "../../clients/createBicoBundlerClient"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../toStartaleSmartAccount"
@@ -28,7 +28,7 @@ describe("account.decorators.getNexusAddress.local", () => {
   let eoaAccount: LocalAccount
 
   let startaleAccount: StartaleSmartAccount
-  let startaleClient: NexusClient
+  let startaleClient: StartaleAccountClient
   let startaleAccountAddress: Address
 
   beforeAll(async () => {

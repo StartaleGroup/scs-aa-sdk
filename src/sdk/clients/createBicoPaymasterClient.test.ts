@@ -16,7 +16,7 @@ import type { NetworkConfig } from "../../test/testUtils"
 import { type NexusAccount, toNexusAccount } from "../account/toNexusAccount"
 import { BICONOMY_TOKEN_PAYMASTER } from "../account/utils/Constants"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "./createBicoBundlerClient"
 import {
@@ -41,7 +41,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   let nexusAccountAddress: Address
   let paymaster: BicoPaymasterClient
   let nexusAccount: NexusAccount
-  let nexusClient: NexusClient
+  let nexusClient: StartaleAccountClient
 
   const baseSepoliaUSDCAddress: Address =
     "0x036cbd53842c5426634e7929541ec2318f3dcf7e"

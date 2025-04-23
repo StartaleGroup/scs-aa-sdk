@@ -1,4 +1,4 @@
-import type { NexusClient } from "../../createBicoBundlerClient"
+import type { StartaleAccountClient } from "../../createBicoBundlerClient"
 import type { BicoPaymasterClient } from "../../createBicoPaymasterClient"
 import type { FeeQuote } from "./getTokenPaymasterQuotes"
 
@@ -15,7 +15,7 @@ import type { FeeQuote } from "./getTokenPaymasterQuotes"
  * ```
  */
 export const getSupportedTokens = async (
-  client: NexusClient
+  client: StartaleAccountClient
 ): Promise<FeeQuote[]> => {
   const userOp = await client.prepareUserOperation({
     calls: [

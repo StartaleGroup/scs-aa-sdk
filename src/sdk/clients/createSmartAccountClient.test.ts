@@ -32,7 +32,7 @@ import {
 } from "../account/utils/Utils"
 import { getChain } from "../account/utils/getChain"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "./createBicoBundlerClient"
 
@@ -46,7 +46,7 @@ describe("nexus.client", async () => {
   let eoaAccount: Account
   let recipientAccount: Account
   let recipientAddress: Address
-  let nexusClient: NexusClient
+  let nexusClient: StartaleAccountClient
   let nexusAccountAddress: Address
   let privKey: Hex
 

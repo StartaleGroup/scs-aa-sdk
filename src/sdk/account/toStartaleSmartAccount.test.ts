@@ -40,7 +40,7 @@ import {
 } from "../../test/testUtils"
 import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "../clients/createBicoBundlerClient"
 import { TokenWithPermitAbi } from "../constants/abi/TokenWithPermitAbi"
@@ -69,7 +69,7 @@ describe("nexus.account", async () => {
   let eoaAccount: LocalAccount
   let userTwo: LocalAccount
   let startaleAccountAddress: Address
-  let startaleAccountClient: NexusClient
+  let startaleAccountClient: StartaleAccountClient
   let startaleAccount: StartaleSmartAccount
   let walletClient: WalletClient
 

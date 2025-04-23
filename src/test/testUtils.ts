@@ -18,7 +18,7 @@ import {
 import { mnemonicToAccount, privateKeyToAccount } from "viem/accounts"
 import { getChain, getCustomChain } from "../sdk/account/utils"
 import { Logger } from "../sdk/account/utils/Logger"
-import type { NexusClient } from "../sdk/clients/createBicoBundlerClient"
+import type { StartaleAccountClient } from "../sdk/clients/createBicoBundlerClient"
 import type { AnyData } from "../sdk/modules/utils/Types"
 import type { TestFileNetworkType } from "./testSetup"
 
@@ -209,7 +209,7 @@ export const nonZeroBalance = async (
 
 export const fundAndDeployClients = async (
   testClient: MasterClient,
-  nexusClients: NexusClient[]
+  nexusClients: StartaleAccountClient[]
 ) => {
   return await Promise.all(
     nexusClients.map(async (nexusClient) => {
@@ -220,7 +220,7 @@ export const fundAndDeployClients = async (
 
 export const fundAndDeploySingleClient = async (
   testClient: MasterClient,
-  nexusClient: NexusClient
+  nexusClient: StartaleAccountClient
 ) => {
   try {
     const accountAddress = await nexusClient.account.getAddress()

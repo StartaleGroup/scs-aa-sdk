@@ -1,5 +1,5 @@
 import type { PaymasterClient } from "viem/account-abstraction";
-import type { NexusClient } from "../../createBicoBundlerClient";
+import type { StartaleAccountClient } from "../../createBicoBundlerClient";
 import { type FeeQuote, type GetTokenPaymasterQuotesParameters, type TokenPaymasterQuotesResponse } from "./getTokenPaymasterQuotes";
 export type TokenPaymasterActions = {
     /**
@@ -59,7 +59,7 @@ export type TokenPaymasterActions = {
      * console.log(supportedTokens);
      * ```
      */
-    getSupportedTokens: (client: NexusClient) => Promise<FeeQuote[]>;
+    getSupportedTokens: (client: StartaleAccountClient) => Promise<FeeQuote[]>;
 };
 export declare const bicoTokenPaymasterActions: () => (client: PaymasterClient) => TokenPaymasterActions;
 //# sourceMappingURL=index.d.ts.map

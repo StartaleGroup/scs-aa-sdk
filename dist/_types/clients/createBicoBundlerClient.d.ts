@@ -7,7 +7,7 @@ import { type SmartAccountActions } from "./decorators/smartAccount";
 /**
  * Nexus Client type
  */
-export type NexusClient<transport extends Transport = Transport, chain extends Chain | undefined = Chain | undefined, account extends ModularSmartAccount | undefined = ModularSmartAccount | undefined, client extends Client | undefined = Client | undefined, rpcSchema extends RpcSchema | undefined = undefined> = Prettify<Client<transport, chain extends Chain ? chain : client extends Client<AnyData, infer chain> ? chain : undefined, account, rpcSchema extends RpcSchema ? [...BundlerRpcSchema, ...rpcSchema] : BundlerRpcSchema, BundlerActions<account>>> & BundlerActions<ModularSmartAccount> & BicoActions & Erc7579Actions<ModularSmartAccount> & SmartAccountActions<chain, ModularSmartAccount> & {
+export type StartaleAccountClient<transport extends Transport = Transport, chain extends Chain | undefined = Chain | undefined, account extends ModularSmartAccount | undefined = ModularSmartAccount | undefined, client extends Client | undefined = Client | undefined, rpcSchema extends RpcSchema | undefined = undefined> = Prettify<Client<transport, chain extends Chain ? chain : client extends Client<AnyData, infer chain> ? chain : undefined, account, rpcSchema extends RpcSchema ? [...BundlerRpcSchema, ...rpcSchema] : BundlerRpcSchema, BundlerActions<account>>> & BundlerActions<ModularSmartAccount> & BicoActions & Erc7579Actions<ModularSmartAccount> & SmartAccountActions<chain, ModularSmartAccount> & {
     /**
      * Whether to use the test bundler. Conditionally used by the `getGasFeeValues` decorator.
      */
@@ -57,10 +57,10 @@ type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
  *
  * const bundlerClient = createBicoBundlerClient({ chain: mainnet });
  */
-export declare const createBicoBundlerClient: (parameters: BicoBundlerClientConfig) => NexusClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
-export declare const createSmartAccountClient: (parameters: BicoBundlerClientConfig) => NexusClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
-export declare const createNexusClient: (parameters: BicoBundlerClientConfig) => NexusClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
-export declare const createNexusSessionClient: (parameters: BicoBundlerClientConfig) => NexusClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
-export type BicoBundlerClient = NexusClient;
+export declare const createBicoBundlerClient: (parameters: BicoBundlerClientConfig) => StartaleAccountClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
+export declare const createSmartAccountClient: (parameters: BicoBundlerClientConfig) => StartaleAccountClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
+export declare const createStartaleAccountClient: (parameters: BicoBundlerClientConfig) => StartaleAccountClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
+export declare const createStartaleSessionClient: (parameters: BicoBundlerClientConfig) => StartaleAccountClient<Transport, Chain | undefined, ModularSmartAccount | undefined, Client | undefined, undefined>;
+export type BicoBundlerClient = StartaleAccountClient;
 export {};
 //# sourceMappingURL=createBicoBundlerClient.d.ts.map

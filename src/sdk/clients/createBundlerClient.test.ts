@@ -14,7 +14,7 @@ import { toNetwork } from "../../test/testSetup"
 import type { NetworkConfig } from "../../test/testUtils"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import { safeMultiplier } from "../account/utils"
-import type { NexusClient } from "./createBicoBundlerClient"
+import type { StartaleAccountClient } from "./createBicoBundlerClient"
 import { createBicoBundlerClient } from "./createBicoBundlerClient"
 import { erc7579Actions } from "./decorators/erc7579"
 import { smartAccountActions } from "./decorators/smartAccount"
@@ -51,7 +51,7 @@ describe.runIf(runPaidTests).each(COMPETITORS)(
     const publicClient = createPublicClient({ chain, transport: http() })
     let startaleSmartAccountAddress: Address
     let startaleSmartAccount: StartaleSmartAccount
-    let bundlerClient: NexusClient
+    let bundlerClient: StartaleAccountClient
 
     beforeAll(async () => {
       startaleSmartAccount = await toStartaleSmartAccount({
@@ -92,7 +92,7 @@ describe.runIf(runPaidTests).each(COMPETITORS)(
         }
       })
         .extend(erc7579Actions())
-        .extend(smartAccountActions()) as unknown as NexusClient
+        .extend(smartAccountActions()) as unknown as StartaleAccountClient
     })
 
     test("should send a transaction through bundler", async () => {

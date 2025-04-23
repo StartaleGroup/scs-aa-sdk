@@ -1,4 +1,4 @@
-import type { NexusClient } from "../../createBicoBundlerClient";
+import type { StartaleAccountClient } from "../../createBicoBundlerClient";
 import type { FeeQuote } from "./getTokenPaymasterQuotes";
 /**
  * Retrieves the supported tokens for the Biconomy Token Paymaster..
@@ -12,5 +12,5 @@ import type { FeeQuote } from "./getTokenPaymasterQuotes";
  * console.log(supportedTokens);
  * ```
  */
-export declare const getSupportedTokens: (client: NexusClient) => Promise<FeeQuote[]>;
+export declare const getSupportedTokens: (client: StartaleAccountClient) => Promise<FeeQuote[]>;
 //# sourceMappingURL=getSupportedTokens.d.ts.map

@@ -13,7 +13,7 @@ import { getTestAccount, killNetwork, toTestClient } from "../test/testUtils"
 import type { MasterClient, NetworkConfig } from "../test/testUtils"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "./account/toStartaleSmartAccount"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "./clients/createBicoBundlerClient"
 import { toSmartSessionsModule } from "./modules/validators/smartSessions/toSmartSessionsModule"
@@ -28,7 +28,7 @@ describe("core", async () => {
   let eoaAccount: LocalAccount
   let userTwo: LocalAccount
   let startaleAccountAddress: Address
-  let startaleClient: NexusClient
+  let startaleClient: StartaleAccountClient
   let startaleAccount: StartaleSmartAccount
   let walletClient: WalletClient
 

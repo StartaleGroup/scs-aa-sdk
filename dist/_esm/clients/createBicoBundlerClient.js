@@ -51,6 +51,6 @@ export const createBicoBundlerClient = (parameters) => {
 };
 // Aliases for backwards compatibility
 export const createSmartAccountClient = createBicoBundlerClient;
-export const createNexusClient = createSmartAccountClient;
-export const createNexusSessionClient = createSmartAccountClient;
+export const createStartaleAccountClient = createSmartAccountClient;
+export const createStartaleSessionClient = createSmartAccountClient;
 //# sourceMappingURL=createBicoBundlerClient.js.map

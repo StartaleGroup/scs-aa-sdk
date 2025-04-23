@@ -4,14 +4,14 @@ import type { Transport } from "viem";
 import type { Chain } from "viem";
 import type { Account } from "viem";
 import type { BundlerClient, SmartAccount } from "viem/account-abstraction";
-import type { NexusClient } from "../../clients/createBicoBundlerClient";
+import type { StartaleAccountClient } from "../../clients/createBicoBundlerClient";
 import type { StartaleSmartAccount } from "../toStartaleSmartAccount";
 import type { Signer } from "./toSigner";
 /**
  * Union type representing all supported bundler client types
- * @typedef {BundlerClient | NexusClient | Client<Transport, Chain | undefined, Account>} BundlerClientTypes
+ * @typedef {BundlerClient | StartaleAccountClient | Client<Transport, Chain | undefined, Account>} BundlerClientTypes
  */
-export type BundlerClientTypes = BundlerClient | NexusClient | Client<Transport, Chain | undefined, SmartAccount | undefined>;
+export type BundlerClientTypes = BundlerClient | StartaleAccountClient | Client<Transport, Chain | undefined, SmartAccount | undefined>;
 /**
  * Extracts the PublicClient from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from

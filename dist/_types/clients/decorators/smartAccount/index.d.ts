@@ -45,7 +45,7 @@ export type SmartAccountActions<TChain extends Chain | undefined = Chain | undef
      * 2. Creating an approval transaction for the token paymaster if needed
      * 3. Preparing the user operation with the approval and user transactions
      *
-     * @param client - The NexusClient instance
+     * @param client - The StartaleAccountClient instance
      * @param args.txs - Array of transactions to be executed
      * @param args.feeTokenAddress - Token used for paying for the gas
      * @param args.customApprovalAmount - Optional custom approval amount

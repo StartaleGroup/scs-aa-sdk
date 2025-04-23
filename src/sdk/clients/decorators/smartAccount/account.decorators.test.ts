@@ -17,7 +17,7 @@ import {
   toNexusAccount
 } from "../../../account/toNexusAccount"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "../../createBicoBundlerClient"
 
@@ -30,7 +30,7 @@ describe("account.decorators", async () => {
   let testClient: MasterClient
   let eoaAccount: Account
   let nexusAccount: NexusAccount
-  let nexusClient: NexusClient
+  let nexusClient: StartaleAccountClient
   let nexusAccountAddress: Address
   let recipient: Account
   let recipientAddress: Address

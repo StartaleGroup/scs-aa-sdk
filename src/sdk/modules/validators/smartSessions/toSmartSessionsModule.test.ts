@@ -18,7 +18,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { getTestAccount, killNetwork } from "../../../../test/testUtils"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../../../account"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "../../../clients/createBicoBundlerClient"
 import { getSudoPolicy } from "../../../constants"
@@ -35,7 +35,7 @@ describe("modules.toSmartSessionsModule", () => {
   let eoaAccount: LocalAccount
   let redeemerAccount: LocalAccount
   let redeemerAddress: Address
-  let startaleSmartAccountClient: NexusClient
+  let startaleSmartAccountClient: StartaleAccountClient
   let startaleSmartAccountAddress: Address
   let startaleSmartAccount: StartaleSmartAccount
   let sessionDetails: GrantPermissionResponse

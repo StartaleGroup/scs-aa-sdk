@@ -12,7 +12,7 @@ import { toNetwork } from "../../test/testSetup"
 import { getTestAccount, killNetwork, toTestClient } from "../../test/testUtils"
 import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "../clients/createBicoBundlerClient"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "./toStartaleSmartAccount"
@@ -27,7 +27,7 @@ describe("nexus.account.addresses", async () => {
   let eoaAccount: LocalAccount
   let userTwo: LocalAccount
   let startaleAccountAddress: Address
-  let startaleClient: NexusClient
+  let startaleClient: StartaleAccountClient
   let startaleAccount: StartaleSmartAccount
   let walletClient: WalletClient
 

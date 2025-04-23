@@ -26,7 +26,7 @@ import {
 /**
  * Nexus Client type
  */
-export type NexusClient<
+export type StartaleAccountClient<
   transport extends Transport = Transport,
   chain extends Chain | undefined = Chain | undefined,
   account extends ModularSmartAccount | undefined =
@@ -158,13 +158,13 @@ export const createBicoBundlerClient = (
     .extend((client: AnyData) => ({ ...client, mock }))
     .extend(bicoBundlerActions())
     .extend(erc7579Actions())
-    .extend(smartAccountActions()) as unknown as NexusClient
+    .extend(smartAccountActions()) as unknown as StartaleAccountClient
 
   return bundler_
 }
 
 // Aliases for backwards compatibility
 export const createSmartAccountClient = createBicoBundlerClient
-export const createNexusClient = createSmartAccountClient
-export const createNexusSessionClient = createSmartAccountClient
-export type BicoBundlerClient = NexusClient
+export const createStartaleAccountClient = createSmartAccountClient
+export const createStartaleSessionClient = createSmartAccountClient
+export type BicoBundlerClient = StartaleAccountClient

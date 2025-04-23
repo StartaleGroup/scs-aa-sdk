@@ -1,5 +1,5 @@
 import type { PaymasterClient } from "viem/account-abstraction"
-import type { NexusClient } from "../../createBicoBundlerClient"
+import type { StartaleAccountClient } from "../../createBicoBundlerClient"
 import { getSupportedTokens } from "./getSupportedTokens"
 import {
   type FeeQuote,
@@ -68,7 +68,7 @@ export type TokenPaymasterActions = {
    * console.log(supportedTokens);
    * ```
    */
-  getSupportedTokens: (client: NexusClient) => Promise<FeeQuote[]>
+  getSupportedTokens: (client: StartaleAccountClient) => Promise<FeeQuote[]>
 }
 
 export const bicoTokenPaymasterActions =
@@ -133,6 +133,6 @@ export const bicoTokenPaymasterActions =
      * console.log(supportedTokens);
      * ```
      */
-    getSupportedTokens: async (client: NexusClient) =>
+    getSupportedTokens: async (client: StartaleAccountClient) =>
       getSupportedTokens(client)
   })

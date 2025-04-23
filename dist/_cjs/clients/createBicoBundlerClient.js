@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createNexusSessionClient = exports.createNexusClient = exports.createSmartAccountClient = exports.createBicoBundlerClient = void 0;
+exports.createStartaleSessionClient = exports.createStartaleAccountClient = exports.createSmartAccountClient = exports.createBicoBundlerClient = void 0;
 const viem_1 = require("viem");
 const account_abstraction_1 = require("viem/account-abstraction");
 const createBicoPaymasterClient_1 = require("./createBicoPaymasterClient.js");
@@ -40,6 +40,6 @@ const createBicoBundlerClient = (parameters) => {
 };
 exports.createBicoBundlerClient = createBicoBundlerClient;
 exports.createSmartAccountClient = exports.createBicoBundlerClient;
-exports.createNexusClient = exports.createSmartAccountClient;
-exports.createNexusSessionClient = exports.createSmartAccountClient;
+exports.createStartaleAccountClient = exports.createSmartAccountClient;
+exports.createStartaleSessionClient = exports.createSmartAccountClient;
 //# sourceMappingURL=createBicoBundlerClient.js.map

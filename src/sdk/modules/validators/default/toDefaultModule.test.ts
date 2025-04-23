@@ -15,7 +15,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { getTestAccount, killNetwork } from "../../../../test/testUtils"
 import { type NexusAccount, toNexusAccount } from "../../../account"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "../../../clients/createBicoBundlerClient"
 import type { Validator } from "../toValidator"
@@ -29,7 +29,7 @@ describe("modules.toDefaultModule", () => {
 
   let eoaAccount: LocalAccount
   let redeemerAccount: LocalAccount
-  let nexusClient: NexusClient
+  let nexusClient: StartaleAccountClient
   let nexusAccountAddress: Address
   let nexusAccount: NexusAccount
   let meeModule: Validator

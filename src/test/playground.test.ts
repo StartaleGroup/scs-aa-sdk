@@ -17,7 +17,7 @@ import { toMultichainNexusAccount } from "../sdk/account"
 import { toNexusAccount } from "../sdk/account/toNexusAccount"
 import { playgroundTrue } from "../sdk/account/utils/Utils"
 import {
-  type NexusClient,
+  type StartaleAccountClient,
   createSmartAccountClient
 } from "../sdk/clients/createBicoBundlerClient"
 import {
@@ -44,7 +44,7 @@ describe.skipIf(!playgroundTrue())("playground", () => {
   let publicClient: PublicClient // testClient not available on public testnets
   let eoaAccount: PrivateKeyAccount
   let recipientAddress: Address
-  let nexusClient: NexusClient
+  let nexusClient: StartaleAccountClient
 
   let paymasterParams:
     | undefined
