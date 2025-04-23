@@ -12,16 +12,10 @@ import { baseSepolia } from "viem/chains"
 import { beforeAll, describe, expect, inject, test } from "vitest"
 import { toNetwork } from "../../test/testSetup"
 import type { NetworkConfig } from "../../test/testUtils"
-import {
-  type MultichainSmartAccount,
-  toMultichainNexusAccount
-} from "../account/toMultiChainNexusAccount"
-import { type NexusAccount, toNexusAccount } from "../account/toNexusAccount"
+import { type StartaleSmartAccount, toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import { safeMultiplier } from "../account/utils"
-import { testnetMcUSDC } from "../constants"
 import type { NexusClient } from "./createBicoBundlerClient"
 import { createBicoBundlerClient } from "./createBicoBundlerClient"
-import { type MeeClient, createMeeClient } from "./createMeeClient"
 import { erc7579Actions } from "./decorators/erc7579"
 import { smartAccountActions } from "./decorators/smartAccount"
 
@@ -50,85 +44,31 @@ const calls = [
   }
 ]
 
-describe.runIf(runPaidTests)("nexus.interoperability with 'MeeNode'", () => {
-  let network: NetworkConfig
-  let eoaAccount: LocalAccount
-
-  let mcNexus: MultichainSmartAccount
-  let meeClient: MeeClient
-
-  let chain: Chain
-
-  beforeAll(async () => {
-    network = await toNetwork("TESTNET_FROM_ENV_VARS")
-    eoaAccount = network.account!
-    chain = baseSepolia
-
-    mcNexus = await toMultichainNexusAccount({
-      chains: [baseSepolia],
-      transports: [http()],
-      signer: eoaAccount
-    })
-
-    meeClient = await createMeeClient({ account: mcNexus })
-  })
-
-  test("should send a transaction through the MeeNode", async () => {
-    const usdcBalance = await createPublicClient({
-      chain: baseSepolia,
-      transport: http()
-    }).getBalance({
-      address: mcNexus.addressOn(baseSepolia.id, true)
-    })
-
-    if (usdcBalance === 0n) {
-      throw new Error("Insufficient balance")
-    }
-
-    const { hash } = await meeClient.execute({
-      instructions: [
-        {
-          calls,
-          chainId: baseSepolia.id
-        }
-      ],
-      feeToken: {
-        address: testnetMcUSDC.addressOn(baseSepolia.id),
-        chainId: baseSepolia.id
-      }
-    })
-
-    const { transactionStatus } =
-      await meeClient.waitForSupertransactionReceipt({ hash })
-    expect(transactionStatus).to.be.eq("MINED_SUCCESS")
-  })
-})
-
 describe.runIf(runPaidTests).each(COMPETITORS)(
   "nexus.interoperability with $name bundler",
   async ({ bundlerUrl, chain, mock }) => {
     const account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY as Hex}`)
     const publicClient = createPublicClient({ chain, transport: http() })
-    let nexusAccountAddress: Address
-    let nexusAccount: NexusAccount
+    let startaleSmartAccountAddress: Address
+    let startaleSmartAccount: StartaleSmartAccount
     let bundlerClient: NexusClient
 
     beforeAll(async () => {
-      nexusAccount = await toNexusAccount({
+      startaleSmartAccount = await toStartaleSmartAccount({
         signer: account,
         chain,
         transport: http()
       })
 
-      nexusAccountAddress = await nexusAccount.getAddress()
+      startaleSmartAccountAddress = await startaleSmartAccount.getAddress()
 
       const balance = await publicClient.getBalance({
-        address: nexusAccountAddress
+        address: startaleSmartAccountAddress
       })
 
       if (balance === 0n) {
         throw new Error(
-          `Insufficient balance at address: ${nexusAccountAddress}`
+          `Insufficient balance at address: ${startaleSmartAccountAddress}`
         )
       }
 
@@ -136,7 +76,7 @@ describe.runIf(runPaidTests).each(COMPETITORS)(
         mock,
         chain,
         transport: http(bundlerUrl),
-        account: nexusAccount,
+        account: startaleSmartAccount,
         // Different vendors have different fee estimation strategies
         userOperation: {
           estimateFeesPerGas: async (_) => {
@@ -158,7 +98,7 @@ describe.runIf(runPaidTests).each(COMPETITORS)(
     test("should send a transaction through bundler", async () => {
       // Get initial balance
       const initialBalance = await publicClient.getBalance({
-        address: nexusAccountAddress
+        address: startaleSmartAccountAddress
       })
 
       // Send user operation
@@ -176,7 +116,7 @@ describe.runIf(runPaidTests).each(COMPETITORS)(
 
       // Get final balance
       const finalBalance = await publicClient.getBalance({
-        address: nexusAccountAddress
+        address: startaleSmartAccountAddress
       })
 
       // Check that the balance has decreased

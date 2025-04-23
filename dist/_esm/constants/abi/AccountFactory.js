@@ -43,6 +43,11 @@ export const AccountFactoryAbi = [
     },
     {
         "inputs": [],
+        "name": "ImplementationNotDeployed",
+        "type": "error"
+    },
+    {
+        "inputs": [],
         "name": "InvalidEntryPointAddress",
         "type": "error"
     },

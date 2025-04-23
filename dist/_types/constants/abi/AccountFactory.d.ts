@@ -32,6 +32,10 @@ export declare const AccountFactoryAbi: readonly [{
     readonly type: "error";
 }, {
     readonly inputs: readonly [];
+    readonly name: "ImplementationNotDeployed";
+    readonly type: "error";
+}, {
+    readonly inputs: readonly [];
     readonly name: "InvalidEntryPointAddress";
     readonly type: "error";
 }, {
