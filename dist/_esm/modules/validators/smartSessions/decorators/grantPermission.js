@@ -1,4 +1,4 @@
-import { OWNABLE_VALIDATOR_ADDRESS, SmartSessionMode, encodeValidationData, getAccount, getEnableSessionDetails, getOwnableValidatorMockSignature } from "@rhinestone/module-sdk";
+import { OWNABLE_VALIDATOR_ADDRESS, SmartSessionMode, encodeValidationData, getAccount, getEnableSessionDetails, getOwnableValidatorMockSignature, getSudoPolicy } from "@rhinestone/module-sdk";
 import { zeroAddress } from "viem";
 import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound.js";
 import { generateSalt } from "../Helpers.js";
@@ -23,13 +23,13 @@ export async function grantPermission(nexusClient, parameters) {
     }
     const session = {
         sessionValidator: OWNABLE_VALIDATOR_ADDRESS,
-        permitERC4337Paymaster: false,
+        permitERC4337Paymaster: true,
         sessionValidatorInitData: encodeValidationData({
             threshold: 1,
             owners: [redeemer]
         }),
         salt: generateSalt(),
-        userOpPolicies: [],
+        userOpPolicies: [getSudoPolicy()],
         erc7739Policies: { allowedERC7739Content: [], erc1271Policies: [] },
         chainId: bigChainId ?? BigInt(chainIdFromAccount),
         ...session_

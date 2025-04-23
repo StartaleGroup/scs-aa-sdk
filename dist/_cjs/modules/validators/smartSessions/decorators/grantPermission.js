@@ -26,13 +26,13 @@ async function grantPermission(nexusClient, parameters) {
     }
     const session = {
         sessionValidator: module_sdk_1.OWNABLE_VALIDATOR_ADDRESS,
-        permitERC4337Paymaster: false,
+        permitERC4337Paymaster: true,
         sessionValidatorInitData: (0, module_sdk_1.encodeValidationData)({
             threshold: 1,
             owners: [redeemer]
         }),
         salt: (0, Helpers_1.generateSalt)(),
-        userOpPolicies: [],
+        userOpPolicies: [(0, module_sdk_1.getSudoPolicy)()],
         erc7739Policies: { allowedERC7739Content: [], erc1271Policies: [] },
         chainId: bigChainId ?? BigInt(chainIdFromAccount),
         ...session_
