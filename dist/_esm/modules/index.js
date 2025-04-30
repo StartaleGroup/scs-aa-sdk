@@ -1,7 +1,6 @@
+// Export all types and utilities
 export * from "./utils/index.js";
-export * from "./validators/ownable/index.js";
-export * from "./validators/default/index.js";
-export * from "./validators/toValidator.js";
-export * from "./validators/smartSessionsValidator/index.js";
-export * from "./toEmptyHook.js";
+export * from "./validators/index.js";
+// Export constants
+export const DUMMY_SIGNATURE = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 //# sourceMappingURL=index.js.map

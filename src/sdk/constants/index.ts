@@ -1,6 +1,6 @@
-import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUniversalActionPolicy, getUsageLimitPolicy, getValueLimitPolicy } from "@rhinestone/module-sdk"
-import { toBytes, toHex, type Hex } from "viem"
-import { ParamCondition } from "../modules"
+import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUsageLimitPolicy, getValueLimitPolicy } from "@rhinestone/module-sdk"
+import type { Address, Hex } from "viem"
+
 export * from "./abi"
 
 export const ENTRY_POINT_ADDRESS: Hex =
@@ -60,20 +60,8 @@ export {
   getUniversalActionPolicy
 } from "@rhinestone/module-sdk"
 
-export const UNIVERSAL_ACTION_POLICY_ADDRESS: Hex = getUniversalActionPolicy({
-  valueLimitPerUse: 0n,
-  paramRules: {
-    length: 16,
-    rules: new Array(16).fill({
-      condition: ParamCondition.EQUAL,
-      isLimited: false,
-      offset: 0,
-      ref: toHex(toBytes("0x", { size: 32 })),
-      usage: { limit: BigInt(0), used: BigInt(0) }
-    })
-  }
-}).address
-
+export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
+  '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F'
 
 export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address;
 
