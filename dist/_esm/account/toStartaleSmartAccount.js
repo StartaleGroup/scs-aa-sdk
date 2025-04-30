@@ -254,6 +254,9 @@ export const toStartaleSmartAccount = async (parameters) => {
      * @returns void
      */
     const setModule = (validationModule) => {
+        if (validationModule.type !== "validator") {
+            throw new Error("Only validator modules are supported");
+        }
         module = validationModule;
     };
     return toSmartAccount({

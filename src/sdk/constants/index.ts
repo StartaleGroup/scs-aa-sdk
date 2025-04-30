@@ -1,5 +1,6 @@
-import { GLOBAL_CONSTANTS } from "@rhinestone/module-sdk"
-import type { Hex } from "viem"
+import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUniversalActionPolicy, getUsageLimitPolicy, getValueLimitPolicy } from "@rhinestone/module-sdk"
+import { toBytes, toHex, type Hex } from "viem"
+import { ParamCondition } from "../modules"
 export * from "./abi"
 
 export const ENTRY_POINT_ADDRESS: Hex =
@@ -59,23 +60,42 @@ export {
   getUniversalActionPolicy
 } from "@rhinestone/module-sdk"
 
-// Rhinestone doesn't export the universal action policy address, so we need to get it from the policies
-export const UNIVERSAL_ACTION_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.UNIVERSAL_ACTION_POLICY_ADDRESS
+export const UNIVERSAL_ACTION_POLICY_ADDRESS: Hex = getUniversalActionPolicy({
+  valueLimitPerUse: 0n,
+  paramRules: {
+    length: 16,
+    rules: new Array(16).fill({
+      condition: ParamCondition.EQUAL,
+      isLimited: false,
+      offset: 0,
+      ref: toHex(toBytes("0x", { size: 32 })),
+      usage: { limit: BigInt(0), used: BigInt(0) }
+    })
+  }
+}).address
 
-export const TIME_FRAME_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.TIME_FRAME_POLICY_ADDRESS
 
-export const VALUE_LIMIT_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.VALUE_LIMIT_POLICY_ADDRESS
+export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address;
 
-export const USAGE_LIMIT_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.USAGE_LIMIT_POLICY_ADDRESS
+export const TIME_FRAME_POLICY_ADDRESS: Hex = getTimeFramePolicy({
+  validUntil: 0,
+  validAfter: 0
+}).address
 
-export const SPENDING_LIMITS_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.SPENDING_LIMITS_POLICY_ADDRESS
+export const VALUE_LIMIT_POLICY_ADDRESS: Hex = getValueLimitPolicy({
+  limit: 0n
+}).address
 
-export const SUDO_POLICY_ADDRESS: Hex = GLOBAL_CONSTANTS.SUDO_POLICY_ADDRESS
+export const USAGE_LIMIT_POLICY_ADDRESS: Hex = getUsageLimitPolicy({
+  limit: 0n
+}).address
+
+export const SPENDING_LIMITS_POLICY_ADDRESS: Hex = getSpendingLimitsPolicy([
+  {
+    token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    limit: 0n
+  }
+]).address
 
 export const PERMIT_TYPEHASH =
   "0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9"

@@ -11,5 +11,5 @@ export * from "./clients"
 export * from "./constants"
 
 // Explicitly export commonly used functions
-export { toSmartSessionsModule } from "./modules/validators/smartSessions/toSmartSessionsModule"
+export { toSmartSessionsValidator } from "./modules/validators/smartSessionsValidator/toSmartSessionsValidator"
 export { toValidator } from "./modules/validators/toValidator"

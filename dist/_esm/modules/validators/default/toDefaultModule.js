@@ -1,5 +1,5 @@
 import { zeroAddress } from "viem";
-import { DUMMY_SIGNATURE } from "../smartSessions/index.js";
+import { DUMMY_SIGNATURE } from "../smartSessionsValidator/index.js";
 import { toValidator } from "../toValidator.js";
 export const toDefaultModule = (parameters) => toValidator({
     initData: parameters.signer.address,

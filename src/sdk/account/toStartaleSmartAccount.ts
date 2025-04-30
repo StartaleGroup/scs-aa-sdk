@@ -55,6 +55,7 @@ import type { BaseComposableCall, ComposableCall } from "../modules"
 import { toEmptyHook } from "../modules/toEmptyHook"
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule"
 import type { Validator } from "../modules/validators/toValidator"
+import type { Module } from "../modules/utils/Types"
 import { getFactoryData, getInitData } from "./decorators/getFactoryData"
 import { getStartaleAccountAddress } from "./decorators/getStartaleAccountAddress"
 import {
@@ -196,7 +197,7 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<
     getModule: () => Validator
 
     /** Set the active module */
-    setModule: (validationModule: Validator) => void
+    setModule: (validationModule: Module) => void
   }
 >
 
@@ -533,8 +534,11 @@ export const toStartaleSmartAccount = async (
    * @param module - The new module to set as active
    * @returns void
    */
-  const setModule = (validationModule: Validator) => {
-    module = validationModule
+  const setModule = (validationModule: Module) => {
+    if (validationModule.type !== "validator") {
+      throw new Error("Only validator modules are supported")
+    }
+    module = validationModule as Validator
   }
 
   return toSmartAccount({
