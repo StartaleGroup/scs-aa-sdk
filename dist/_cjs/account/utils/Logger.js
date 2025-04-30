@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = void 0;
 const Helpers_1 = require("./Helpers.js");
 class Logger {
+    static isDebug = (0, Helpers_1.isDebugging)();
     static log(message, value = "") {
         const timestamp = new Date().toISOString();
         const logMessage = `\x1b[35m[${timestamp}]\x1b[0m \x1b[36m${message}\x1b[0m:`;
@@ -26,10 +27,4 @@ class Logger {
     }
 }
 exports.Logger = Logger;
-Object.defineProperty(Logger, "isDebug", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: (0, Helpers_1.isDebugging)()
-});
 //# sourceMappingURL=Logger.js.map

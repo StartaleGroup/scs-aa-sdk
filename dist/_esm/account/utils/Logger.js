@@ -7,6 +7,8 @@
 import { isDebugging } from "./Helpers.js";
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class Logger {
+    // By default, the logger is not in debug mode.
+    static isDebug = isDebugging();
     /**
      * \x1b[0m is an escape sequence to reset the color of the text
      * All color codes used - 31 - Red, 33 - Yellow, 34 - Blue, 35 - Magenta, 36 - Cyan
@@ -39,12 +41,5 @@ class Logger {
         }
     }
 }
-// By default, the logger is not in debug mode.
-Object.defineProperty(Logger, "isDebug", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: isDebugging()
-});
 export { Logger };
 //# sourceMappingURL=Logger.js.map

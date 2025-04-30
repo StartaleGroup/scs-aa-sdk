@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
+    "module": "ES2022",
     "outDir": "../dist/_esm",
     "noEmit": false,
     "rootDir": "../src/sdk"
