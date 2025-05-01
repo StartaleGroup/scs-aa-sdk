@@ -6,7 +6,7 @@ import {
   getOwnableValidatorMockSignature,
   getSmartSessionsValidator
 } from "../../../constants"
-import type { ModuleMeta } from "../../../modules/utils/Types"
+import type { ModuleMeta } from "../../utils/Types"
 import type { ModularSmartAccount } from "../../utils/Types"
 import type { Module, ModuleParameters } from "../../utils/Types"
 import { toModule } from "../../utils/toModule"
