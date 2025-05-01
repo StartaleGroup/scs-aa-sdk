@@ -1,6 +1,6 @@
 {
   "name": "startale-aa-sdk",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "SCS",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
   },
   "peerDependencies": {
     "typescript": "^5.8.2",
-    "viem": "2.22.0",
+    "viem": "2.23.2",
     "@rhinestone/module-sdk": "0.2.3"
   },
   "exports": {
