@@ -54,38 +54,60 @@ const toSafeSenderCalls = async (__, { address }) => (0, Utils_1.addressEquals)(
     ]
     : [];
 exports.toSafeSenderCalls = toSafeSenderCalls;
-const toInstallModuleCalls = async (account, { address, initData, type }) => [
-    {
-        to: account.address,
-        value: BigInt(0),
-        data: (0, viem_1.encodeFunctionData)({
-            abi: [
-                {
-                    name: "installModule",
-                    type: "function",
-                    stateMutability: "nonpayable",
-                    inputs: [
-                        {
-                            type: "uint256",
-                            name: "moduleTypeId"
-                        },
-                        {
-                            type: "address",
-                            name: "module"
-                        },
-                        {
-                            type: "bytes",
-                            name: "initData"
-                        }
-                    ],
-                    outputs: []
-                }
-            ],
-            functionName: "installModule",
-            args: [(0, supportsModule_1.parseModuleTypeId)(type), (0, viem_1.getAddress)(address), initData ?? "0x"]
-        })
+const toInstallModuleCalls = async (account, { address, initData, type }) => {
+    const calls = [
+        {
+            to: account.address,
+            value: BigInt(0),
+            data: (0, viem_1.encodeFunctionData)({
+                abi: [
+                    {
+                        name: "installModule",
+                        type: "function",
+                        stateMutability: "nonpayable",
+                        inputs: [
+                            {
+                                type: "uint256",
+                                name: "moduleTypeId"
+                            },
+                            {
+                                type: "address",
+                                name: "module"
+                            },
+                            {
+                                type: "bytes",
+                                name: "initData"
+                            }
+                        ],
+                        outputs: []
+                    }
+                ],
+                functionName: "installModule",
+                args: [(0, supportsModule_1.parseModuleTypeId)(type), (0, viem_1.getAddress)(address), initData ?? "0x"]
+            })
+        }
+    ];
+    if ((0, Utils_1.addressEquals)(address, constants_1.SMART_SESSIONS_ADDRESS)) {
+        const publicClient = account?.client;
+        const trustedAttesters = await (0, constants_1.findTrustedAttesters)({
+            client: publicClient,
+            accountAddress: account.address
+        });
+        const needToAddTrustAttesters = trustedAttesters.length === 0;
+        if (needToAddTrustAttesters) {
+            const trustAttestersAction = (0, constants_1.getTrustAttestersAction)({
+                attesters: [constants_1.STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+                threshold: 1
+            });
+            calls.push({
+                to: trustAttestersAction.target,
+                value: trustAttestersAction.value.valueOf(),
+                data: trustAttestersAction.callData
+            });
+        }
     }
-];
+    return calls;
+};
 exports.toInstallModuleCalls = toInstallModuleCalls;
 const toInstallWithSafeSenderCalls = async (account, { address, initData, type }) => [
     ...(await (0, exports.toInstallModuleCalls)(account, { address, initData, type })),

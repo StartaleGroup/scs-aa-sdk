@@ -2,6 +2,7 @@ import {
   type Chain,
   type Client,
   type Hex,
+  type PublicClient,
   type Transport,
   encodeFunctionData,
   getAddress
@@ -16,8 +17,11 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
 import type { Call } from "../../../account/utils/Types"
 import { addressEquals } from "../../../account/utils/Utils"
 import {
+  findTrustedAttesters,
+  getTrustAttestersAction,
   MEE_VALIDATOR_ADDRESS,
-  SMART_SESSIONS_ADDRESS
+  SMART_SESSIONS_ADDRESS,
+  STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO
 } from "../../../constants"
 import type {
   ModularSmartAccount,
@@ -129,38 +133,69 @@ export const toSafeSenderCalls = async (
 export const toInstallModuleCalls = async (
   account: ModularSmartAccount,
   { address, initData, type }: ModuleMeta
-): Promise<Call[]> => [
-  {
-    to: account.address,
-    value: BigInt(0),
-    data: encodeFunctionData({
-      abi: [
-        {
-          name: "installModule",
-          type: "function",
-          stateMutability: "nonpayable",
-          inputs: [
-            {
-              type: "uint256",
-              name: "moduleTypeId"
-            },
-            {
-              type: "address",
-              name: "module"
-            },
-            {
-              type: "bytes",
-              name: "initData"
-            }
-          ],
-          outputs: []
-        }
-      ],
-      functionName: "installModule",
-      args: [parseModuleTypeId(type), getAddress(address), initData ?? "0x"]
+): Promise<Call[]> => {
+  const calls = [
+    {
+      to: account.address,
+      value: BigInt(0),
+      data: encodeFunctionData({
+        abi: [
+          {
+            name: "installModule",
+            type: "function",
+            stateMutability: "nonpayable",
+            inputs: [
+              {
+                type: "uint256",
+                name: "moduleTypeId"
+              },
+              {
+                type: "address",
+                name: "module"
+              },
+              {
+                type: "bytes",
+                name: "initData"
+              }
+            ],
+            outputs: []
+          }
+        ],
+        functionName: "installModule",
+        args: [parseModuleTypeId(type), getAddress(address), initData ?? "0x"]
+      })
+    }
+  ]
+
+  // These changes are done to ensure trustAttesters is a batch action.
+
+  if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
+    
+    const publicClient = account?.client as PublicClient
+
+    const trustedAttesters = await findTrustedAttesters({
+      client: publicClient as any,
+      accountAddress: account.address
     })
+
+    const needToAddTrustAttesters = trustedAttesters.length === 0
+
+    if (needToAddTrustAttesters) {
+      const trustAttestersAction = getTrustAttestersAction({
+        attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+        threshold: 1
+      })
+
+      calls.push({
+        to: trustAttestersAction.target,
+        value: trustAttestersAction.value.valueOf(),
+        data: trustAttestersAction.callData
+      })
+    }
   }
-]
+
+  return calls
+}
 
 export const toInstallWithSafeSenderCalls = async (
   account: ModularSmartAccount,

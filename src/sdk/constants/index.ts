@@ -21,7 +21,11 @@ export const COMPOSABLE_MODULE_ADDRESS: Hex =
   "0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10"
 export const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex =
   "0x0f5fB606cF3194C2c181A184E459dD461BaA4D51"
-
+// Review
+// Note: Only needed for Smart Sessions in USE mode.
+// Note: otherwise deploy SmartSessions withREgistry false.
+export const STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO: Hex =
+  "0xaeD4d8bAa80948d54d33dE041513D30124e1Ae3f"
 // Rhinestone constants
 export {
   SMART_SESSIONS_ADDRESS,

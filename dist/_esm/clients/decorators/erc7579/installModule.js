@@ -3,7 +3,7 @@ import { sendUserOperation } from "viem/account-abstraction";
 import { getAction, parseAccount } from "viem/utils";
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js";
 import { addressEquals } from "../../../account/utils/Utils.js";
-import { MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS } from "../../../constants/index.js";
+import { findTrustedAttesters, getTrustAttestersAction, MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS, STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO } from "../../../constants/index.js";
 import { parseModuleTypeId } from "./supportsModule.js";
 /**
  * Installs a module on a given smart account.
@@ -69,38 +69,61 @@ export const toSafeSenderCalls = async (__, { address }) => addressEquals(addres
         }
     ]
     : [];
-export const toInstallModuleCalls = async (account, { address, initData, type }) => [
-    {
-        to: account.address,
-        value: BigInt(0),
-        data: encodeFunctionData({
-            abi: [
-                {
-                    name: "installModule",
-                    type: "function",
-                    stateMutability: "nonpayable",
-                    inputs: [
-                        {
-                            type: "uint256",
-                            name: "moduleTypeId"
-                        },
-                        {
-                            type: "address",
-                            name: "module"
-                        },
-                        {
-                            type: "bytes",
-                            name: "initData"
-                        }
-                    ],
-                    outputs: []
-                }
-            ],
-            functionName: "installModule",
-            args: [parseModuleTypeId(type), getAddress(address), initData ?? "0x"]
-        })
+export const toInstallModuleCalls = async (account, { address, initData, type }) => {
+    const calls = [
+        {
+            to: account.address,
+            value: BigInt(0),
+            data: encodeFunctionData({
+                abi: [
+                    {
+                        name: "installModule",
+                        type: "function",
+                        stateMutability: "nonpayable",
+                        inputs: [
+                            {
+                                type: "uint256",
+                                name: "moduleTypeId"
+                            },
+                            {
+                                type: "address",
+                                name: "module"
+                            },
+                            {
+                                type: "bytes",
+                                name: "initData"
+                            }
+                        ],
+                        outputs: []
+                    }
+                ],
+                functionName: "installModule",
+                args: [parseModuleTypeId(type), getAddress(address), initData ?? "0x"]
+            })
+        }
+    ];
+    // These changes are done to ensure trustAttesters is a batch action.
+    if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
+        const publicClient = account?.client;
+        const trustedAttesters = await findTrustedAttesters({
+            client: publicClient,
+            accountAddress: account.address
+        });
+        const needToAddTrustAttesters = trustedAttesters.length === 0;
+        if (needToAddTrustAttesters) {
+            const trustAttestersAction = getTrustAttestersAction({
+                attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+                threshold: 1
+            });
+            calls.push({
+                to: trustAttestersAction.target,
+                value: trustAttestersAction.value.valueOf(),
+                data: trustAttestersAction.callData
+            });
+        }
     }
-];
+    return calls;
+};
 export const toInstallWithSafeSenderCalls = async (account, { address, initData, type }) => [
     ...(await toInstallModuleCalls(account, { address, initData, type })),
     ...(await toSafeSenderCalls(account, { address, type }))
