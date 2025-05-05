@@ -3,7 +3,12 @@ import { sendUserOperation } from "viem/account-abstraction";
 import { getAction, parseAccount } from "viem/utils";
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js";
 import { addressEquals } from "../../../account/utils/Utils.js";
-import { findTrustedAttesters, getTrustAttestersAction, MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS, STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO } from "../../../constants/index.js";
+import { 
+// findTrustedAttesters,
+// getTrustAttestersAction,
+MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS,
+// STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO
+ } from "../../../constants/index.js";
 import { parseModuleTypeId } from "./supportsModule.js";
 /**
  * Installs a module on a given smart account.
@@ -103,25 +108,25 @@ export const toInstallModuleCalls = async (account, { address, initData, type })
         }
     ];
     // These changes are done to ensure trustAttesters is a batch action.
-    if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
-        const publicClient = account?.client;
-        const trustedAttesters = await findTrustedAttesters({
-            client: publicClient,
-            accountAddress: account.address
-        });
-        const needToAddTrustAttesters = trustedAttesters.length === 0;
-        if (needToAddTrustAttesters) {
-            const trustAttestersAction = getTrustAttestersAction({
-                attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
-                threshold: 1
-            });
-            calls.push({
-                to: trustAttestersAction.target,
-                value: trustAttestersAction.value.valueOf(),
-                data: trustAttestersAction.callData
-            });
-        }
-    }
+    // if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
+    //   const publicClient = account?.client as PublicClient
+    //   const trustedAttesters = await findTrustedAttesters({
+    //     client: publicClient as any,
+    //     accountAddress: account.address
+    //   })
+    //   const needToAddTrustAttesters = trustedAttesters.length === 0
+    //   if (needToAddTrustAttesters) {
+    //     const trustAttestersAction = getTrustAttestersAction({
+    //       attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+    //       threshold: 1
+    //     })
+    //     calls.push({
+    //       to: trustAttestersAction.target,
+    //       value: trustAttestersAction.value.valueOf(),
+    //       data: trustAttestersAction.callData
+    //     })
+    //   }
+    // }
     return calls;
 };
 export const toInstallWithSafeSenderCalls = async (account, { address, initData, type }) => [

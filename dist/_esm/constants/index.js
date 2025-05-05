@@ -14,7 +14,11 @@ export const ACCOUNT_IMPLEMENTATION_ADDRESS = "0x0f5fB606cF3194C2c181A184E459dD4
 // Note: otherwise deploy SmartSessions withREgistry false.
 export const STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO = "0xaeD4d8bAa80948d54d33dE041513D30124e1Ae3f";
 // Rhinestone constants
-export { SMART_SESSIONS_ADDRESS, OWNABLE_VALIDATOR_ADDRESS, OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
+// Custokm SS address
+export const SMART_SESSIONS_ADDRESS = "0x8e7c945C11Ab0be83Af5c0264856753FAf7f5Cd8";
+export { 
+// SMART_SESSIONS_ADDRESS,
+OWNABLE_VALIDATOR_ADDRESS, OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
 export const UNIVERSAL_ACTION_POLICY_ADDRESS = '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F';
 export const SUDO_POLICY_ADDRESS = getSudoPolicy().address;
 export const TIME_FRAME_POLICY_ADDRESS = getTimeFramePolicy({

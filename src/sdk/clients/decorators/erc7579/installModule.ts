@@ -2,7 +2,7 @@ import {
   type Chain,
   type Client,
   type Hex,
-  type PublicClient,
+  // type PublicClient,
   type Transport,
   encodeFunctionData,
   getAddress
@@ -17,11 +17,11 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
 import type { Call } from "../../../account/utils/Types"
 import { addressEquals } from "../../../account/utils/Utils"
 import {
-  findTrustedAttesters,
-  getTrustAttestersAction,
+  // findTrustedAttesters,
+  // getTrustAttestersAction,
   MEE_VALIDATOR_ADDRESS,
   SMART_SESSIONS_ADDRESS,
-  STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO
+  // STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO
 } from "../../../constants"
 import type {
   ModularSmartAccount,
@@ -169,30 +169,30 @@ export const toInstallModuleCalls = async (
 
   // These changes are done to ensure trustAttesters is a batch action.
 
-  if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
+  // if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
     
-    const publicClient = account?.client as PublicClient
+  //   const publicClient = account?.client as PublicClient
 
-    const trustedAttesters = await findTrustedAttesters({
-      client: publicClient as any,
-      accountAddress: account.address
-    })
+  //   const trustedAttesters = await findTrustedAttesters({
+  //     client: publicClient as any,
+  //     accountAddress: account.address
+  //   })
 
-    const needToAddTrustAttesters = trustedAttesters.length === 0
+  //   const needToAddTrustAttesters = trustedAttesters.length === 0
 
-    if (needToAddTrustAttesters) {
-      const trustAttestersAction = getTrustAttestersAction({
-        attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
-        threshold: 1
-      })
+  //   if (needToAddTrustAttesters) {
+  //     const trustAttestersAction = getTrustAttestersAction({
+  //       attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+  //       threshold: 1
+  //     })
 
-      calls.push({
-        to: trustAttestersAction.target,
-        value: trustAttestersAction.value.valueOf(),
-        data: trustAttestersAction.callData
-      })
-    }
-  }
+  //     calls.push({
+  //       to: trustAttestersAction.target,
+  //       value: trustAttestersAction.value.valueOf(),
+  //       data: trustAttestersAction.callData
+  //     })
+  //   }
+  // }
 
   return calls
 }

@@ -87,25 +87,6 @@ const toInstallModuleCalls = async (account, { address, initData, type }) => {
             })
         }
     ];
-    if ((0, Utils_1.addressEquals)(address, constants_1.SMART_SESSIONS_ADDRESS)) {
-        const publicClient = account?.client;
-        const trustedAttesters = await (0, constants_1.findTrustedAttesters)({
-            client: publicClient,
-            accountAddress: account.address
-        });
-        const needToAddTrustAttesters = trustedAttesters.length === 0;
-        if (needToAddTrustAttesters) {
-            const trustAttestersAction = (0, constants_1.getTrustAttestersAction)({
-                attesters: [constants_1.STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
-                threshold: 1
-            });
-            calls.push({
-                to: trustAttestersAction.target,
-                value: trustAttestersAction.value.valueOf(),
-                data: trustAttestersAction.callData
-            });
-        }
-    }
     return calls;
 };
 exports.toInstallModuleCalls = toInstallModuleCalls;
