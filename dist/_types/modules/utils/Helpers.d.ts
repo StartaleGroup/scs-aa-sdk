@@ -36,5 +36,13 @@ export declare function parseReferenceValue(referenceValue: AnyReferenceValue): 
  * @throws {Error} If no module is currently activated
  */
 export declare const parseModule: <TModularSmartAccount extends ModularSmartAccount | undefined, chain extends Chain | undefined>(client: Client<Transport, chain, TModularSmartAccount>) => AnyData;
+/**
+ * Sanitizes an ECDSA signature by ensuring the 'v' value is either 27 or 28.
+ * Also ensures the signature has a '0x' prefix.
+ *
+ * @param signature - The hex signature to sanitize
+ * @returns A properly formatted signature with correct 'v' value
+ */
+export declare function sanitizeSignature(signature: Hex): Hex;
 export {};
 //# sourceMappingURL=Helpers.d.ts.map

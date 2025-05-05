@@ -183,6 +183,9 @@ const toStartaleSmartAccount = async (parameters) => {
         return signature;
     }
     const setModule = (validationModule) => {
+        if (validationModule.type !== "validator") {
+            throw new Error("Only validator modules are supported");
+        }
         module = validationModule;
     };
     return (0, account_abstraction_1.toSmartAccount)({

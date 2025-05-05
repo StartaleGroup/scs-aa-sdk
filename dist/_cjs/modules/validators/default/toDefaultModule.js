@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toDefaultModule = void 0;
 const viem_1 = require("viem");
-const smartSessions_1 = require("../smartSessions/index.js");
+const smartSessionsValidator_1 = require("../smartSessionsValidator/index.js");
 const toValidator_1 = require("../toValidator.js");
 const toDefaultModule = (parameters) => (0, toValidator_1.toValidator)({
     initData: parameters.signer.address,
@@ -12,7 +12,7 @@ const toDefaultModule = (parameters) => (0, toValidator_1.toValidator)({
     address: viem_1.zeroAddress,
     module: viem_1.zeroAddress,
     type: "validator",
-    getStubSignature: async () => smartSessions_1.DUMMY_SIGNATURE
+    getStubSignature: async () => smartSessionsValidator_1.DUMMY_SIGNATURE
 });
 exports.toDefaultModule = toDefaultModule;
 //# sourceMappingURL=toDefaultModule.js.map

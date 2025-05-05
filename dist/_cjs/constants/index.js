@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PERMIT_TYPEHASH = exports.SUDO_POLICY_ADDRESS = exports.SPENDING_LIMITS_POLICY_ADDRESS = exports.USAGE_LIMIT_POLICY_ADDRESS = exports.VALUE_LIMIT_POLICY_ADDRESS = exports.TIME_FRAME_POLICY_ADDRESS = exports.UNIVERSAL_ACTION_POLICY_ADDRESS = exports.getUniversalActionPolicy = exports.getOwnableValidator = exports.getValueLimitPolicy = exports.getUsageLimitPolicy = exports.getSpendingLimitsPolicy = exports.getSudoPolicy = exports.getSmartSessionsValidator = exports.getEnableSessionDetails = exports.encodeValidationData = exports.decodeSmartSessionSignature = exports.getSetOwnableValidatorThresholdAction = exports.getRemoveOwnableValidatorOwnerAction = exports.getOwnableValidatorOwners = exports.getAddOwnableValidatorOwnerAction = exports.getOwnableValidatorSignature = exports.getTrustAttestersAction = exports.findTrustedAttesters = exports.isRhinestoneModuleInstalled = exports.getOwnableValidatorThreshold = exports.getOwnableValidatorMockSignature = exports.getAccount = exports.getExecuteOnOwnedAccountAction = exports.getAddOwnableExecutorOwnerAction = exports.encodeSmartSessionSignature = exports.SmartSessionMode = exports.REGISTRY_ADDRESS = exports.RHINESTONE_ATTESTER_ADDRESS = exports.OWNABLE_EXECUTOR_ADDRESS = exports.OWNABLE_VALIDATOR_ADDRESS = exports.SMART_SESSIONS_ADDRESS = exports.ACCOUNT_IMPLEMENTATION_ADDRESS = exports.COMPOSABLE_MODULE_ADDRESS = exports.ACCOUNT_FACTORY_ADDRESS = exports.BICONOMY_ATTESTER_ADDRESS_UNTIL_0_1 = exports.BICONOMY_ATTESTER_ADDRESS = exports.MEE_VALIDATOR_ADDRESS = exports.BOOTSTRAP_ADDRESS = exports.ENTRYPOINT_SIMULATIONS_ADDRESS = exports.ENTRY_POINT_ADDRESS = void 0;
+exports.PERMIT_TYPEHASH = exports.SPENDING_LIMITS_POLICY_ADDRESS = exports.USAGE_LIMIT_POLICY_ADDRESS = exports.VALUE_LIMIT_POLICY_ADDRESS = exports.TIME_FRAME_POLICY_ADDRESS = exports.SUDO_POLICY_ADDRESS = exports.UNIVERSAL_ACTION_POLICY_ADDRESS = exports.getUniversalActionPolicy = exports.getOwnableValidator = exports.getValueLimitPolicy = exports.getUsageLimitPolicy = exports.getSpendingLimitsPolicy = exports.getSudoPolicy = exports.getSmartSessionsValidator = exports.getEnableSessionDetails = exports.encodeValidationData = exports.decodeSmartSessionSignature = exports.getSetOwnableValidatorThresholdAction = exports.getRemoveOwnableValidatorOwnerAction = exports.getOwnableValidatorOwners = exports.getAddOwnableValidatorOwnerAction = exports.getOwnableValidatorSignature = exports.getTrustAttestersAction = exports.findTrustedAttesters = exports.isRhinestoneModuleInstalled = exports.getOwnableValidatorThreshold = exports.getOwnableValidatorMockSignature = exports.getAccount = exports.getExecuteOnOwnedAccountAction = exports.getAddOwnableExecutorOwnerAction = exports.encodeSmartSessionSignature = exports.SmartSessionMode = exports.REGISTRY_ADDRESS = exports.RHINESTONE_ATTESTER_ADDRESS = exports.OWNABLE_EXECUTOR_ADDRESS = exports.OWNABLE_VALIDATOR_ADDRESS = exports.SMART_SESSIONS_ADDRESS = exports.STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO = exports.ACCOUNT_IMPLEMENTATION_ADDRESS = exports.COMPOSABLE_MODULE_ADDRESS = exports.ACCOUNT_FACTORY_ADDRESS = exports.BICONOMY_ATTESTER_ADDRESS_UNTIL_0_1 = exports.BICONOMY_ATTESTER_ADDRESS = exports.MEE_VALIDATOR_ADDRESS = exports.BOOTSTRAP_ADDRESS = exports.ENTRYPOINT_SIMULATIONS_ADDRESS = exports.ENTRY_POINT_ADDRESS = void 0;
 const tslib_1 = require("tslib");
 const module_sdk_1 = require("@rhinestone/module-sdk");
 tslib_1.__exportStar(require("./abi/index.js"), exports);
@@ -13,6 +13,7 @@ exports.BICONOMY_ATTESTER_ADDRESS_UNTIL_0_1 = "0xDE8FD2dBcC0CA847d11599AF5964fe2
 exports.ACCOUNT_FACTORY_ADDRESS = "0xF227EB456F1B0AC51b07f451040ec1c44aB8D1aA";
 exports.COMPOSABLE_MODULE_ADDRESS = "0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10";
 exports.ACCOUNT_IMPLEMENTATION_ADDRESS = "0x0f5fB606cF3194C2c181A184E459dD461BaA4D51";
+exports.STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO = "0xaeD4d8bAa80948d54d33dE041513D30124e1Ae3f";
 var module_sdk_2 = require("@rhinestone/module-sdk");
 Object.defineProperty(exports, "SMART_SESSIONS_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.SMART_SESSIONS_ADDRESS; } });
 Object.defineProperty(exports, "OWNABLE_VALIDATOR_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.OWNABLE_VALIDATOR_ADDRESS; } });
@@ -44,11 +45,23 @@ Object.defineProperty(exports, "getUsageLimitPolicy", { enumerable: true, get: f
 Object.defineProperty(exports, "getValueLimitPolicy", { enumerable: true, get: function () { return module_sdk_2.getValueLimitPolicy; } });
 Object.defineProperty(exports, "getOwnableValidator", { enumerable: true, get: function () { return module_sdk_2.getOwnableValidator; } });
 Object.defineProperty(exports, "getUniversalActionPolicy", { enumerable: true, get: function () { return module_sdk_2.getUniversalActionPolicy; } });
-exports.UNIVERSAL_ACTION_POLICY_ADDRESS = module_sdk_1.GLOBAL_CONSTANTS.UNIVERSAL_ACTION_POLICY_ADDRESS;
-exports.TIME_FRAME_POLICY_ADDRESS = module_sdk_1.GLOBAL_CONSTANTS.TIME_FRAME_POLICY_ADDRESS;
-exports.VALUE_LIMIT_POLICY_ADDRESS = module_sdk_1.GLOBAL_CONSTANTS.VALUE_LIMIT_POLICY_ADDRESS;
-exports.USAGE_LIMIT_POLICY_ADDRESS = module_sdk_1.GLOBAL_CONSTANTS.USAGE_LIMIT_POLICY_ADDRESS;
-exports.SPENDING_LIMITS_POLICY_ADDRESS = module_sdk_1.GLOBAL_CONSTANTS.SPENDING_LIMITS_POLICY_ADDRESS;
-exports.SUDO_POLICY_ADDRESS = module_sdk_1.GLOBAL_CONSTANTS.SUDO_POLICY_ADDRESS;
+exports.UNIVERSAL_ACTION_POLICY_ADDRESS = '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F';
+exports.SUDO_POLICY_ADDRESS = (0, module_sdk_1.getSudoPolicy)().address;
+exports.TIME_FRAME_POLICY_ADDRESS = (0, module_sdk_1.getTimeFramePolicy)({
+    validUntil: 0,
+    validAfter: 0
+}).address;
+exports.VALUE_LIMIT_POLICY_ADDRESS = (0, module_sdk_1.getValueLimitPolicy)({
+    limit: 0n
+}).address;
+exports.USAGE_LIMIT_POLICY_ADDRESS = (0, module_sdk_1.getUsageLimitPolicy)({
+    limit: 0n
+}).address;
+exports.SPENDING_LIMITS_POLICY_ADDRESS = (0, module_sdk_1.getSpendingLimitsPolicy)([
+    {
+        token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        limit: 0n
+    }
+]).address;
 exports.PERMIT_TYPEHASH = "0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9";
 //# sourceMappingURL=index.js.map

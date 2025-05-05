@@ -1,5 +1,6 @@
-import { GLOBAL_CONSTANTS } from "@rhinestone/module-sdk"
-import type { Hex } from "viem"
+import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUsageLimitPolicy, getValueLimitPolicy } from "@rhinestone/module-sdk"
+import type { Address, Hex } from "viem"
+
 export * from "./abi"
 
 export const ENTRY_POINT_ADDRESS: Hex =
@@ -20,7 +21,11 @@ export const COMPOSABLE_MODULE_ADDRESS: Hex =
   "0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10"
 export const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex =
   "0x0f5fB606cF3194C2c181A184E459dD461BaA4D51"
-
+// Review
+// Note: Only needed for Smart Sessions in USE mode.
+// Note: otherwise deploy SmartSessions withREgistry false.
+export const STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO: Hex =
+  "0xaeD4d8bAa80948d54d33dE041513D30124e1Ae3f"
 // Rhinestone constants
 export {
   SMART_SESSIONS_ADDRESS,
@@ -59,23 +64,30 @@ export {
   getUniversalActionPolicy
 } from "@rhinestone/module-sdk"
 
-// Rhinestone doesn't export the universal action policy address, so we need to get it from the policies
-export const UNIVERSAL_ACTION_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.UNIVERSAL_ACTION_POLICY_ADDRESS
+export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
+  '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F'
 
-export const TIME_FRAME_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.TIME_FRAME_POLICY_ADDRESS
+export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address;
 
-export const VALUE_LIMIT_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.VALUE_LIMIT_POLICY_ADDRESS
+export const TIME_FRAME_POLICY_ADDRESS: Hex = getTimeFramePolicy({
+  validUntil: 0,
+  validAfter: 0
+}).address
 
-export const USAGE_LIMIT_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.USAGE_LIMIT_POLICY_ADDRESS
+export const VALUE_LIMIT_POLICY_ADDRESS: Hex = getValueLimitPolicy({
+  limit: 0n
+}).address
 
-export const SPENDING_LIMITS_POLICY_ADDRESS: Hex =
-  GLOBAL_CONSTANTS.SPENDING_LIMITS_POLICY_ADDRESS
+export const USAGE_LIMIT_POLICY_ADDRESS: Hex = getUsageLimitPolicy({
+  limit: 0n
+}).address
 
-export const SUDO_POLICY_ADDRESS: Hex = GLOBAL_CONSTANTS.SUDO_POLICY_ADDRESS
+export const SPENDING_LIMITS_POLICY_ADDRESS: Hex = getSpendingLimitsPolicy([
+  {
+    token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    limit: 0n
+  }
+]).address
 
 export const PERMIT_TYPEHASH =
   "0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9"

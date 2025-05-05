@@ -1,5 +1,5 @@
 import { zeroAddress } from "viem"
-import { DUMMY_SIGNATURE } from "../smartSessions"
+import { DUMMY_SIGNATURE } from "../smartSessionsValidator"
 import {
   type Validator,
   type ValidatorParameters,

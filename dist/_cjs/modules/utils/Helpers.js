@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseModule = void 0;
 exports.parseReferenceValue = parseReferenceValue;
+exports.sanitizeSignature = sanitizeSignature;
 const viem_1 = require("viem");
 const index_js_1 = require("../../account/index.js");
 function parseReferenceValue(referenceValue) {
@@ -43,4 +44,16 @@ const parseModule = (client) => {
     return activeModule;
 };
 exports.parseModule = parseModule;
+function sanitizeSignature(signature) {
+    let signature_ = signature;
+    const potentiallyIncorrectV = Number.parseInt(signature_.slice(-2), 16);
+    if (![27, 28].includes(potentiallyIncorrectV)) {
+        const correctV = potentiallyIncorrectV + 27;
+        signature_ = signature_.slice(0, -2) + correctV.toString(16);
+    }
+    if (signature.slice(0, 2) !== "0x") {
+        signature_ = `0x${signature_}`;
+    }
+    return signature_;
+}
 //# sourceMappingURL=Helpers.js.map

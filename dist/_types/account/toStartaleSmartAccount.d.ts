@@ -3,6 +3,7 @@ import { type SmartAccount, type SmartAccountImplementation, type UserOperation 
 import { EntrypointAbi } from "../constants/abi";
 import type { ComposableCall } from "../modules";
 import type { Validator } from "../modules/validators/toValidator";
+import type { Module } from "../modules/utils/Types";
 import type { Call } from "./utils/Types";
 import { type EthersWallet } from "./utils/Utils";
 import { type EthereumProvider, type Signer } from "./utils/toSigner";
@@ -86,7 +87,7 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<type
     /** Get the active module */
     getModule: () => Validator;
     /** Set the active module */
-    setModule: (validationModule: Validator) => void;
+    setModule: (validationModule: Module) => void;
 }>;
 /**
  * @description Create a Startale Smart Account.
