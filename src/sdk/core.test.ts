@@ -15,8 +15,9 @@ import { type StartaleSmartAccount, toStartaleSmartAccount } from "./account/toS
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "./clients/createBicoBundlerClient"
-import { toSmartSessionsModule } from "./modules/validators/smartSessions/toSmartSessionsModule"
+} from "./clients/createSCSBundlerClient"
+import { toSmartSessionsValidator } from "./modules/validators/smartSessionsValidator/toSmartSessionsValidator"
+import { getSmartSessionsValidator } from "@rhinestone/module-sdk"
 
 describe("core", async () => {
   let network: NetworkConfig
@@ -90,7 +91,7 @@ describe("core", async () => {
 
   test("should install smart sessions validator", async () => {
     const hash = await startaleClient.installModule({
-      module: toSmartSessionsModule({ signer: eoaAccount })
+      module: getSmartSessionsValidator({})
     })
     const receipt = await startaleClient.waitForUserOperationReceipt({ hash })
     expect(receipt.success).toBe(true)

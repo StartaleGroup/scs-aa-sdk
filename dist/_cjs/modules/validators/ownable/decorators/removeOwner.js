@@ -10,7 +10,7 @@ async function removeOwner(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, owner } = parameters;
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = (0, utils_1.parseAccount)(account_);
@@ -25,7 +25,7 @@ async function removeOwner(client, parameters) {
 }
 const toRemoveOwnerCalls = async (account, parameters) => {
     const action = await (0, constants_1.getRemoveOwnableValidatorOwnerAction)({
-        account: (0, constants_1.getAccount)({ address: account.address, type: "nexus" }),
+        account: (0, constants_1.getAccount)({ address: account.address, type: "erc7579-implementation" }),
         client: account.client,
         owner: parameters.owner
     });

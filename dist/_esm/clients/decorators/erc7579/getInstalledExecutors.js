@@ -42,9 +42,9 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getInstalledExecutors } from '@scs-aa-sdk'
+ * import { getInstalledExecutors } from 'startale-aa-sdk'
  *
- * const [executors, nextCursor] = await getInstalledExecutors(nexusClient, {
+ * const [executors, nextCursor] = await getInstalledExecutors(startaleClient, {
  *   pageSize: 10n
  * })
  * console.log(executors, nextCursor) // ['0x...', '0x...'], '0x...'
@@ -55,7 +55,7 @@ export async function getInstalledExecutors(client, parameters) {
     const cursor = parameters?.cursor ?? SENTINEL_ADDRESS;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

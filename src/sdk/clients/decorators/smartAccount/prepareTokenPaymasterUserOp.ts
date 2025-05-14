@@ -9,7 +9,7 @@ import {
 import { encodeFunctionData } from "viem"
 import type { SmartAccount, UserOperation } from "viem/account-abstraction"
 import { getAction } from "viem/utils"
-import { BICONOMY_TOKEN_PAYMASTER } from "../../../account/utils/Constants"
+import { STARTALE_TOKEN_PAYMASTER } from "../../../account/utils/Constants"
 import { prepareUserOperationWithoutSignature } from "./prepareUserOperationWithoutSignature"
 
 export type Transaction = {
@@ -47,7 +47,7 @@ export type PrepareTokenPaymasterUserOpParameters = {
  * 
  * @example
  * ```typescript
- * const userOp = await prepareTokenPaymasterUserOp(nexusClient, {
+ * const userOp = await prepareTokenPaymasterUserOp(startaleClient, {
  *    txs: [
  *      {
  *        to: recipientAddress,
@@ -81,7 +81,7 @@ export async function prepareTokenPaymasterUserOp<
         data: encodeFunctionData({
           functionName: "approve",
           abi: erc20Abi,
-          args: [BICONOMY_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
+          args: [STARTALE_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
         }),
         value: BigInt(0)
       },

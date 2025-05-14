@@ -30,9 +30,9 @@ export type InstallModulesParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModules } from '@scs-aa-sdk'
+ * import { installModules } from 'startale-aa-sdk'
  *
- * const userOpHash = await installModules(nexusClient, {
+ * const userOpHash = await installModules(startaleClient, {
  *   modules: [
  *     { type: 'executor', address: '0x...', context: '0x' },
  *     { type: 'validator', address: '0x...', context: '0x' }
@@ -56,7 +56,7 @@ export async function installModules<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

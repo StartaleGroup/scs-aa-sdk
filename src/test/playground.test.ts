@@ -13,13 +13,12 @@ import {
 import { privateKeyToAccount } from "viem/accounts"
 import { base, optimism, polygon } from "viem/chains"
 import { beforeAll, describe, expect, test } from "vitest"
-import { toMultichainNexusAccount } from "../sdk/account"
-import { toNexusAccount } from "../sdk/account/toNexusAccount"
+import { toStartaleSmartAccount } from "../sdk/account/toStartaleSmartAccount"
 import { playgroundTrue } from "../sdk/account/utils/Utils"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../sdk/clients/createBicoBundlerClient"
+} from "../sdk/clients/createSCSBundlerClient"
 import {
   type BicoPaymasterClient,
   type BiconomyPaymasterContext,
@@ -33,18 +32,18 @@ const index = 0n
 
 describe.skipIf(!playgroundTrue())("playground", () => {
   let network: NetworkConfig
-  // Nexus Config
+  // Startale Account Config
   let chain: Chain
   let bundlerUrl: string
   let walletClient: WalletClient
   let paymasterUrl: string | undefined
-  let nexusAccountAddress: Address
 
   // Test utils
   let publicClient: PublicClient // testClient not available on public testnets
   let eoaAccount: PrivateKeyAccount
   let recipientAddress: Address
-  let nexusClient: StartaleAccountClient
+  let startaleClient: StartaleAccountClient
+  let startaleAccountAddress: Address
 
   let paymasterParams:
     | undefined
@@ -85,8 +84,8 @@ describe.skipIf(!playgroundTrue())("playground", () => {
   })
 
   test("should init the smart account", async () => {
-    nexusClient = createSmartAccountClient({
-      account: await toNexusAccount({
+    startaleClient = createSmartAccountClient({
+      account: await toStartaleSmartAccount({
         chain,
         signer: eoaAccount,
         transport: http(),
@@ -98,8 +97,8 @@ describe.skipIf(!playgroundTrue())("playground", () => {
   })
 
   test("should log relevant addresses", async () => {
-    nexusAccountAddress = await nexusClient.account.getAddress()
-    console.log({ nexusAccountAddress })
+    startaleAccountAddress = await startaleClient.account.getAddress()
+    console.log({ startaleAccountAddress })
   })
 
   test("should check balances and top up relevant addresses", async () => {
@@ -108,7 +107,7 @@ describe.skipIf(!playgroundTrue())("playground", () => {
         address: eoaAccount.address
       }),
       publicClient.getBalance({
-        address: nexusAccountAddress
+        address: startaleAccountAddress
       })
     ])
 
@@ -119,14 +118,14 @@ describe.skipIf(!playgroundTrue())("playground", () => {
       const hash = await walletClient.sendTransaction({
         chain,
         account: eoaAccount,
-        to: nexusAccountAddress,
+        to: startaleAccountAddress,
         value: parseEther("0.01")
       })
       const receipt = await publicClient.waitForTransactionReceipt({ hash })
       expect(receipt.status).toBe("success")
       const [ownerBalanceTwo, smartAccountBalanceTwo] = await Promise.all([
         publicClient.getBalance({ address: eoaAccount.address }),
-        publicClient.getBalance({ address: nexusAccountAddress })
+        publicClient.getBalance({ address: startaleAccountAddress })
       ])
       console.log({ ownerBalanceTwo, smartAccountBalanceTwo })
     }
@@ -137,10 +136,10 @@ describe.skipIf(!playgroundTrue())("playground", () => {
     const balanceBefore = await publicClient.getBalance({
       address: recipientAddress
     })
-    const hash = await nexusClient.sendUserOperation({
+    const hash = await startaleClient.sendUserOperation({
       calls: [{ to: recipientAddress, value: 1n }]
     })
-    const { success } = await nexusClient.waitForUserOperationReceipt({ hash })
+    const { success } = await startaleClient.waitForUserOperationReceipt({ hash })
     const balanceAfter = await publicClient.getBalance({
       address: recipientAddress
     })
@@ -148,14 +147,14 @@ describe.skipIf(!playgroundTrue())("playground", () => {
     expect(balanceAfter - balanceBefore).toBe(1n)
   })
 
-  test.skip("should send a user operation using nexusClient.sendUserOperation", async () => {
+  test.skip("should send a user operation using startaleClient.sendUserOperation", async () => {
     const balanceBefore = await publicClient.getBalance({
       address: recipientAddress
     })
-    const userOpHash = await nexusClient.sendUserOperation({
+    const userOpHash = await startaleClient.sendUserOperation({
       calls: [{ to: recipientAddress, value: 1n }]
     })
-    const { success } = await nexusClient.waitForUserOperationReceipt({
+    const { success } = await startaleClient.waitForUserOperationReceipt({
       hash: userOpHash
     })
     const balanceAfter = await publicClient.getBalance({

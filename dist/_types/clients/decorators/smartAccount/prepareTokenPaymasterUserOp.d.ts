@@ -33,7 +33,7 @@ export type PrepareTokenPaymasterUserOpParameters = {
  *
  * @example
  * ```typescript
- * const userOp = await prepareTokenPaymasterUserOp(nexusClient, {
+ * const userOp = await prepareTokenPaymasterUserOp(startaleClient, {
  *    txs: [
  *      {
  *        to: recipientAddress,

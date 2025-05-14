@@ -7,6 +7,7 @@ export type KnownError = {
   docsUrl?: string
 }
 
+// Todo: Update URls
 export const ERRORS_URL =
   "https://raw.githubusercontent.com/bcnmy/aa-errors/main/docs/errors.json"
 export const DOCS_URL = "https://docs.biconomy.io/troubleshooting/commonerrors"

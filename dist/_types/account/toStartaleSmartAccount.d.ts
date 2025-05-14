@@ -96,7 +96,7 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<type
  * @returns Startale Smart Account. {@link StartaleSmartAccount}
  *
  * @example
- * import { toStartaleAccount } from '@scs-aa-sdk'
+ * import { toStartaleAccount } from 'startale-aa-sdk'
  * import { createWalletClient, http } from 'viem'
  * import { mainnet } from 'viem/chains'
  *

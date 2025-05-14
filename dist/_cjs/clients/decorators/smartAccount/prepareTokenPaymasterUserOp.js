@@ -15,7 +15,7 @@ async function prepareTokenPaymasterUserOp(client, args) {
                 data: (0, viem_2.encodeFunctionData)({
                     functionName: "approve",
                     abi: viem_1.erc20Abi,
-                    args: [Constants_1.BICONOMY_TOKEN_PAYMASTER, customApprovalAmount ?? viem_1.maxUint256]
+                    args: [Constants_1.STARTALE_TOKEN_PAYMASTER, customApprovalAmount ?? viem_1.maxUint256]
                 }),
                 value: BigInt(0)
             },

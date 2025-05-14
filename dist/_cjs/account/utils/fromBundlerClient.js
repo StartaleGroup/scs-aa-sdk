@@ -1,25 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fromBundlerClientToSigner = exports.fromBundlerClientToChainId = exports.fromBundlerClientToChain = exports.fromBundlerClientToNexusAccount = exports.fromBundlerClientToPublicClient = void 0;
+exports.fromBundlerClientToSigner = exports.fromBundlerClientToChainId = exports.fromBundlerClientToChain = exports.fromBundlerClientToStartaleAccount = exports.fromBundlerClientToPublicClient = void 0;
 const fromBundlerClientToPublicClient = (bundlerClient) => {
-    const nexusAccount = (0, exports.fromBundlerClientToNexusAccount)(bundlerClient);
-    if (!nexusAccount.client) {
+    const startaleAccount = (0, exports.fromBundlerClientToStartaleAccount)(bundlerClient);
+    if (!startaleAccount.client) {
         throw new Error("Public client not found");
     }
-    return nexusAccount.client;
+    return startaleAccount.client;
 };
 exports.fromBundlerClientToPublicClient = fromBundlerClientToPublicClient;
-const fromBundlerClientToNexusAccount = (bundlerClient) => {
+const fromBundlerClientToStartaleAccount = (bundlerClient) => {
     const startaleAccount = bundlerClient.account;
     if (!startaleAccount.type || startaleAccount.type !== "smart") {
         throw new Error("Startale account not found");
     }
     return bundlerClient.account;
 };
-exports.fromBundlerClientToNexusAccount = fromBundlerClientToNexusAccount;
+exports.fromBundlerClientToStartaleAccount = fromBundlerClientToStartaleAccount;
 const fromBundlerClientToChain = (bundlerClient) => {
-    const nexusAccount = (0, exports.fromBundlerClientToNexusAccount)(bundlerClient);
-    const chain = nexusAccount.chain;
+    const startaleAccount = (0, exports.fromBundlerClientToStartaleAccount)(bundlerClient);
+    const chain = startaleAccount.chain;
     if (!chain.id) {
         throw new Error("Chain not found");
     }
@@ -35,11 +35,11 @@ const fromBundlerClientToChainId = (bundlerClient) => {
 };
 exports.fromBundlerClientToChainId = fromBundlerClientToChainId;
 const fromBundlerClientToSigner = (bundlerClient) => {
-    const nexusAccount = (0, exports.fromBundlerClientToNexusAccount)(bundlerClient);
-    if (!nexusAccount.signer || !nexusAccount.signer.address) {
+    const startaleAccount = (0, exports.fromBundlerClientToStartaleAccount)(bundlerClient);
+    if (!startaleAccount.signer || !startaleAccount.signer.address) {
         throw new Error("Signer not found");
     }
-    return nexusAccount.signer;
+    return startaleAccount.signer;
 };
 exports.fromBundlerClientToSigner = fromBundlerClientToSigner;
 //# sourceMappingURL=fromBundlerClient.js.map

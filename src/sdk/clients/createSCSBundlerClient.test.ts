@@ -16,10 +16,10 @@ import {
 import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import {
-  type BicoBundlerClient,
-  createBicoBundlerClient,
+  type SCSBundlerClient,
+  createSCSBundlerClient,
   createSmartAccountClient
-} from "./createBicoBundlerClient"
+} from "./createSCSBundlerClient"
 
 describe("bico.bundler", async () => {
   let network: NetworkConfig
@@ -30,7 +30,7 @@ describe("bico.bundler", async () => {
   let testClient: MasterClient
   let eoaAccount: Account
   let startaleAccountAddress: Address
-  let bicoBundler: BicoBundlerClient
+  let scsBundler: SCSBundlerClient
   let startaleAccount: StartaleSmartAccount
 
   beforeAll(async () => {
@@ -47,7 +47,7 @@ describe("bico.bundler", async () => {
       transport: http()
     })
 
-    bicoBundler = createBicoBundlerClient({
+    scsBundler = createSCSBundlerClient({
       mock: true,
       bundlerUrl,
       account: startaleAccount
@@ -122,7 +122,7 @@ describe("bico.bundler", async () => {
   test.concurrent(
     "should have been extended by biconomy specific actions",
     async () => {
-      const gasFees = await bicoBundler.getGasFeeValues()
+      const gasFees = await scsBundler.getGasFeeValues()
       expect(gasFees).toHaveProperty("fast")
       expect(gasFees).toHaveProperty("standard")
       expect(gasFees).toHaveProperty("slow")
@@ -134,12 +134,12 @@ describe("bico.bundler", async () => {
     const calls = [{ to: eoaAccount.address, value: 1n }]
     // Must find gas fees before sending the user operation
     const gas = await testClient.estimateFeesPerGas()
-    const hash = await bicoBundler.sendUserOperation({
+    const hash = await scsBundler.sendUserOperation({
       ...gas,
       calls,
       account: startaleAccount
     })
-    const receipt = await bicoBundler.waitForUserOperationReceipt({ hash })
+    const receipt = await scsBundler.waitForUserOperationReceipt({ hash })
     expect(receipt.success).toBeTruthy()
   })
 })

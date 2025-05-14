@@ -4,7 +4,6 @@ export * from "./AccountNotFound";
 export * from "./Constants";
 export * from "./contractSimulation";
 export * from "./deepHexlify";
-export * from "./explorer";
 export * from "./fromBundlerClient";
 export * from "./getAAError";
 export * from "./getChain";

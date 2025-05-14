@@ -24,7 +24,7 @@ type StringOrStrings = string | string[];
  *
  * @example
  *
- * import { getCustomChain, createSmartAccountClient } from "@scs-aa-sdk"
+ * import { getCustomChain, createSmartAccountClient } from "startale-aa-sdk"
  *
  * const customChain = getCustomChain(
  *   "My Custom Chain",
@@ -41,7 +41,7 @@ type StringOrStrings = string | string[];
  * })
  *
  * const smartAccountCustomChain = createSmartAccountClient({
- *   account: await toNexusAccount({
+ *   account: await toStartaleSmartAccount({
  *     chain: customChain,
  *     signer: walletClientWithCustomChain,
  *     transport: http(),

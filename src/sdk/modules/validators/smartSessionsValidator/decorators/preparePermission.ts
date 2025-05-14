@@ -228,7 +228,7 @@ export const getPermissionAction = async ({
  * ```typescript
  * import { preparePermission } from '@biconomy/abstractjs'
  *
- * const result = await preparePermission(nexusClient, {
+ * const result = await preparePermission(startaleClient, {
  *   sessionRequestedInfo: [
  *     {
  *       sessionKeyData: '0x...',
@@ -267,7 +267,7 @@ export async function preparePermission<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

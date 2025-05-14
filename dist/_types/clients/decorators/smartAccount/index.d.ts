@@ -15,7 +15,7 @@ export type SmartAccountActions<TChain extends Chain | undefined = Chain | undef
     /**
      * Prepares and sends a user operation with token paymaster
      *
-     * @param client - The Nexus client instance
+     * @param client - The Startale client instance
      * @param args - The parameters for the token paymaster user operation
      * @param args.calls - Array of transactions to be executed
      * @param args.feeTokenAddress - Address of the token to be used for paying gas fees
@@ -54,7 +54,7 @@ export type SmartAccountActions<TChain extends Chain | undefined = Chain | undef
      *
      * @example
      * ```typescript
-     * const userOp = await prepareTokenPaymasterUserOp(nexusClient, {
+     * const userOp = await prepareTokenPaymasterUserOp(startaleClient, {
      *    txs: [
      *      {
      *        to: recipientAddress,
@@ -81,9 +81,9 @@ export type SmartAccountActions<TChain extends Chain | undefined = Chain | undef
      * @throws {AccountNotFoundError} If the account is not found.
      *
      * @example
-     * import { sendTransaction } from '@scs-aa-sdk'
+     * import { sendTransaction } from 'startale-aa-sdk'
      *
-     * const hash = await nexusClient.sendTransaction({calls: [{to: '0x...', value: parseEther('0.1'), data: '0x...'}]})
+     * const hash = await startaleClient.sendTransaction({calls: [{to: '0x...', value: parseEther('0.1'), data: '0x...'}]})
      * console.log(hash) // '0x...'
      */
     sendTransaction: <TChainOverride extends Chain | undefined = undefined, accountOverride extends SmartAccount | undefined = undefined, calls extends readonly unknown[] = readonly unknown[]>(args: Parameters<typeof sendTransaction<TSmartAccount, TChain, accountOverride, TChainOverride, calls>>[1]) => Promise<Hash>;
@@ -239,7 +239,7 @@ export type SmartAccountActions<TChain extends Chain | undefined = Chain | undef
      *
      * A "write" function on a Solidity contract modifies the state of the blockchain. These types of functions require gas to be executed, and hence a [Transaction](https://viem.sh/docs/glossary/terms.html) is needed to be broadcast in order to change the state.
      *
-     * Internally, uses a [Wallet Client](https://viem.sh/docs/clients/wallet.html) to call the [`sendTransaction` action](https://viem.sh/nexus-client/methods#sendtransaction.html) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData.html).
+     * Internally, uses a [Wallet Client](https://viem.sh/docs/clients/wallet.html) to call the [`sendTransaction` action](https://viem.sh/startale-client/methods#sendtransaction.html) with [ABI-encoded `data`](https://viem.sh/docs/contract/encodeFunctionData.html).
      *
      * __Warning: The `write` internally sends a transaction – it does not validate if the contract write will succeed (the contract may throw an error). It is highly recommended to [simulate the contract write with `contract.simulate`](https://viem.sh/docs/contract/writeContract.html#usage) before you execute it.__
      *

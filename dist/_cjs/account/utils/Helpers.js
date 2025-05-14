@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRandomBigInt = exports.getRandomInt = exports.bigIntReplacer = exports.isStaging = exports.isDebugging = void 0;
 const isDebugging = () => {
     try {
-        return (process?.env?.BICONOMY_SDK_DEBUG === "true" ||
-            process?.env?.REACT_APP_BICONOMY_SDK_DEBUG === "true" ||
-            process?.env?.NEXT_PUBLIC_BICONOMY_SDK_DEBUG === "true");
+        return (process?.env?.SDK_DEBUG === "true" ||
+            process?.env?.REACT_APP_SDK_DEBUG === "true" ||
+            process?.env?.NEXT_PUBLIC_SDK_DEBUG === "true");
     }
     catch (e) {
         return false;

@@ -39,9 +39,9 @@ export declare function encodeExecutionMode<callType extends CallType>({ type, r
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsExecutionMode } from '@scs-aa-sdk'
+ * import { supportsExecutionMode } from 'startale-aa-sdk'
  *
- * const isSupported = await supportsExecutionMode(nexusClient, {
+ * const isSupported = await supportsExecutionMode(startaleClient, {
  *   type: 'call',
  *   revertOnError: true,
  *   selector: '0x12345678'

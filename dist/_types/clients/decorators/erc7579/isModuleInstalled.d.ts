@@ -34,9 +34,9 @@ declare const abi: readonly [{
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { isModuleInstalled } from '@scs-aa-sdk'
+ * import { isModuleInstalled } from 'startale-aa-sdk'
  *
- * const isInstalled = await isModuleInstalled(nexusClient, {
+ * const isInstalled = await isModuleInstalled(startaleClient, {
  *   module: {
  *     type: 'executor',
  *     address: '0x...',

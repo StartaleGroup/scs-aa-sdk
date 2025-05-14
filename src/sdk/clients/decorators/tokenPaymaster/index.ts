@@ -1,5 +1,5 @@
 import type { PaymasterClient } from "viem/account-abstraction"
-import type { StartaleAccountClient } from "../../createBicoBundlerClient"
+import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 import { getSupportedTokens } from "./getSupportedTokens"
 import {
   type FeeQuote,
@@ -59,12 +59,12 @@ export type TokenPaymasterActions = {
   /**
    * Retrieves the supported tokens for the Biconomy Token Paymaster..
    *
-   * @param client - The Nexus client instance
+   * @param client - The Startale client instance
    * @returns A promise that resolves to an array of FeeQuote objects.
    *
    * @example
    * ```typescript
-   * const supportedTokens = await paymaster.getSupportedTokens(nexusClient);
+   * const supportedTokens = await paymaster.getSupportedTokens(startaleClient);
    * console.log(supportedTokens);
    * ```
    */
@@ -124,12 +124,12 @@ export const bicoTokenPaymasterActions =
     /**
      * Retrieves the supported tokens for the Biconomy Token Paymaster..
      *
-     * @param client - The Nexus client instance
+     * @param client - The Startale client instance
      * @returns A promise that resolves to an array of FeeQuote objects.
      *
      * @example
      * ```typescript
-     * const supportedTokens = await paymaster.getSupportedTokens(nexusClient);
+     * const supportedTokens = await paymaster.getSupportedTokens(startaleClient);
      * console.log(supportedTokens);
      * ```
      */

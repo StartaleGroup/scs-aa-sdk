@@ -2,22 +2,22 @@
  * Extracts the PublicClient from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
  * @returns {PublicClient<Transport, Chain, Account>} The public client instance
- * @throws {Error} If the Nexus account is not found
+ * @throws {Error} If the Smart account is not found
  */
 export const fromBundlerClientToPublicClient = (bundlerClient) => {
-    const nexusAccount = fromBundlerClientToNexusAccount(bundlerClient);
-    if (!nexusAccount.client) {
+    const startaleAccount = fromBundlerClientToStartaleAccount(bundlerClient);
+    if (!startaleAccount.client) {
         throw new Error("Public client not found");
     }
-    return nexusAccount.client;
+    return startaleAccount.client;
 };
 /**
- * Extracts the NexusAccount from a bundler client
+ * Extracts the StartaleSmartAccount from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
- * @returns {NexusAccount} The Nexus account instance
- * @throws {Error} If the account is not a valid Nexus smart account
+ * @returns {StartaleSmartAccount} The Startale smart account instance
+ * @throws {Error} If the account is not a valid Startale smart account
  */
-export const fromBundlerClientToNexusAccount = (bundlerClient) => {
+export const fromBundlerClientToStartaleAccount = (bundlerClient) => {
     const startaleAccount = bundlerClient.account;
     if (!startaleAccount.type || startaleAccount.type !== "smart") {
         throw new Error("Startale account not found");
@@ -31,8 +31,8 @@ export const fromBundlerClientToNexusAccount = (bundlerClient) => {
  * @throws {Error} If the chain information is not found
  */
 export const fromBundlerClientToChain = (bundlerClient) => {
-    const nexusAccount = fromBundlerClientToNexusAccount(bundlerClient);
-    const chain = nexusAccount.chain;
+    const startaleAccount = fromBundlerClientToStartaleAccount(bundlerClient);
+    const chain = startaleAccount.chain;
     if (!chain.id) {
         throw new Error("Chain not found");
     }
@@ -55,13 +55,13 @@ export const fromBundlerClientToChainId = (bundlerClient) => {
  * Extracts the Signer from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
  * @returns {Signer} The signer instance
- * @throws {Error} If the Nexus account is not found
+ * @throws {Error} If the Startale smart account is not found
  */
 export const fromBundlerClientToSigner = (bundlerClient) => {
-    const nexusAccount = fromBundlerClientToNexusAccount(bundlerClient);
-    if (!nexusAccount.signer || !nexusAccount.signer.address) {
+    const startaleAccount = fromBundlerClientToStartaleAccount(bundlerClient);
+    if (!startaleAccount.signer || !startaleAccount.signer.address) {
         throw new Error("Signer not found");
     }
-    return nexusAccount.signer;
+    return startaleAccount.signer;
 };
 //# sourceMappingURL=fromBundlerClient.js.map

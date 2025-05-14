@@ -38,7 +38,7 @@ export type BicoActions = {
    * @example
    *
    * import { createClient } from "viem"
-   * import { bicoBundlerActions } from "@scs-aa-sdk"
+   * import { bicoBundlerActions } from "startale-aa-sdk"
    *
    * const bundlerClient = createClient({
    *      chain: goerli,

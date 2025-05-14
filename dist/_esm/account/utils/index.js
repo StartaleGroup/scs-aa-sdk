@@ -4,7 +4,6 @@ export * from "./AccountNotFound.js";
 export * from "./Constants.js";
 export * from "./contractSimulation.js";
 export * from "./deepHexlify.js";
-export * from "./explorer.js";
 export * from "./fromBundlerClient.js";
 export * from "./getAAError.js";
 export * from "./getChain.js";

@@ -20,8 +20,8 @@ import { getAccount, getOwnableValidatorThreshold } from "../../../../constants/
  *
  * @example
  * ```typescript
- * const nexusClient = createSmartAccountClient({ ... });
- * const threshold = await getThreshold(nexusClient);
+ * const startaleClient = createSmartAccountClient({ ... });
+ * const threshold = await getThreshold(startaleClient);
  * console.log(`Current approval threshold: ${threshold}`);
  * ```
  *
@@ -34,7 +34,7 @@ export async function getThreshold(client, parameters) {
     const { account: account_ = client.account } = parameters ?? {};
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);
@@ -42,12 +42,12 @@ export async function getThreshold(client, parameters) {
     if (!publicClient) {
         throw new Error("Public client not found");
     }
-    const nexusAccount = getAccount({
+    const startaleAccount = getAccount({
         address: account.address,
-        type: "nexus"
+        type: "erc7579-implementation"
     });
     return await getOwnableValidatorThreshold({
-        account: nexusAccount,
+        account: startaleAccount,
         client: publicClient
     });
 }

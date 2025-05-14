@@ -40,9 +40,9 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getActiveHook } from '@scs-aa-sdk'
+ * import { getActiveHook } from 'startale-aa-sdk'
  *
- * const activeHook = await getActiveHook(nexusClient)
+ * const activeHook = await getActiveHook(startaleClient)
  * console.log(activeHook) // '0x...'
  */
 export async function getActiveHook<
@@ -55,7 +55,7 @@ export async function getActiveHook<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

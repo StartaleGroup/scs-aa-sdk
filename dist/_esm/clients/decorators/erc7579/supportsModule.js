@@ -51,18 +51,19 @@ export function parseModuleTypeId(type) {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsModule } from '@scs-aa-sdk'
+ * import { supportsModule } from 'startale-aa-sdk'
  *
- * const isSupported = await supportsModule(nexusClient, {
+ * const isSupported = await supportsModule(startaleClient, {
  *   type: 'executor'
  * })
  * console.log(isSupported) // true or false
  */
 export async function supportsModule(client, args) {
     const { account: account_ = client.account } = args;
+    // Review: all docs paths.
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

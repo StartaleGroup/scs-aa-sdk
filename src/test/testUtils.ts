@@ -18,7 +18,7 @@ import {
 import { mnemonicToAccount, privateKeyToAccount } from "viem/accounts"
 import { getChain, getCustomChain } from "../sdk/account/utils"
 import { Logger } from "../sdk/account/utils/Logger"
-import type { StartaleAccountClient } from "../sdk/clients/createBicoBundlerClient"
+import type { StartaleAccountClient } from "../sdk/clients/createSCSBundlerClient"
 import type { AnyData } from "../sdk/modules/utils/Types"
 import type { TestFileNetworkType } from "./testSetup"
 
@@ -209,24 +209,24 @@ export const nonZeroBalance = async (
 
 export const fundAndDeployClients = async (
   testClient: MasterClient,
-  nexusClients: StartaleAccountClient[]
+  startaleClients: StartaleAccountClient[]
 ) => {
   return await Promise.all(
-    nexusClients.map(async (nexusClient) => {
-      await fundAndDeploySingleClient(testClient, nexusClient)
+    startaleClients.map(async (startaleClient) => {
+      await fundAndDeploySingleClient(testClient, startaleClient)
     })
   )
 }
 
 export const fundAndDeploySingleClient = async (
   testClient: MasterClient,
-  nexusClient: StartaleAccountClient
+  startaleClient: StartaleAccountClient
 ) => {
   try {
-    const accountAddress = await nexusClient.account.getAddress()
+    const accountAddress = await startaleClient.account.getAddress()
     await topUp(testClient, accountAddress)
 
-    const hash = await nexusClient.sendUserOperation({
+    const hash = await startaleClient.sendUserOperation({
       calls: [
         {
           to: zeroAddress,
@@ -238,7 +238,7 @@ export const fundAndDeploySingleClient = async (
     const {
       success,
       receipt: { transactionHash }
-    } = await nexusClient.waitForUserOperationReceipt({
+    } = await startaleClient.waitForUserOperationReceipt({
       hash
     })
     if (!success) {

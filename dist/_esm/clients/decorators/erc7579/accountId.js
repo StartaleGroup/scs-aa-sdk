@@ -12,9 +12,9 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js"
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { accountId } from '@scs-aa-sdk'
+ * import { accountId } from 'startale-aa-sdk'
  *
- * const id = await accountId(nexusClient)
+ * const id = await accountId(startaleClient)
  * console.log(id) // 'example_account_id'
  */
 export async function accountId(client, args) {
@@ -24,7 +24,7 @@ export async function accountId(client, args) {
     }
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = account_;

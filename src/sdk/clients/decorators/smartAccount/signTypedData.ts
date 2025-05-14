@@ -26,7 +26,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { signTypedData } from '@scs-aa-sdk'
+ * import { signTypedData } from 'startale-aa-sdk'
  * import { keccak256, encodeAbiParameters, parseAbiParameters } from 'viem'
  *
  * const domain = {
@@ -60,7 +60,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  *   contents: 'Hello, Bob!'
  * }
  *
- * const signature = await signTypedData(nexusClient, {
+ * const signature = await signTypedData(startaleClient, {
  *   domain,
  *   types,
  *   primaryType: 'Mail',

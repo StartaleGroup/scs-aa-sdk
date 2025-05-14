@@ -39,9 +39,9 @@ export type UpgradeSmartAccountParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { upgradeSmartAccount } from '@scs-aa-sdk'
+ * import { upgradeSmartAccount } from 'startale-aa-sdk'
  *
- * const userOpHash = await upgradeSmartAccount(nexusClient, {
+ * const userOpHash = await upgradeSmartAccount(startaleClient, {
  *   // Optional custom implementation address
  *   implementationAddress: '0x...',
  *   // Optional initialization data
@@ -67,7 +67,7 @@ export async function upgradeSmartAccount<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#upgradeSmartAccount"
+      docsPath: "/startale-client/methods#upgradeSmartAccount"
     })
   }
 

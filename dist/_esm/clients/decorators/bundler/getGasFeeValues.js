@@ -21,6 +21,8 @@ export const getGasFeeValues = async (client) => {
     const nexusClient = client;
     const usePimlico = !!nexusClient?.mock ||
         !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico");
+    // Todo: Update as per the flag and change default to rundler
+    // Rundler only has https://github.com/alchemyplatform/rundler/blob/main/docs/architecture/rpc.md#rundler_maxpriorityfeepergas
     const gasPrice = await client.request({
         method: usePimlico
             ? "pimlico_getUserOperationGasPrice"

@@ -1,7 +1,8 @@
 import { type Hex, concat, keccak256, pad, toHex } from "viem"
 export const ADDRESS_ZERO: Hex = "0x0000000000000000000000000000000000000000"
 
-export const BICONOMY_TOKEN_PAYMASTER: Hex =
+// Todo: Update when final prod contracts are deployed
+export const STARTALE_TOKEN_PAYMASTER: Hex =
   "0x00000000301515A5410e0d768aF4f53c416edf19"
 
 export const EIP1559_UNSUPPORTED_NETWORKS: Array<number> = [97, 56, 1442, 1101]
@@ -101,6 +102,7 @@ export const MOCK_MULTI_MODULE_ADDRESS =
   "0x9C992f91E7Cd4697B81E137007f446E826b8378b"
 export const MODULE_TYPE_MULTI = 0
 
+// Todo: Update when final prod contracts are deployed
 export const ACCOUNT_DOMAIN_NAME = "Startale"
 export const ACCOUNT_DOMAIN_VERSION = "0.0.1"
 export const ACCOUNT_DOMAIN_TYPEHASH =

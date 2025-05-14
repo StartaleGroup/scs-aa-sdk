@@ -19,7 +19,6 @@ import { addressEquals } from "../../../account/utils/Utils"
 import {
   findTrustedAttesters,
   getTrustAttestersAction,
-  MEE_VALIDATOR_ADDRESS,
   SMART_SESSIONS_ADDRESS,
   RHINESTONE_ATTESTER_ADDRESS
 } from "../../../constants"
@@ -47,9 +46,9 @@ export type InstallModuleParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModule } from '@scs-aa-sdk'
+ * import { installModule } from 'startale-aa-sdk'
  *
- * const userOpHash = await installModule(nexusClient, {
+ * const userOpHash = await installModule(startaleClient, {
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
@@ -76,7 +75,7 @@ export async function installModule<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
@@ -103,32 +102,6 @@ export async function installModule<
     "sendUserOperation"
   )(sendUserOperationParams)
 }
-
-export const toSafeSenderCalls = async (
-  __: ModularSmartAccount,
-  { address }: ModuleMeta
-): Promise<Call[]> =>
-  addressEquals(address, SMART_SESSIONS_ADDRESS)
-    ? [
-        {
-          to: MEE_VALIDATOR_ADDRESS,
-          value: BigInt(0),
-          data: encodeFunctionData({
-            abi: [
-              {
-                name: "addSafeSender",
-                type: "function",
-                stateMutability: "nonpayable",
-                inputs: [{ type: "address", name: "sender" }],
-                outputs: []
-              }
-            ],
-            functionName: "addSafeSender",
-            args: [address]
-          })
-        }
-      ]
-    : []
 
 export const toInstallModuleCalls = async (
   account: ModularSmartAccount,
@@ -201,6 +174,5 @@ export const toInstallWithSafeSenderCalls = async (
   account: ModularSmartAccount,
   { address, initData, type }: ModuleMeta
 ): Promise<Call[]> => [
-  ...(await toInstallModuleCalls(account, { address, initData, type })),
-  ...(await toSafeSenderCalls(account, { address, type }))
+  ...(await toInstallModuleCalls(account, { address, initData, type }))
 ]

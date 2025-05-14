@@ -19,9 +19,9 @@ export type InstallModuleParameters<TSmartAccount extends SmartAccount | undefin
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModule } from '@scs-aa-sdk'
+ * import { installModule } from 'startale-aa-sdk'
  *
- * const userOpHash = await installModule(nexusClient, {
+ * const userOpHash = await installModule(startaleClient, {
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
@@ -31,7 +31,6 @@ export type InstallModuleParameters<TSmartAccount extends SmartAccount | undefin
  * console.log(userOpHash) // '0x...'
  */
 export declare function installModule<TSmartAccount extends SmartAccount | undefined>(client: Client<Transport, Chain | undefined, TSmartAccount>, parameters: InstallModuleParameters<TSmartAccount>): Promise<Hex>;
-export declare const toSafeSenderCalls: (__: ModularSmartAccount, { address }: ModuleMeta) => Promise<Call[]>;
 export declare const toInstallModuleCalls: (account: ModularSmartAccount, { address, initData, type }: ModuleMeta) => Promise<Call[]>;
 export declare const toInstallWithSafeSenderCalls: (account: ModularSmartAccount, { address, initData, type }: ModuleMeta) => Promise<Call[]>;
 //# sourceMappingURL=installModule.d.ts.map

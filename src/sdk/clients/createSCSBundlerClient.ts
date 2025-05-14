@@ -24,7 +24,7 @@ import {
 } from "./decorators/smartAccount"
 
 /**
- * Nexus Client type
+ * Startale Account Client type
  */
 export type StartaleAccountClient<
   transport extends Transport = Transport,
@@ -58,7 +58,7 @@ export type StartaleAccountClient<
      */
     mock: boolean
     /**
-     * The Nexus account associated with this client
+     * The Smart account associated with this client
      */
     account: ModularSmartAccount
     /**
@@ -103,12 +103,12 @@ type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
  * @returns A Bico Bundler Client
  *
  * @example
- * import { createBicoBundlerClient, http } from '@scs-aa-sdk'
+ * import { createSCSBundlerClient, http } from 'startale-aa-sdk'
  * import { mainnet } from 'viem/chains'
  *
- * const bundlerClient = createBicoBundlerClient({ chain: mainnet });
+ * const bundlerClient = createSCSBundlerClient({ chain: mainnet });
  */
-export const createBicoBundlerClient = (
+export const createSCSBundlerClient = (
   parameters: BicoBundlerClientConfig
 ) => {
   const {
@@ -164,7 +164,7 @@ export const createBicoBundlerClient = (
 }
 
 // Aliases for backwards compatibility
-export const createSmartAccountClient = createBicoBundlerClient
+export const createSmartAccountClient = createSCSBundlerClient
 export const createStartaleAccountClient = createSmartAccountClient
 export const createStartaleSessionClient = createSmartAccountClient
-export type BicoBundlerClient = StartaleAccountClient
+export type SCSBundlerClient = StartaleAccountClient

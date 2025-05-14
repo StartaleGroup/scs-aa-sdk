@@ -26,8 +26,8 @@ export type GetThresholdParameters<TModularSmartAccount extends ModularSmartAcco
  *
  * @example
  * ```typescript
- * const nexusClient = createSmartAccountClient({ ... });
- * const threshold = await getThreshold(nexusClient);
+ * const startaleClient = createSmartAccountClient({ ... });
+ * const threshold = await getThreshold(startaleClient);
  * console.log(`Current approval threshold: ${threshold}`);
  * ```
  *

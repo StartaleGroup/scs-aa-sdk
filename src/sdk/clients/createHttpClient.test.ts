@@ -2,19 +2,11 @@ import type { Chain, LocalAccount, Transport } from "viem"
 import { beforeAll, describe, expect, test } from "vitest"
 import { getTestChainConfig, toNetwork } from "../../test/testSetup"
 import type { NetworkConfig } from "../../test/testUtils"
-import {
-  type MultichainSmartAccount,
-  toMultichainNexusAccount
-} from "../account/toMultiChainNexusAccount"
 import createHttpClient from "./createHttpClient"
-import { type MeeClient, createMeeClient } from "./createMeeClient"
 
 describe("mee.createHttpClient", async () => {
   let network: NetworkConfig
   let eoaAccount: LocalAccount
-
-  let mcNexus: MultichainSmartAccount
-  let meeClient: MeeClient
 
   let paymentChain: Chain
   let targetChain: Chain
@@ -25,14 +17,6 @@ describe("mee.createHttpClient", async () => {
     ;[[paymentChain, targetChain], transports] = getTestChainConfig(network)
 
     eoaAccount = network.account!
-
-    mcNexus = await toMultichainNexusAccount({
-      chains: [paymentChain, targetChain],
-      transports,
-      signer: eoaAccount
-    })
-
-    meeClient = await createMeeClient({ account: mcNexus })
   })
 
   test("should instantiate a client", async () => {

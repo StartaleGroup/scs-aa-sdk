@@ -30,9 +30,9 @@ declare const abi: {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getFallbackBySelector } from '@scs-aa-sdk'
+ * import { getFallbackBySelector } from 'startale-aa-sdk'
  *
- * const [callType, handlerAddress] = await getFallbackBySelector(nexusClient, {
+ * const [callType, handlerAddress] = await getFallbackBySelector(startaleClient, {
  *   selector: '0x12345678'
  * })
  * console.log(callType, handlerAddress) // '0x1' '0x...'

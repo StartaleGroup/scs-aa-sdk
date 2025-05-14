@@ -33,8 +33,8 @@ export type SetThresholdParameters<TModularSmartAccount extends ModularSmartAcco
  *
  * @example
  * ```typescript
- * const nexusClient = createSmartAccountClient({ ... });
- * const hash = await setThreshold(nexusClient, {
+ * const startaleClient = createSmartAccountClient({ ... });
+ * const hash = await setThreshold(startaleClient, {
  *   threshold: 2,
  *   maxFeePerGas: 1000000000n
  * });

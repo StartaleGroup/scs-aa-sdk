@@ -222,7 +222,7 @@ const getTenderlyDetails = () => {
 exports.getTenderlyDetails = getTenderlyDetails;
 const safeMultiplier = (bI, multiplier) => BigInt(Math.round(Number(bI) * multiplier));
 exports.safeMultiplier = safeMultiplier;
-const getAllowance = async (client, owner, tokenAddress, grantee = Constants_1.BICONOMY_TOKEN_PAYMASTER) => {
+const getAllowance = async (client, owner, tokenAddress, grantee = Constants_1.STARTALE_TOKEN_PAYMASTER) => {
     const approval = await client.readContract({
         address: tokenAddress,
         abi: viem_1.erc20Abi,

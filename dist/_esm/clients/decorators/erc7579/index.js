@@ -4,7 +4,7 @@ import { getFallbackBySelector, toGetFallbackBySelectorReads } from "./getFallba
 import { getInstalledExecutors, toGetInstalledExecutorsReads } from "./getInstalledExecutors.js";
 import { getInstalledValidators, toGetInstalledValidatorsReads } from "./getInstalledValidators.js";
 import { getPreviousModule } from "./getPreviousModule.js";
-import { installModule, toInstallModuleCalls, toInstallWithSafeSenderCalls, toSafeSenderCalls } from "./installModule.js";
+import { installModule, toInstallModuleCalls, toInstallWithSafeSenderCalls, } from "./installModule.js";
 import { installModules } from "./installModules.js";
 import { isModuleInstalled, toIsModuleInstalledReads } from "./isModuleInstalled.js";
 import { supportsExecutionMode, toSupportsExecutionModeReads } from "./supportsExecutionMode.js";
@@ -34,7 +34,6 @@ export const erc7579Calls = {
     toInstallModuleCalls,
     toUninstallModuleCalls,
     toInstallWithSafeSenderCalls,
-    toSafeSenderCalls,
     toUninstallFallbackCalls
 };
 export const erc7579Reads = {

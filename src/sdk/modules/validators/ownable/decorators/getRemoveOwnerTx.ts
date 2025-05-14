@@ -41,7 +41,7 @@ export async function getRemoveOwnerTx<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
@@ -53,7 +53,7 @@ export async function getRemoveOwnerTx<
   }
 
   const action = await getRemoveOwnableValidatorOwnerAction({
-    account: { address: account.address, deployedOnChains: [], type: "nexus" },
+    account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
     client: publicClient as any,
     owner
   })

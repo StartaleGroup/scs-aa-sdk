@@ -1,6 +1,6 @@
 import type { Account, Chain, Client, Hex, Transport } from "viem"
 import type { BicoRpcSchema } from "."
-import type { StartaleAccountClient } from "../../createBicoBundlerClient"
+import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 
 export type BicoUserOperationGasPriceWithBigIntAsHex = {
   slow: {
@@ -64,6 +64,8 @@ export const getGasFeeValues = async (
     !!nexusClient?.mock ||
     !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico")
 
+  // Todo: Update as per the flag and change default to rundler
+  // Rundler only has https://github.com/alchemyplatform/rundler/blob/main/docs/architecture/rpc.md#rundler_maxpriorityfeepergas
   const gasPrice = await client.request({
     method: usePimlico
       ? "pimlico_getUserOperationGasPrice"

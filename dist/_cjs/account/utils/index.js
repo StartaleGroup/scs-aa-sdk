@@ -8,7 +8,6 @@ tslib_1.__exportStar(require("./AccountNotFound.js"), exports);
 tslib_1.__exportStar(require("./Constants.js"), exports);
 tslib_1.__exportStar(require("./contractSimulation.js"), exports);
 tslib_1.__exportStar(require("./deepHexlify.js"), exports);
-tslib_1.__exportStar(require("./explorer.js"), exports);
 tslib_1.__exportStar(require("./fromBundlerClient.js"), exports);
 tslib_1.__exportStar(require("./getAAError.js"), exports);
 tslib_1.__exportStar(require("./getChain.js"), exports);

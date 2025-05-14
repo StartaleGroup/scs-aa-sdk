@@ -21,6 +21,7 @@ import { AccountFactoryAbi } from "../../constants/abi/AccountFactory.js";
 export const getStartaleAccountAddress = async (params) => {
     const { publicClient, initData, factoryAddress = ACCOUNT_FACTORY_ADDRESS, index = 0n } = params;
     const salt = pad(toHex(index), { size: 32 });
+    console.log("chainId", publicClient?.chain?.id);
     return await publicClient.readContract({
         address: factoryAddress,
         abi: AccountFactoryAbi,

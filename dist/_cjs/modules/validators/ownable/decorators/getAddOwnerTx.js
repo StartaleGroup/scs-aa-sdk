@@ -9,7 +9,7 @@ async function getAddOwnerTx(client, parameters) {
     const { account: account_ = client.account, owner } = parameters;
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = (0, utils_1.parseAccount)(account_);
@@ -17,12 +17,12 @@ async function getAddOwnerTx(client, parameters) {
     if (!publicClient) {
         throw new Error("Public client not found");
     }
-    const nexusAccount = (0, constants_1.getAccount)({
+    const startaleAccount = (0, constants_1.getAccount)({
         address: account.address,
-        type: "nexus"
+        type: "erc7579-implementation"
     });
     const action = await (0, constants_1.getAddOwnableValidatorOwnerAction)({
-        account: nexusAccount,
+        account: startaleAccount,
         client: publicClient,
         owner
     });

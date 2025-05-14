@@ -45,9 +45,9 @@ export type RemoveOwnerParameters<
  *
  * @example
  * ```typescript
- * import { removeOwner } from '@scs-aa-sdk'
+ * import { removeOwner } from 'startale-aa-sdk'
  *
- * const userOpHash = await removeOwner(nexusClient, {
+ * const userOpHash = await removeOwner(startaleClient, {
  *   owner: '0x...'
  * })
  * console.log(userOpHash) // '0x...'
@@ -69,7 +69,7 @@ export async function removeOwner<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
@@ -93,7 +93,7 @@ export const toRemoveOwnerCalls = async (
   parameters: RemoveOwnerParameters<ModularSmartAccount | undefined>
 ): Promise<Call[]> => {
   const action = await getRemoveOwnableValidatorOwnerAction({
-    account: getAccount({ address: account.address, type: "nexus" }),
+    account: getAccount({ address: account.address, type: "erc7579-implementation" }),
     client: account.client as any,
     owner: parameters.owner
   })

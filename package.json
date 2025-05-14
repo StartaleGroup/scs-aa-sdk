@@ -45,9 +45,9 @@
     "yargs": "^17.7.2"
   },
   "peerDependencies": {
+    "@rhinestone/module-sdk": "0.2.3",
     "typescript": "^5.8.2",
-    "viem": "2.23.2",
-    "@rhinestone/module-sdk": "0.2.3"
+    "viem": "2.23.2"
   },
   "exports": {
     ".": {
@@ -65,8 +65,12 @@
   },
   "typesVersions": {
     "*": {
-      "*": ["./dist/_types/*"],
-      "smart-sessions": ["./dist/_types/modules/validators/smartSessions/*"]
+      "*": [
+        "./dist/_types/*"
+      ],
+      "smart-sessions": [
+        "./dist/_types/modules/validators/smartSessions/*"
+      ]
     }
   },
   "commitlint": {
@@ -117,7 +121,7 @@
     "build:types": "tsc --project ./tsconfig/tsconfig.types.json && tsc-alias -p ./tsconfig/tsconfig.types.json",
     "fetch:deployment": "bun run ./scripts/fetch:deployment.ts && bun run lint --apply-unsafe",
     "fetch:deployment:raw": "bun run ./scripts/fetch:deployment.ts",
-    "fund:nexus": "bun run ./scripts/fund:nexus.ts"
+    "fund:smartAccount": "bun run ./scripts/fund:smartAccount.ts"
   },
   "sideEffects": false,
   "simple-git-hooks": {

@@ -45,7 +45,7 @@ export async function getAddOwnerTx<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
@@ -56,13 +56,13 @@ export async function getAddOwnerTx<
     throw new Error("Public client not found")
   }
 
-  const nexusAccount = getAccount({
+  const startaleAccount = getAccount({
     address: account.address,
-    type: "nexus"
+    type: "erc7579-implementation"
   })
 
   const action = await getAddOwnableValidatorOwnerAction({
-    account: nexusAccount,
+    account: startaleAccount,
     client: publicClient as any,
     owner
   })

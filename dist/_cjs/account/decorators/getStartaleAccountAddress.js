@@ -7,6 +7,7 @@ const AccountFactory_1 = require("../../constants/abi/AccountFactory.js");
 const getStartaleAccountAddress = async (params) => {
     const { publicClient, initData, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, index = 0n } = params;
     const salt = (0, viem_1.pad)((0, viem_1.toHex)(index), { size: 32 });
+    console.log("chainId", publicClient?.chain?.id);
     return await publicClient.readContract({
         address: factoryAddress,
         abi: AccountFactory_1.AccountFactoryAbi,

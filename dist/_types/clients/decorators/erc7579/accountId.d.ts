@@ -10,9 +10,9 @@ import type { SmartAccount } from "viem/account-abstraction";
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { accountId } from '@scs-aa-sdk'
+ * import { accountId } from 'startale-aa-sdk'
  *
- * const id = await accountId(nexusClient)
+ * const id = await accountId(startaleClient)
  * console.log(id) // 'example_account_id'
  */
 export declare function accountId<TSmartAccount extends SmartAccount | undefined>(client: Client<Transport, Chain | undefined, TSmartAccount>, args?: {

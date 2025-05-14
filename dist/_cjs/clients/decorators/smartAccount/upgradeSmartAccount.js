@@ -11,7 +11,7 @@ async function upgradeSmartAccount(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, implementationAddress = constants_1.ACCOUNT_IMPLEMENTATION_ADDRESS, initData = "0x", ...rest } = parameters ?? {};
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#upgradeSmartAccount"
+            docsPath: "/startale-client/methods#upgradeSmartAccount"
         });
     }
     const account = (0, utils_1.parseAccount)(account_);

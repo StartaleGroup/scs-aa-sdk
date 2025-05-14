@@ -49,7 +49,7 @@ export type UsePermissionParameters<
  *
  * @example
  * ```typescript
- * const result = await usePermission(nexusClient, {
+ * const result = await usePermission(startaleClient, {
  *   calls: [
  *     {
  *       to: '0x1234...',
@@ -76,7 +76,7 @@ export async function usePermission<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

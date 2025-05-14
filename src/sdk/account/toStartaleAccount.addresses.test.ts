@@ -14,10 +14,10 @@ import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../clients/createBicoBundlerClient"
+} from "../clients/createSCSBundlerClient"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "./toStartaleSmartAccount"
 
-describe("nexus.account.addresses", async () => {
+describe("startale.account.addresses", async () => {
   let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
@@ -65,11 +65,11 @@ describe("nexus.account.addresses", async () => {
   })
 
   test("should override account address", async () => {
-    const someoneElsesNexusAddress =
+    const someoneElsesAccountAddress =
       "0xf0479e036343bC66dc49dd374aFAF98402D0Ae5f"
 
     const newStartaleAccount = await toStartaleSmartAccount({
-      accountAddress: someoneElsesNexusAddress,
+      accountAddress: someoneElsesAccountAddress,
       chain,
       signer: eoaAccount,
       transport: http()
@@ -87,7 +87,7 @@ describe("nexus.account.addresses", async () => {
     expect(newStartaleClient.account.address).toBe(
       someoneElseCounterfactualAddress
     )
-    expect(accountAddress).toBe(someoneElsesNexusAddress)
+    expect(accountAddress).toBe(someoneElsesAccountAddress)
   })
 
   test("should check that mainnet and testnet addresses are different", async () => {

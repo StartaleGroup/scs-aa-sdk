@@ -17,8 +17,8 @@ import { getSetOwnableValidatorThresholdAction } from "../../../../constants/ind
  *
  * @example
  * ```typescript
- * const nexusClient = createSmartAccountClient({ ... });
- * const hash = await setThreshold(nexusClient, {
+ * const startaleClient = createSmartAccountClient({ ... });
+ * const hash = await setThreshold(startaleClient, {
  *   threshold: 2,
  *   maxFeePerGas: 1000000000n
  * });
@@ -34,7 +34,7 @@ export async function setThreshold(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

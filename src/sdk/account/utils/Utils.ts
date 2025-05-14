@@ -22,7 +22,7 @@ import {
   toHex
 } from "viem"
 import {
-  BICONOMY_TOKEN_PAYMASTER,
+  STARTALE_TOKEN_PAYMASTER,
   MOCK_MULTI_MODULE_ADDRESS,
   MODULE_ENABLE_MODE_TYPE_HASH,
   ACCOUNT_DOMAIN_NAME,
@@ -424,7 +424,7 @@ export const getAllowance = async (
   client: PublicClient,
   owner: Address,
   tokenAddress: Address,
-  grantee = BICONOMY_TOKEN_PAYMASTER
+  grantee = STARTALE_TOKEN_PAYMASTER
 ): Promise<bigint> => {
   const approval = await client.readContract({
     address: tokenAddress,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toInstallWithSafeSenderCalls = exports.toInstallModuleCalls = exports.toSafeSenderCalls = void 0;
+exports.toInstallWithSafeSenderCalls = exports.toInstallModuleCalls = void 0;
 exports.installModule = installModule;
 const viem_1 = require("viem");
 const account_abstraction_1 = require("viem/account-abstraction");
@@ -13,7 +13,7 @@ async function installModule(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, module, module: { address, initData, type }, ...rest } = parameters;
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = (0, utils_1.parseAccount)(account_);
@@ -32,28 +32,6 @@ async function installModule(client, parameters) {
     };
     return (0, utils_1.getAction)(client, account_abstraction_1.sendUserOperation, "sendUserOperation")(sendUserOperationParams);
 }
-const toSafeSenderCalls = async (__, { address }) => (0, Utils_1.addressEquals)(address, constants_1.SMART_SESSIONS_ADDRESS)
-    ? [
-        {
-            to: constants_1.MEE_VALIDATOR_ADDRESS,
-            value: BigInt(0),
-            data: (0, viem_1.encodeFunctionData)({
-                abi: [
-                    {
-                        name: "addSafeSender",
-                        type: "function",
-                        stateMutability: "nonpayable",
-                        inputs: [{ type: "address", name: "sender" }],
-                        outputs: []
-                    }
-                ],
-                functionName: "addSafeSender",
-                args: [address]
-            })
-        }
-    ]
-    : [];
-exports.toSafeSenderCalls = toSafeSenderCalls;
 const toInstallModuleCalls = async (account, { address, initData, type }) => {
     const calls = [
         {
@@ -110,8 +88,7 @@ const toInstallModuleCalls = async (account, { address, initData, type }) => {
 };
 exports.toInstallModuleCalls = toInstallModuleCalls;
 const toInstallWithSafeSenderCalls = async (account, { address, initData, type }) => [
-    ...(await (0, exports.toInstallModuleCalls)(account, { address, initData, type })),
-    ...(await (0, exports.toSafeSenderCalls)(account, { address, type }))
+    ...(await (0, exports.toInstallModuleCalls)(account, { address, initData, type }))
 ];
 exports.toInstallWithSafeSenderCalls = toInstallWithSafeSenderCalls;
 //# sourceMappingURL=installModule.js.map

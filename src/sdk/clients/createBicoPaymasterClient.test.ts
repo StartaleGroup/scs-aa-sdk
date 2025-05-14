@@ -13,12 +13,15 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { paymasterTruthy, toNetwork } from "../../test/testSetup"
 import { getBalance, killNetwork } from "../../test/testUtils"
 import type { NetworkConfig } from "../../test/testUtils"
-import { type NexusAccount, toNexusAccount } from "../account/toNexusAccount"
-import { BICONOMY_TOKEN_PAYMASTER } from "../account/utils/Constants"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../account/toStartaleSmartAccount"
+import { STARTALE_TOKEN_PAYMASTER } from "../account/utils/Constants"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "./createBicoBundlerClient"
+} from "./createSCSBundlerClient"
 import {
   type BicoPaymasterClient,
   createBicoPaymasterClient,
@@ -38,10 +41,10 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   let publicClient: PublicClient // testClient not available on public testnets
   let account: PrivateKeyAccount
   let recipientAddress: Address
-  let nexusAccountAddress: Address
+  let smartAccountAddress: Address
   let paymaster: BicoPaymasterClient
-  let nexusAccount: NexusAccount
-  let nexusClient: StartaleAccountClient
+  let smartAccount: StartaleSmartAccount
+  let smartAccountClient: StartaleAccountClient
 
   const baseSepoliaUSDCAddress: Address =
     "0x036cbd53842c5426634e7929541ec2318f3dcf7e"
@@ -73,16 +76,16 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       transport: http(paymasterUrl)
     })
 
-    nexusAccount = await toNexusAccount({
+    smartAccount = await toStartaleSmartAccount({
       signer: account,
       chain,
       transport: http()
     })
 
-    nexusAccountAddress = await nexusAccount.getAddress()
+    smartAccountAddress = await smartAccount.getAddress()
 
-    nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    smartAccountClient = createSmartAccountClient({
+      account: smartAccount,
       transport: http(bundlerUrl),
       paymaster
     })
@@ -102,11 +105,11 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   test.skip("should send a sponsored transaction", async () => {
     // Get initial balance
     const initialBalance = await publicClient.getBalance({
-      address: nexusAccountAddress
+      address: smartAccountAddress
     })
 
     // Send user operation
-    const hash = await nexusClient.sendTransaction({
+    const hash = await smartAccountClient.sendTransaction({
       calls: [
         {
           to: recipientAddress,
@@ -120,7 +123,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
     expect(status).toBe("success")
     // Get final balance
     const finalBalance = await publicClient.getBalance({
-      address: nexusAccountAddress
+      address: smartAccountAddress
     })
 
     // Check that the balance hasn't changed
@@ -129,7 +132,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   })
 
   test.skip("should wait for a confirmed user operation receipt", async () => {
-    const hash = await nexusClient.sendUserOperation({
+    const hash = await smartAccountClient.sendUserOperation({
       calls: [
         {
           to: recipientAddress,
@@ -138,7 +141,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       ]
     })
 
-    const receipt = await nexusClient.waitForConfirmedUserOperationReceipt({
+    const receipt = await smartAccountClient.waitForConfirmedUserOperationReceipt({
       hash
     })
 
@@ -149,18 +152,18 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
     const paymasterContext = toBiconomyTokenPaymasterContext({
       feeTokenAddress: baseSepoliaUSDCAddress
     })
-    const nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    const smartAccountClient = createSmartAccountClient({
+      account: smartAccount,
       paymaster: createBicoPaymasterClient({ transport: http(paymasterUrl) }),
       paymasterContext,
       transport: http(bundlerUrl)
     })
 
     const initialBalance = await publicClient.getBalance({
-      address: nexusAccountAddress
+      address: smartAccountAddress
     })
 
-    const hash = await nexusClient.sendTokenPaymasterUserOp({
+    const hash = await smartAccountClient.sendTokenPaymasterUserOp({
       calls: [
         {
           to: recipientAddress,
@@ -170,13 +173,13 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       ],
       feeTokenAddress: baseSepoliaUSDCAddress
     })
-    const receipt = await nexusClient.waitForUserOperationReceipt({ hash })
+    const receipt = await smartAccountClient.waitForUserOperationReceipt({ hash })
 
     expect(receipt.success).toBe("true")
 
     // Get final balance
     const finalBalance = await publicClient.getBalance({
-      address: nexusAccountAddress
+      address: smartAccountAddress
     })
 
     // Check that the balance hasn't changed
@@ -189,8 +192,8 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       feeTokenAddress: baseSepoliaUSDCAddress
     })
 
-    const nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    const smartAccountClient = createSmartAccountClient({
+      account: smartAccount,
       paymaster: createBicoPaymasterClient({
         transport: http(paymasterUrl)
       }),
@@ -199,10 +202,10 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
     })
 
     const initialBalance = await publicClient.getBalance({
-      address: nexusAccountAddress
+      address: smartAccountAddress
     })
 
-    const tokenPaymasterUserOp = await nexusClient.prepareTokenPaymasterUserOp({
+    const tokenPaymasterUserOp = await smartAccountClient.prepareTokenPaymasterUserOp({
       calls: [
         {
           to: recipientAddress,
@@ -213,7 +216,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       feeTokenAddress: baseSepoliaUSDCAddress
     })
 
-    const hash = await nexusClient.sendTransaction(tokenPaymasterUserOp)
+    const hash = await smartAccountClient.sendTransaction(tokenPaymasterUserOp)
 
     const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
@@ -221,7 +224,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
 
     // Get final balance
     const finalBalance = await publicClient.getBalance({
-      address: nexusAccountAddress
+      address: smartAccountAddress
     })
 
     // Check that the balance hasn't changed
@@ -231,7 +234,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
 
   test("should retrieve quotes from token paymaster", async () => {
     const tokenList = [baseSepoliaUSDCAddress]
-    const userOp = await nexusClient.prepareUserOperation({
+    const userOp = await smartAccountClient.prepareUserOperation({
       calls: [
         {
           to: recipientAddress,
@@ -243,7 +246,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
 
     const quote = await paymaster.getTokenPaymasterQuotes({ userOp, tokenList })
     expect(quote.mode).toBe("ERC20")
-    expect(quote.paymasterAddress).toBe(BICONOMY_TOKEN_PAYMASTER)
+    expect(quote.paymasterAddress).toBe(STARTALE_TOKEN_PAYMASTER)
     expect(quote.feeQuotes).toBeInstanceOf(Array)
     expect(quote.unsupportedTokens).toBeInstanceOf(Array)
 
@@ -260,8 +263,8 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       feeTokenAddress: baseSepoliaUSDCAddress
     })
 
-    const nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    const smartAccountClient = createSmartAccountClient({
+      account: smartAccount,
       paymaster: createBicoPaymasterClient({
         transport: http(paymasterUrl)
       }),
@@ -271,18 +274,18 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
 
     const usdcBalance = await getBalance(
       publicClient,
-      nexusClient.account.address,
+      smartAccountClient.account.address,
       baseSepoliaUSDCAddress
     )
 
     expect(usdcBalance).toBeGreaterThan(0n)
 
     const initialBalance = await publicClient.getBalance({
-      address: nexusClient.account.address
+      address: smartAccountClient.account.address
     })
 
     const tokenList = [baseSepoliaUSDCAddress]
-    const userOp = await nexusClient.prepareUserOperation({
+    const userOp = await smartAccountClient.prepareUserOperation({
       calls: [
         {
           to: recipientAddress,
@@ -297,7 +300,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       quote.feeQuotes[0].decimal
     )
 
-    const hash = await nexusClient.sendTokenPaymasterUserOp({
+    const hash = await smartAccountClient.sendTokenPaymasterUserOp({
       calls: [
         {
           to: recipientAddress,
@@ -309,12 +312,12 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       customApprovalAmount: usdcFeeAmount
     })
 
-    const receipt = await nexusClient.waitForUserOperationReceipt({ hash })
+    const receipt = await smartAccountClient.waitForUserOperationReceipt({ hash })
 
     expect(receipt.success).toBe("true")
 
     const finalBalance = await publicClient.getBalance({
-      address: nexusClient.account.address
+      address: smartAccountClient.account.address
     })
 
     expect(finalBalance).toBe(initialBalance - 1n)
@@ -325,14 +328,14 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       feeTokenAddress: baseSepoliaUSDCAddress
     })
 
-    const nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    const smartAccountClient = createSmartAccountClient({
+      account: smartAccount,
       paymaster: createBicoPaymasterClient({ transport: http(paymasterUrl) }),
       paymasterContext,
       transport: http(bundlerUrl)
     })
 
-    const supportedTokens = await paymaster.getSupportedTokens(nexusClient)
+    const supportedTokens = await paymaster.getSupportedTokens(smartAccountClient)
     const supportedTokenAddresses = supportedTokens.map(
       (token) => token.tokenAddress
     )

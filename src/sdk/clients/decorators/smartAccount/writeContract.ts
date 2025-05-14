@@ -24,7 +24,7 @@ import { sendTransaction } from "./sendTransaction"
  * @throws {Error} If the 'to' address is missing in the request.
  *
  * @example
- * import { writeContract } from '@scs-aa-sdk'
+ * import { writeContract } from 'startale-aa-sdk'
  * import { encodeFunctionData } from 'viem'
  *
  * const encodedCall = encodeFunctionData({
@@ -35,7 +35,7 @@ import { sendTransaction } from "./sendTransaction"
  *   to: '0x61f70428b61864B38D9B45b7B032c700B960acCD',
  *   data: encodedCall
  * }
- * const hash = await writeContract(nexusClient, call)
+ * const hash = await writeContract(startaleClient, call)
  * console.log(hash) // '0x...'
  */
 export async function writeContract<
