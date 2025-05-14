@@ -9,10 +9,6 @@ export const BICONOMY_ATTESTER_ADDRESS_UNTIL_0_1 = "0xDE8FD2dBcC0CA847d11599AF59
 export const ACCOUNT_FACTORY_ADDRESS = "0xF227EB456F1B0AC51b07f451040ec1c44aB8D1aA";
 export const COMPOSABLE_MODULE_ADDRESS = "0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10";
 export const ACCOUNT_IMPLEMENTATION_ADDRESS = "0x0f5fB606cF3194C2c181A184E459dD461BaA4D51";
-// Review
-// Note: Only needed for Smart Sessions in USE mode.
-// Note: otherwise deploy SmartSessions withREgistry false.
-export const STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO = "0xaeD4d8bAa80948d54d33dE041513D30124e1Ae3f";
 // Rhinestone constants
 export { SMART_SESSIONS_ADDRESS, OWNABLE_VALIDATOR_ADDRESS, OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
 export const UNIVERSAL_ACTION_POLICY_ADDRESS = '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F';

@@ -96,7 +96,7 @@ const toInstallModuleCalls = async (account, { address, initData, type }) => {
         const needToAddTrustAttesters = trustedAttesters.length === 0;
         if (needToAddTrustAttesters) {
             const trustAttestersAction = (0, constants_1.getTrustAttestersAction)({
-                attesters: [constants_1.STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+                attesters: [constants_1.RHINESTONE_ATTESTER_ADDRESS],
                 threshold: 1
             });
             calls.push({

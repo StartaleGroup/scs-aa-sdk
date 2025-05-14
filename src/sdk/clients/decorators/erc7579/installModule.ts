@@ -21,7 +21,7 @@ import {
   getTrustAttestersAction,
   MEE_VALIDATOR_ADDRESS,
   SMART_SESSIONS_ADDRESS,
-  STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO
+  RHINESTONE_ATTESTER_ADDRESS
 } from "../../../constants"
 import type {
   ModularSmartAccount,
@@ -182,7 +182,7 @@ export const toInstallModuleCalls = async (
 
     if (needToAddTrustAttesters) {
       const trustAttestersAction = getTrustAttestersAction({
-        attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+        attesters: [RHINESTONE_ATTESTER_ADDRESS],
         threshold: 1
       })
 
