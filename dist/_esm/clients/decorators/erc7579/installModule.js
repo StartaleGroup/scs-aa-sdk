@@ -3,7 +3,7 @@ import { sendUserOperation } from "viem/account-abstraction";
 import { getAction, parseAccount } from "viem/utils";
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js";
 import { addressEquals } from "../../../account/utils/Utils.js";
-import { findTrustedAttesters, getTrustAttestersAction, MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS, STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO } from "../../../constants/index.js";
+import { findTrustedAttesters, getTrustAttestersAction, MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS, RHINESTONE_ATTESTER_ADDRESS } from "../../../constants/index.js";
 import { parseModuleTypeId } from "./supportsModule.js";
 /**
  * Installs a module on a given smart account.
@@ -112,7 +112,7 @@ export const toInstallModuleCalls = async (account, { address, initData, type })
         const needToAddTrustAttesters = trustedAttesters.length === 0;
         if (needToAddTrustAttesters) {
             const trustAttestersAction = getTrustAttestersAction({
-                attesters: [STARTALE_TRUSTED_ATTESTERS_ADDRESS_MINATO],
+                attesters: [RHINESTONE_ATTESTER_ADDRESS],
                 threshold: 1
             });
             calls.push({
