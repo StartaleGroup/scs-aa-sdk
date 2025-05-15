@@ -78,7 +78,6 @@ export const getGasFeeValues = async (
 
   const feeData = await publicClient.estimateFeesPerGas()
   const maxFeePerGas =  safeMultiplier(feeData.maxFeePerGas, 1.6);
-  console.log("maxFeePerGas", maxFeePerGas)
   // const maxPriorityFeePerGas = safeMultiplier(
   //     feeData.maxPriorityFeePerGas,
   //     1.6
@@ -88,7 +87,6 @@ export const getGasFeeValues = async (
     method: "rundler_maxPriorityFeePerGas",
     params: []
   })
-  console.log("feeDataFromSCS", feeDataFromSCS)
 
   const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(feeDataFromSCS), 1);
   
