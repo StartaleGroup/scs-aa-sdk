@@ -1,3 +1,4 @@
+import { safeMultiplier } from "../../../account/index.js";
 /**
  * Returns the live gas prices that you can use to send a user operation.
  *
@@ -19,28 +20,43 @@
  */
 export const getGasFeeValues = async (client) => {
     const nexusClient = client;
-    const usePimlico = !!nexusClient?.mock ||
-        !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico");
+    const publicClient = nexusClient.client;
+    // const usePimlico =
+    //   !!nexusClient?.mock ||
+    //   !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico")
     // Todo: Update as per the flag and change default to rundler
     // Rundler only has https://github.com/alchemyplatform/rundler/blob/main/docs/architecture/rpc.md#rundler_maxpriorityfeepergas
-    const gasPrice = await client.request({
-        method: usePimlico
-            ? "pimlico_getUserOperationGasPrice"
-            : "biconomy_getGasFeeValues",
+    // const gasPrice = await client.request({
+    //   method: usePimlico
+    //     ? "pimlico_getUserOperationGasPrice"
+    //     : "biconomy_getGasFeeValues",
+    //   params: []
+    // })
+    const feeData = await publicClient.estimateFeesPerGas();
+    const maxFeePerGas = safeMultiplier(feeData.maxFeePerGas, 1.6);
+    console.log("maxFeePerGas", maxFeePerGas);
+    // const maxPriorityFeePerGas = safeMultiplier(
+    //     feeData.maxPriorityFeePerGas,
+    //     1.6
+    // );
+    const feeDataFromSCS = await client.request({
+        method: "rundler_maxPriorityFeePerGas",
         params: []
     });
+    console.log("feeDataFromSCS", feeDataFromSCS);
+    const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(feeDataFromSCS), 1);
     return {
         slow: {
-            maxFeePerGas: BigInt(gasPrice.slow.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.slow.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         },
         standard: {
-            maxFeePerGas: BigInt(gasPrice.standard.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.standard.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         },
         fast: {
-            maxFeePerGas: BigInt(gasPrice.fast.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         }
     };
 };

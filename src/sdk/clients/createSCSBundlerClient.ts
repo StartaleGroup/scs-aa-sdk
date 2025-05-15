@@ -14,7 +14,7 @@ import {
   createBundlerClient
 } from "viem/account-abstraction"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
-import { biconomySponsoredPaymasterContext } from "./createBicoPaymasterClient"
+import { scsSponsoredPaymasterContext } from "./createSCSPaymasterClient"
 import { type BicoActions, bicoBundlerActions } from "./decorators/bundler"
 import { getGasFeeValues } from "./decorators/bundler/getGasFeeValues"
 import { type Erc7579Actions, erc7579Actions } from "./decorators/erc7579"
@@ -140,7 +140,7 @@ export const createSCSBundlerClient = (
         )
 
   const defaultedPaymasterContext = paymaster
-    ? (paymasterContext ?? biconomySponsoredPaymasterContext)
+    ? (paymasterContext ?? scsSponsoredPaymasterContext)
     : undefined
 
   const defaultedUserOperation = userOperation ?? {

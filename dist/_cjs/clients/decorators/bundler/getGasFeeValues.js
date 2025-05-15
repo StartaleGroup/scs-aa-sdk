@@ -1,28 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGasFeeValues = void 0;
+const account_1 = require("../../../account/index.js");
 const getGasFeeValues = async (client) => {
     const nexusClient = client;
-    const usePimlico = !!nexusClient?.mock ||
-        !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico");
-    const gasPrice = await client.request({
-        method: usePimlico
-            ? "pimlico_getUserOperationGasPrice"
-            : "biconomy_getGasFeeValues",
+    const publicClient = nexusClient.client;
+    const feeData = await publicClient.estimateFeesPerGas();
+    const maxFeePerGas = (0, account_1.safeMultiplier)(feeData.maxFeePerGas, 1.6);
+    console.log("maxFeePerGas", maxFeePerGas);
+    const feeDataFromSCS = await client.request({
+        method: "rundler_maxPriorityFeePerGas",
         params: []
     });
+    console.log("feeDataFromSCS", feeDataFromSCS);
+    const maxPriorityFeePerGasFromSCS = (0, account_1.safeMultiplier)(BigInt(feeDataFromSCS), 1);
     return {
         slow: {
-            maxFeePerGas: BigInt(gasPrice.slow.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.slow.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         },
         standard: {
-            maxFeePerGas: BigInt(gasPrice.standard.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.standard.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         },
         fast: {
-            maxFeePerGas: BigInt(gasPrice.fast.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         }
     };
 };

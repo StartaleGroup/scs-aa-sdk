@@ -9,6 +9,11 @@ export type BicoRpcSchema = [
         ReturnType: BicoUserOperationGasPriceWithBigIntAsHex;
     },
     {
+        Method: "rundler_maxPriorityFeePerGas";
+        Parameters: [];
+        ReturnType: any;
+    },
+    {
         Method: "biconomy_getUserOperationStatus";
         Parameters: [string];
         ReturnType: GetUserOperationStatusReturnType;

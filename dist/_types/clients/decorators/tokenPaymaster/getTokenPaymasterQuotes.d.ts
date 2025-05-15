@@ -70,7 +70,7 @@ export type GetTokenPaymasterQuotesParameters = {
  * @example
  * ```typescript
  * // Configure client with paymaster RPC
- * const paymasterClient = createBicoPaymasterClient({
+ * const paymasterClient = createSCSPaymasterClient({
  *     paymasterUrl
  * })
  *

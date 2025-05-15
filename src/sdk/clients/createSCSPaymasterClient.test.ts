@@ -23,10 +23,10 @@ import {
   createSmartAccountClient
 } from "./createSCSBundlerClient"
 import {
-  type BicoPaymasterClient,
-  createBicoPaymasterClient,
-  toBiconomyTokenPaymasterContext
-} from "./createBicoPaymasterClient"
+  type SCSPaymasterClient,
+  createSCSPaymasterClient,
+  toSCSTokenPaymasterContext
+} from "./createSCSPaymasterClient"
 
 // NB These tests require ERC20 tokens to be available on testnet, so they are mostly skipped
 describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
@@ -42,7 +42,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   let account: PrivateKeyAccount
   let recipientAddress: Address
   let smartAccountAddress: Address
-  let paymaster: BicoPaymasterClient
+  let paymaster: SCSPaymasterClient
   let smartAccount: StartaleSmartAccount
   let smartAccountClient: StartaleAccountClient
 
@@ -72,7 +72,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
       transport: http()
     })
 
-    paymaster = createBicoPaymasterClient({
+    paymaster = createSCSPaymasterClient({
       transport: http(paymasterUrl)
     })
 
@@ -149,12 +149,12 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   })
 
   test.skip("should use token paymaster to pay for gas fees, use maxApproval, use sendUserOperation", async () => {
-    const paymasterContext = toBiconomyTokenPaymasterContext({
-      feeTokenAddress: baseSepoliaUSDCAddress
+    const paymasterContext = toSCSTokenPaymasterContext({
+      token: baseSepoliaUSDCAddress
     })
     const smartAccountClient = createSmartAccountClient({
       account: smartAccount,
-      paymaster: createBicoPaymasterClient({ transport: http(paymasterUrl) }),
+      paymaster: createSCSPaymasterClient({ transport: http(paymasterUrl) }),
       paymasterContext,
       transport: http(bundlerUrl)
     })
@@ -188,13 +188,13 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   })
 
   test.skip("should use token paymaster to pay for gas fees, use maxApproval, use sendTransaction", async () => {
-    const paymasterContext = toBiconomyTokenPaymasterContext({
-      feeTokenAddress: baseSepoliaUSDCAddress
+    const paymasterContext = toSCSTokenPaymasterContext({
+      token: baseSepoliaUSDCAddress
     })
 
     const smartAccountClient = createSmartAccountClient({
       account: smartAccount,
-      paymaster: createBicoPaymasterClient({
+      paymaster: createSCSPaymasterClient({
         transport: http(paymasterUrl)
       }),
       paymasterContext,
@@ -259,13 +259,13 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   })
 
   test.skip("should use token paymaster to pay for gas fees, use custom approval with token paymaster quotes", async () => {
-    const paymasterContext = toBiconomyTokenPaymasterContext({
-      feeTokenAddress: baseSepoliaUSDCAddress
+    const paymasterContext = toSCSTokenPaymasterContext({
+      token: baseSepoliaUSDCAddress
     })
 
     const smartAccountClient = createSmartAccountClient({
       account: smartAccount,
-      paymaster: createBicoPaymasterClient({
+      paymaster: createSCSPaymasterClient({
         transport: http(paymasterUrl)
       }),
       paymasterContext,
@@ -324,13 +324,13 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
   })
 
   test("should retrieve all supported token addresses from the token paymaster", async () => {
-    const paymasterContext = toBiconomyTokenPaymasterContext({
-      feeTokenAddress: baseSepoliaUSDCAddress
+    const paymasterContext = toSCSTokenPaymasterContext({
+      token: baseSepoliaUSDCAddress
     })
 
     const smartAccountClient = createSmartAccountClient({
       account: smartAccount,
-      paymaster: createBicoPaymasterClient({ transport: http(paymasterUrl) }),
+      paymaster: createSCSPaymasterClient({ transport: http(paymasterUrl) }),
       paymasterContext,
       transport: http(bundlerUrl)
     })

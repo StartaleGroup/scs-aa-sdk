@@ -20,11 +20,11 @@ import {
   createSmartAccountClient
 } from "../sdk/clients/createSCSBundlerClient"
 import {
-  type BicoPaymasterClient,
-  type BiconomyPaymasterContext,
-  biconomySponsoredPaymasterContext,
-  createBicoPaymasterClient
-} from "../sdk/clients/createBicoPaymasterClient"
+  type SCSPaymasterClient,
+  type SCSPaymasterContext,
+  scsSponsoredPaymasterContext,
+  createSCSPaymasterClient
+} from "../sdk/clients/createSCSPaymasterClient"
 import { toNetwork } from "./testSetup"
 import type { NetworkConfig } from "./testUtils"
 
@@ -48,8 +48,8 @@ describe.skipIf(!playgroundTrue())("playground", () => {
   let paymasterParams:
     | undefined
     | {
-        paymaster: BicoPaymasterClient
-        paymasterContext: BiconomyPaymasterContext
+        paymaster: SCSPaymasterClient
+        paymasterContext: SCSPaymasterContext
       }
 
   beforeAll(async () => {
@@ -75,10 +75,10 @@ describe.skipIf(!playgroundTrue())("playground", () => {
 
     paymasterParams = paymasterUrl
       ? {
-          paymaster: createBicoPaymasterClient({
+          paymaster: createSCSPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: biconomySponsoredPaymasterContext
+          paymasterContext: scsSponsoredPaymasterContext
         }
       : undefined
   })

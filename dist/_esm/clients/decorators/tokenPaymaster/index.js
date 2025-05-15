@@ -1,6 +1,6 @@
 import { getSupportedTokens } from "./getSupportedTokens.js";
 import { getTokenPaymasterQuotes } from "./getTokenPaymasterQuotes.js";
-export const bicoTokenPaymasterActions = () => (client) => ({
+export const scsTokenPaymasterActions = () => (client) => ({
     /**
      * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
      *
@@ -13,7 +13,7 @@ export const bicoTokenPaymasterActions = () => (client) => ({
      * @example
      * ```typescript
      * // Configure client with paymaster RPC
-     * const paymasterClient = createBicoPaymasterClient({
+     * const paymasterClient = createSCSPaymasterClient({
      *     paymasterUrl
      * })
      *

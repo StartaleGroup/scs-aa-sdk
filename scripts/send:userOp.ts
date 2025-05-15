@@ -7,7 +7,7 @@ import { getChain } from "../src/sdk/account/utils/getChain"
 import { createSCSBundlerClient } from "../src/sdk/clients/createSCSBundlerClient"
 
 // Todo: Update as per SCS sponsorship and token paymaster
-import { biconomySponsoredPaymasterContext } from "../src/sdk/clients/createBicoPaymasterClient"
+import { scsSponsoredPaymasterContext } from "../src/sdk/clients/createSCSPaymasterClient"
 
 config()
 
@@ -62,7 +62,7 @@ const main = async () => {
           paymaster: createPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: biconomySponsoredPaymasterContext
+          paymasterContext: scsSponsoredPaymasterContext
         }
       : undefined),
     userOperation: {

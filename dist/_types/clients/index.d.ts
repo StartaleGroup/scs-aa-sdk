@@ -1,5 +1,5 @@
 export * from "./createSCSBundlerClient";
-export * from "./createBicoPaymasterClient";
+export * from "./createSCSPaymasterClient";
 export * from "./createHttpClient";
 export * from "./decorators";
 //# sourceMappingURL=index.d.ts.map

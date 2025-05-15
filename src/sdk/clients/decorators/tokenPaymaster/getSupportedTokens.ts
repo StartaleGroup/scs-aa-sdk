@@ -1,5 +1,5 @@
 import type { StartaleAccountClient } from "../../createSCSBundlerClient"
-import type { BicoPaymasterClient } from "../../createBicoPaymasterClient"
+import type { SCSPaymasterClient } from "../../createSCSPaymasterClient"
 import type { FeeQuote } from "./getTokenPaymasterQuotes"
 
 /**
@@ -26,7 +26,7 @@ export const getSupportedTokens = async (
       }
     ]
   })
-  const paymaster = client.paymaster as BicoPaymasterClient
+  const paymaster = client.paymaster as SCSPaymasterClient
   const quote = await paymaster.getTokenPaymasterQuotes({
     userOp,
     tokenList: []

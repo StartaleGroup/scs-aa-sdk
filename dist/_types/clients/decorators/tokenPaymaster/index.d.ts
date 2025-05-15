@@ -14,7 +14,7 @@ export type TokenPaymasterActions = {
      * @example
      * ```typescript
      * // Configure client with paymaster RPC
-     * const paymasterClient = createBicoPaymasterClient({
+     * const paymasterClient = createSCSPaymasterClient({
      *     paymasterUrl
      * })
      *
@@ -61,5 +61,5 @@ export type TokenPaymasterActions = {
      */
     getSupportedTokens: (client: StartaleAccountClient) => Promise<FeeQuote[]>;
 };
-export declare const bicoTokenPaymasterActions: () => (client: PaymasterClient) => TokenPaymasterActions;
+export declare const scsTokenPaymasterActions: () => (client: PaymasterClient) => TokenPaymasterActions;
 //# sourceMappingURL=index.d.ts.map
