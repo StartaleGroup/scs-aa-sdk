@@ -79,7 +79,7 @@ export type StartaleAccountClient<
     userOperation?: BundlerClientConfig["userOperation"] | undefined
   }
 
-type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
+type SCSBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
   /**
    * Whether to use the test bundler. Conditionally used by the `getGasFeeValues` decorator.
    */
@@ -109,7 +109,7 @@ type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
  * const bundlerClient = createSCSBundlerClient({ chain: mainnet });
  */
 export const createSCSBundlerClient = (
-  parameters: BicoBundlerClientConfig
+  parameters: SCSBundlerClientConfig
 ) => {
   const {
     mock = false,
