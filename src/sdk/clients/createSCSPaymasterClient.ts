@@ -67,16 +67,11 @@ type ToSCSTokenPaymasterContextParams = {
 
 export const scsSponsoredPaymasterContext: SCSPaymasterContext = {
   // mode: "SPONSORED",
+  // Note: This is fixed from the SCS Pm service backend
   // expiryDuration: 300,
   calculateGasLimits: true,
   // Review this has to be dynamic
-  paymasterId: "pm_test",
-  // sponsorshipInfo: {
-  //   smartAccountInfo: {
-  //     name: "BICONOMY",
-  //     version: "2.0.0"
-  //   }
-  // }
+  paymasterId: "pm_test"
 }
 
 export const toSCSSponsoredPaymasterContext = (
@@ -93,17 +88,8 @@ export const toSCSTokenPaymasterContext = (
 ): SCSPaymasterContext => {
   const { calculateGasLimits } = params
   return {
-    // mode: "ERC20",
-    // sponsorshipInfo: {
-    //   smartAccountInfo: {
-    //     name: "BICONOMY",
-    //     version: "2.0.0"
-    //   }
-    // },
-    // tokenInfo: {
-    //   feeTokenAddress
-    // // },
     token: params.token,
+    // Note: This is fixed from the SCS Pm service backend
     // expiryDuration: expiryDuration ?? 6000,
     calculateGasLimits: calculateGasLimits ?? true
   }
@@ -152,6 +138,8 @@ export const createSCSPaymasterClient = (
       : http(
           `https://paymaster.biconomy.io/api/v2/${parameters.chainId}/${parameters.apiKey}`
         )
+
+  // Todo: Update default to https://dev.paymaster.scs.startale.com/v1?apikey=scsadmin-paymaster (or prod)
 
   // Remove getPaymasterStubData from the client.
   const { getPaymasterStubData, ...paymasterClient } = createPaymasterClient({

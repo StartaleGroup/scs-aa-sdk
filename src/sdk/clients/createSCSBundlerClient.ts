@@ -15,7 +15,7 @@ import {
 } from "viem/account-abstraction"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
 import { scsSponsoredPaymasterContext } from "./createSCSPaymasterClient"
-import { type BicoActions, bicoBundlerActions } from "./decorators/bundler"
+import { type SCSActions, scsBundlerActions } from "./decorators/bundler"
 import { getGasFeeValues } from "./decorators/bundler/getGasFeeValues"
 import { type Erc7579Actions, erc7579Actions } from "./decorators/erc7579"
 import {
@@ -50,7 +50,7 @@ export type StartaleAccountClient<
   >
 > &
   BundlerActions<ModularSmartAccount> &
-  BicoActions &
+  SCSActions &
   Erc7579Actions<ModularSmartAccount> &
   SmartAccountActions<chain, ModularSmartAccount> & {
     /**
@@ -97,10 +97,10 @@ type SCSBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
   >
 
 /**
- * Creates a Bico Bundler Client with a given Transport configured for a Chain.
+ * Creates SCS Bundler Client with a given Transport configured for a Chain.
  *
- * @param parameters - Configuration for the Bico Bundler Client
- * @returns A Bico Bundler Client
+ * @param parameters - Configuration for the SCS Bundler Client
+ * @returns SCS Bundler Client
  *
  * @example
  * import { createSCSBundlerClient, http } from 'startale-aa-sdk'
@@ -156,7 +156,7 @@ export const createSCSBundlerClient = (
     userOperation: defaultedUserOperation
   })
     .extend((client: AnyData) => ({ ...client, mock }))
-    .extend(bicoBundlerActions())
+    .extend(scsBundlerActions())
     .extend(erc7579Actions())
     .extend(smartAccountActions()) as unknown as StartaleAccountClient
 

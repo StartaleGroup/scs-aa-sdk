@@ -21,7 +21,7 @@ import {
   createSmartAccountClient
 } from "./createSCSBundlerClient"
 
-describe("bico.bundler", async () => {
+describe("scs.bundler", async () => {
   let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
@@ -61,7 +61,7 @@ describe("bico.bundler", async () => {
   })
 
   testnetTest(
-    "should demo adjusting gas estimates returned by bico bundler",
+    "should demo adjusting gas estimates returned by the bundler",
     async ({ config: { account, chain, bundlerUrl } }) => {
       if (!account) {
         throw new Error("Account is required")
@@ -120,7 +120,7 @@ describe("bico.bundler", async () => {
   )
 
   test.concurrent(
-    "should have been extended by biconomy specific actions",
+    "should have been extended by SCSspecific actions",
     async () => {
       const gasFees = await scsBundler.getGasFeeValues()
       expect(gasFees).toHaveProperty("fast")

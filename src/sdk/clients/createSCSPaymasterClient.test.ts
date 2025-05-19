@@ -29,7 +29,7 @@ import {
 } from "./createSCSPaymasterClient"
 
 // NB These tests require ERC20 tokens to be available on testnet, so they are mostly skipped
-describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
+describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
   let network: NetworkConfig
 
   let chain: Chain
@@ -98,7 +98,7 @@ describe.skipIf(!paymasterTruthy())("bico.paymaster", async () => {
     expect(paymaster).toHaveProperty("getPaymasterData")
     expect(paymaster.getPaymasterData).toBeInstanceOf(Function)
 
-    // Bico Paymaster has no getPaymasterStubData method, to ensure latency is kept low.
+    // SCS Paymaster has no getPaymasterStubData method, to ensure latency is kept low.
     expect(paymaster).not.toHaveProperty("getPaymasterStubData")
   })
 

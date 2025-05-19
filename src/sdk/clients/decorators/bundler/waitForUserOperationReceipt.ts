@@ -5,7 +5,7 @@ import {
   waitForUserOperationReceipt as waitForUserOperationReceipt_
 } from "viem/account-abstraction"
 import { getAction } from "viem/utils"
-import type { BicoRpcSchema } from "."
+import type { MiscRpcSchema } from "."
 import { waitForConfirmedUserOperationReceipt } from "./waitForConfirmedUserOperationReceipt"
 
 export async function waitForUserOperationReceipt(
@@ -13,7 +13,7 @@ export async function waitForUserOperationReceipt(
     Transport,
     Chain | undefined,
     Account | undefined,
-    BicoRpcSchema
+    MiscRpcSchema
   >,
   parameters: WaitForUserOperationReceiptParameters
 ): Promise<WaitForUserOperationReceiptReturnType> {

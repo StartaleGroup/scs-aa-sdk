@@ -217,7 +217,7 @@ describe("startale.client", async () => {
     expect(() => getChain(chainId)).toThrow("Chain 0 not found.")
   })
 
-  test("should have attached erc757 actions", async () => {
+  test("should have attached erc7579 actions", async () => {
     const [
       accountId,
       isModuleInstalled,
@@ -239,7 +239,6 @@ describe("startale.client", async () => {
         type: "validator"
       })
     ])
-    expect(accountId.indexOf("biconomy.startale") > -1).toBe(true)
     expect(isModuleInstalled).toBe(false)
     expect(supportsExecutionMode).toBe(true)
     expect(supportsModule).toBe(true)

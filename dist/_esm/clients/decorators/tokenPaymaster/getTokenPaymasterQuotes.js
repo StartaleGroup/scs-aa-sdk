@@ -2,7 +2,7 @@
  * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
  *
  * @param userOp - The UserOperation to get paymaster quotes for
- * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+ * @param client - Viem Client configured with TokenPaymaster RPC methods
  * @param tokenList - Array of ERC20 token addresses to get quotes for
  *
  * @returns A promise of {@link TokenPaymasterQuotesResponse}
@@ -43,7 +43,7 @@
  * ```
  */
 export const getTokenPaymasterQuotes = async (client, parameters) => {
-    const { userOp, tokenList } = parameters;
+    const { userOp } = parameters;
     const quote = await client.request({
         method: "pm_getFeeQuoteOrData",
         params: [
@@ -62,17 +62,10 @@ export const getTokenPaymasterQuotes = async (client, parameters) => {
                 paymasterVerificationGasLimit: userOp.paymasterVerificationGasLimit?.toString() ?? "0"
             },
             {
-                mode: "ERC20",
-                sponsorshipInfo: {
-                    smartAccountInfo: {
-                        name: "BICONOMY",
-                        version: "2.0.0"
-                    }
-                },
-                tokenInfo: {
-                    tokenList
-                },
-                expiryDuration: 6000,
+                // tokenInfo: {
+                //   tokenList
+                // },
+                // expiryDuration: 6000,
                 calculateGasLimits: true
             }
         ]

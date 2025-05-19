@@ -1,9 +1,9 @@
 import type { Account, Chain, Client, Hex, PublicClient, Transport } from "viem"
-import type { BicoRpcSchema } from "."
+import type { MiscRpcSchema } from "."
 import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 import { safeMultiplier } from "../../../account"
 
-export type BicoUserOperationGasPriceWithBigIntAsHex = {
+export type UserOperationGasPriceWithBigIntAsHex = {
   slow: {
     maxFeePerGas: Hex
     maxPriorityFeePerGas: Hex
@@ -36,7 +36,7 @@ export type GetGasFeeValuesReturnType = {
 /**
  * Returns the live gas prices that you can use to send a user operation.
  *
- * @param client that you created using viem's createClient whose transport url is pointing to the Biconomy's bundler.
+ * @param client that you created using viem's createClient whose transport url is pointing to the bundler.
  * @returns slow, standard & fast values for maxFeePerGas & maxPriorityFeePerGas
  *
  *
@@ -46,7 +46,7 @@ export type GetGasFeeValuesReturnType = {
  *
  * const bundlerClient = createClient({
  *      chain: goerli,
- *      transport: http("https://biconomy.io/api/v3/5/your-api-key"),
+ *      transport: http(<bundler-url>),
  * })
  *
  * await getGasFeeValues(bundlerClient)
@@ -57,23 +57,15 @@ export const getGasFeeValues = async (
     Transport,
     Chain | undefined,
     Account | undefined,
-    BicoRpcSchema
+    MiscRpcSchema
   >
 ): Promise<GetGasFeeValuesReturnType> => {
-  const nexusClient = client as StartaleAccountClient
-  const publicClient = nexusClient.client as PublicClient
-  // const usePimlico =
-  //   !!nexusClient?.mock ||
-  //   !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico")
+  const accountClient = client as StartaleAccountClient
+  const publicClient = accountClient.client as PublicClient
 
-  // Todo: Update as per the flag and change default to rundler
-  // Rundler only has https://github.com/alchemyplatform/rundler/blob/main/docs/architecture/rpc.md#rundler_maxpriorityfeepergas
-  // const gasPrice = await client.request({
-  //   method: usePimlico
-  //     ? "pimlico_getUserOperationGasPrice"
-  //     : "biconomy_getGasFeeValues",
-  //   params: []
-  // })
+   if(publicClient === null || publicClient === undefined) {
+    throw new Error("client must be passed during initialing smart account client")
+   }
 
 
   const feeData = await publicClient.estimateFeesPerGas()

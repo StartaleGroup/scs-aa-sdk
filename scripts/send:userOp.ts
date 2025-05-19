@@ -93,7 +93,7 @@ const main = async () => {
   const successCount = results.filter((result) => result.status === "fulfilled")
   const failures = results.filter((result) => result.status === "rejected")
   console.log(
-    `running the ${usesAltoBundler ? "Alto" : "Bico"} bundler with ${
+    `running the ${usesAltoBundler ? "Alto" : "Scs"} bundler with ${
       successCount.length
     } successful calls and ${results.length - successCount.length} failed calls`
   )

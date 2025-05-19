@@ -47,8 +47,6 @@ export const getStartaleAccountAddress = async (
 
   const salt = pad(toHex(index), { size: 32 })
 
-  console.log("chainId", publicClient?.chain?.id)
-
   return await publicClient.readContract({
     address: factoryAddress,
     abi: AccountFactoryAbi,

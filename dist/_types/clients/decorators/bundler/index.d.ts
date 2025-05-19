@@ -1,12 +1,12 @@
 import type { Chain, Client, Prettify, Transport } from "viem";
 import type { WaitForUserOperationReceiptParameters, WaitForUserOperationReceiptReturnType } from "viem/account-abstraction";
-import { type BicoUserOperationGasPriceWithBigIntAsHex, type GetGasFeeValuesReturnType } from "./getGasFeeValues";
+import { type UserOperationGasPriceWithBigIntAsHex, type GetGasFeeValuesReturnType } from "./getGasFeeValues";
 import { type GetUserOperationStatusParameters, type GetUserOperationStatusReturnType } from "./getUserOperationStatus";
-export type BicoRpcSchema = [
+export type MiscRpcSchema = [
     {
         Method: "biconomy_getGasFeeValues" | "pimlico_getUserOperationGasPrice";
         Parameters: [];
-        ReturnType: BicoUserOperationGasPriceWithBigIntAsHex;
+        ReturnType: UserOperationGasPriceWithBigIntAsHex;
     },
     {
         Method: "rundler_maxPriorityFeePerGas";
@@ -19,7 +19,7 @@ export type BicoRpcSchema = [
         ReturnType: GetUserOperationStatusReturnType;
     }
 ];
-export type BicoActions = {
+export type SCSActions = {
     /**
      * Returns the live gas prices that you can use to send a user operation.
      *
@@ -28,12 +28,12 @@ export type BicoActions = {
      * @example
      *
      * import { createClient } from "viem"
-     * import { bicoBundlerActions } from "startale-aa-sdk"
+     * import { scsBundlerActions } from "startale-aa-sdk"
      *
      * const bundlerClient = createClient({
      *      chain: goerli,
-     *      transport: http("https://api.biconomy.io/v2/goerli/rpc?apikey=YOUR_API_KEY_HERE")
-     * }).extend(bicoBundlerActions())
+     *      transport: http("http://soneium-minato.bundler.scs.startale.com?apikey=<YOUR_API_KEY>")
+     * }).extend(scsBundlerActions())
      *
      * await bundlerClient.getGasFeeValues()
      */
@@ -57,5 +57,5 @@ export type BicoActions = {
      */
     waitForUserOperationReceipt: (params: WaitForUserOperationReceiptParameters) => Promise<WaitForUserOperationReceiptReturnType>;
 };
-export declare const bicoBundlerActions: () => <TTransport extends Transport, TChain extends Chain | undefined = Chain | undefined>(client: Client<TTransport, TChain>) => BicoActions;
+export declare const scsBundlerActions: () => <TTransport extends Transport, TChain extends Chain | undefined = Chain | undefined>(client: Client<TTransport, TChain>) => SCSActions;
 //# sourceMappingURL=index.d.ts.map

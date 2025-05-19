@@ -116,7 +116,7 @@ export type SmartAccountActions<
    *
    * @param client - The client instance.
    * @param args - Parameters for sending the transaction or user operation.
-   * @param customApprovalAmount - The amount to approve for the Biconomy Token Paymaster to be spent on gas.
+   * @param customApprovalAmount - The amount to approve for the Token Paymaster to be spent on gas.
    * @returns The transaction hash as a hexadecimal string.
    * @throws {AccountNotFoundError} If the account is not found.
    *

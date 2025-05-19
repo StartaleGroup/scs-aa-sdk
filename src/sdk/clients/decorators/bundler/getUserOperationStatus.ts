@@ -3,7 +3,7 @@ import type {
   SmartAccount,
   UserOperationReceipt
 } from "viem/account-abstraction"
-import type { BicoRpcSchema } from "."
+import type { MiscRpcSchema } from "."
 
 export type GetUserOperationStatusParameters = {
   /** The hash of the User Operation. */
@@ -17,6 +17,7 @@ export type GetUserOperationStatusReturnType = {
   userOperationReceipt: UserOperationReceipt
 }
 
+// Review: If we could integrate our specific API
 export async function getUserOperationStatus<
   TAccount extends SmartAccount | undefined
 >(
@@ -24,7 +25,7 @@ export async function getUserOperationStatus<
     Transport,
     Chain | undefined,
     Account | undefined,
-    BicoRpcSchema
+    MiscRpcSchema
   >,
   parameters: GetUserOperationStatusParameters & { account?: TAccount }
 ): Promise<GetUserOperationStatusReturnType> {

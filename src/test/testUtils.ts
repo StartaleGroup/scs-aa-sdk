@@ -298,5 +298,7 @@ export const topUp = async (
   return await testClient.waitForTransactionReceipt({ hash })
 }
 
+// Todo
+// http://soneium-minato.dev.bundler.scs.startale.com?apikey=scsadmin
 export const getBundlerUrl = (chainId: number) =>
   `https://bundler.biconomy.io/api/v3/${chainId}/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f14`

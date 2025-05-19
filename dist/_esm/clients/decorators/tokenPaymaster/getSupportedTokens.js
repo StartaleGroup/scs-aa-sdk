@@ -1,5 +1,5 @@
 /**
- * Retrieves the supported tokens for the Biconomy Token Paymaster..
+ * Retrieves the supported tokens for the Startale Token Paymaster..
  *
  * @param client - The Startale client instance
  * @returns A promise that resolves to an array of FeeQuote objects.

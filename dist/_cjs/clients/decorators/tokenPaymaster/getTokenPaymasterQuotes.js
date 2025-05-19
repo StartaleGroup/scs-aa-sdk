@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTokenPaymasterQuotes = void 0;
 const getTokenPaymasterQuotes = async (client, parameters) => {
-    const { userOp, tokenList } = parameters;
+    const { userOp } = parameters;
     const quote = await client.request({
         method: "pm_getFeeQuoteOrData",
         params: [
@@ -21,17 +21,6 @@ const getTokenPaymasterQuotes = async (client, parameters) => {
                 paymasterVerificationGasLimit: userOp.paymasterVerificationGasLimit?.toString() ?? "0"
             },
             {
-                mode: "ERC20",
-                sponsorshipInfo: {
-                    smartAccountInfo: {
-                        name: "BICONOMY",
-                        version: "2.0.0"
-                    }
-                },
-                tokenInfo: {
-                    tokenList
-                },
-                expiryDuration: 6000,
                 calculateGasLimits: true
             }
         ]

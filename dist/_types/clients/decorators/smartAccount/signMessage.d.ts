@@ -15,7 +15,7 @@ import type { SmartAccount } from "viem/account-abstraction";
  * import { signMessage } from 'startale-aa-sdk'
  *
  * const signature = await signMessage(startaleClient, {
- *   message: 'Hello, Biconomy!'
+ *   message: 'Hello, World!!'
  * })
  * console.log(signature) // '0x...'
  */

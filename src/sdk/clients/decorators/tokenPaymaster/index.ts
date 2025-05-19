@@ -13,7 +13,7 @@ export type TokenPaymasterActions = {
    * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
    *
    * @param userOp - The UserOperation to get paymaster quotes for
-   * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+   * @param client - Viem Client configured with TokenPaymaster RPC methods
    * @param tokenList - Array of ERC20 token addresses to get quotes for
    *
    * @returns A promise of {@link TokenPaymasterQuotesResponse}
@@ -57,7 +57,7 @@ export type TokenPaymasterActions = {
     parameters: GetTokenPaymasterQuotesParameters
   ) => Promise<TokenPaymasterQuotesResponse>
   /**
-   * Retrieves the supported tokens for the Biconomy Token Paymaster..
+   * Retrieves the supported tokens for the Token Paymaster..
    *
    * @param client - The Startale client instance
    * @returns A promise that resolves to an array of FeeQuote objects.
@@ -78,7 +78,7 @@ export const scsTokenPaymasterActions =
      * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
      *
      * @param userOp - The UserOperation to get paymaster quotes for
-     * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+     * @param client - Viem Client configured with TokenPaymaster RPC methods
      * @param tokenList - Array of ERC20 token addresses to get quotes for
      *
      * @returns A promise of {@link TokenPaymasterQuotesResponse}
@@ -122,7 +122,7 @@ export const scsTokenPaymasterActions =
       parameters: GetTokenPaymasterQuotesParameters
     ) => getTokenPaymasterQuotes(client, parameters),
     /**
-     * Retrieves the supported tokens for the Biconomy Token Paymaster..
+     * Retrieves the supported tokens for the Token Paymaster..
      *
      * @param client - The Startale client instance
      * @returns A promise that resolves to an array of FeeQuote objects.
