@@ -1,3 +1,5 @@
+import { toHex } from "viem";
+import { ENTRY_POINT_ADDRESS } from "../../../constants/index.js";
 /**
  * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
  *
@@ -14,60 +16,53 @@
  *     paymasterUrl
  * })
  *
- * // Token addresses to get quotes for
- * const tokenList = [
- *   "0x...", // USDT
- *   "0x..."  // USDC
- * ];
  *
  * // Get paymaster quotes
- * const quotes = await paymasterClient.getTokenPaymasterQuotes(userOp, tokenList);
+ * const quotes = await paymasterClient.getTokenPaymasterQuotes(userOp);
  *
  * // Example response:
  * // {
- * //   mode: "ERC20",
  * //   paymasterAddress: "0x...",
  * //   feeQuotes: [{
  * //     symbol: "USDT",
  * //     decimal: 6,
  * //     tokenAddress: "0x...",
- * //     maxGasFee: 5000000,
- * //     maxGasFeeUSD: 5,
- * //     exchangeRate: 1,
+ * //     maxGasFee: "5000000",
+ * //     maxGasFeeUSD: "5",
+ * //     exchangeRate: "0x94ede635",
+ * //     requiredAmount: "0x57",
  * //     logoUrl: "https://...",
- * //     premiumPercentage: "0.1",
- * //     validUntil: 1234567890
+ * //     premiumPercentage: 5,
  * //   }],
  * //   unsupportedTokens: []
  * // }
  * ```
  */
 export const getTokenPaymasterQuotes = async (client, parameters) => {
-    const { userOp } = parameters;
+    const { userOp, chainId } = parameters;
+    // Review: types rtransformation and requirements in pm service endpoint
     const quote = await client.request({
-        method: "pm_getFeeQuoteOrData",
+        method: "pm_getFeeQuotes",
         params: [
             {
                 sender: userOp.sender,
-                nonce: userOp.nonce.toString(),
+                nonce: toHex(userOp.nonce),
                 factory: userOp.factory,
                 factoryData: userOp.factoryData,
                 callData: userOp.callData,
                 maxFeePerGas: userOp.maxFeePerGas.toString(),
                 maxPriorityFeePerGas: userOp.maxPriorityFeePerGas.toString(),
-                verificationGasLimit: BigInt(userOp.verificationGasLimit).toString(),
-                callGasLimit: BigInt(userOp.callGasLimit).toString(),
-                preVerificationGas: BigInt(userOp.preVerificationGas).toString(),
-                paymasterPostOpGasLimit: userOp.paymasterPostOpGasLimit?.toString() ?? "0",
-                paymasterVerificationGasLimit: userOp.paymasterVerificationGasLimit?.toString() ?? "0"
+                verificationGasLimit: toHex(Number(userOp.verificationGasLimit)),
+                callGasLimit: toHex(Number(userOp.callGasLimit)),
+                preVerificationGas: toHex(Number(userOp.preVerificationGas)),
+                paymasterPostOpGasLimit: toHex(Number(userOp.paymasterPostOpGasLimit ?? 0x0)),
+                paymasterVerificationGasLimit: toHex(Number(userOp.paymasterVerificationGasLimit ?? 0x0))
             },
+            ENTRY_POINT_ADDRESS,
+            chainId,
             {
-                // tokenInfo: {
-                //   tokenList
-                // },
-                // expiryDuration: 6000,
                 calculateGasLimits: true
-            }
+            },
         ]
     });
     return quote;

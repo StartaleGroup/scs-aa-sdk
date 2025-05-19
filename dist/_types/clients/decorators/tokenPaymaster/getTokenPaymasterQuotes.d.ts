@@ -1,27 +1,25 @@
-import type { Account, Address, Chain, Client, Transport } from "viem";
+import { type Account, type Address, type Chain, type Client, type Hex, type Transport } from "viem";
 import type { UserOperation } from "viem/account-abstraction";
 import type { AnyData } from "../../../modules";
 export type TokenPaymasterRpcSchema = [
     {
-        Method: "pm_getFeeQuoteOrData";
-        Parameters: [TokenPaymasterUserOpParams, TokenPaymasterConfigParams];
+        Method: "pm_getFeeQuotes";
+        Parameters: [TokenPaymasterUserOpParams, Address, Hex, TokenPaymasterConfigParams];
         ReturnType: TokenPaymasterQuotesResponse;
     }
 ];
-type PaymasterMode = "ERC20";
 export type FeeQuote = {
     symbol: string;
     decimal: number;
     tokenAddress: Address;
-    maxGasFee: number;
-    maxGasFeeUSD: number;
-    exchangeRate: number;
+    maxGasFee: string | Hex | number;
+    maxGasFeeUSD: string | Hex | number;
+    requiredAmount: string | Hex | number;
+    exchangeRate: string | Hex | number;
     logoUrl: string;
-    premiumPercentage: string;
-    validUntil: number;
+    premiumPercentage: string | number;
 };
 export type TokenPaymasterQuotesResponse = {
-    mode: PaymasterMode;
     paymasterAddress: Address;
     feeQuotes: FeeQuote[];
     unsupportedTokens: AnyData[];
@@ -46,7 +44,7 @@ export type TokenPaymasterConfigParams = {
 };
 export type GetTokenPaymasterQuotesParameters = {
     userOp: UserOperation;
-    tokenList?: Address[];
+    chainId: Hex;
 };
 /**
  * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
@@ -64,34 +62,27 @@ export type GetTokenPaymasterQuotesParameters = {
  *     paymasterUrl
  * })
  *
- * // Token addresses to get quotes for
- * const tokenList = [
- *   "0x...", // USDT
- *   "0x..."  // USDC
- * ];
  *
  * // Get paymaster quotes
- * const quotes = await paymasterClient.getTokenPaymasterQuotes(userOp, tokenList);
+ * const quotes = await paymasterClient.getTokenPaymasterQuotes(userOp);
  *
  * // Example response:
  * // {
- * //   mode: "ERC20",
  * //   paymasterAddress: "0x...",
  * //   feeQuotes: [{
  * //     symbol: "USDT",
  * //     decimal: 6,
  * //     tokenAddress: "0x...",
- * //     maxGasFee: 5000000,
- * //     maxGasFeeUSD: 5,
- * //     exchangeRate: 1,
+ * //     maxGasFee: "5000000",
+ * //     maxGasFeeUSD: "5",
+ * //     exchangeRate: "0x94ede635",
+ * //     requiredAmount: "0x57",
  * //     logoUrl: "https://...",
- * //     premiumPercentage: "0.1",
- * //     validUntil: 1234567890
+ * //     premiumPercentage: 5,
  * //   }],
  * //   unsupportedTokens: []
  * // }
  * ```
  */
 export declare const getTokenPaymasterQuotes: (client: Client<Transport, Chain | undefined, Account | undefined, TokenPaymasterRpcSchema>, parameters: GetTokenPaymasterQuotesParameters) => Promise<TokenPaymasterQuotesResponse>;
-export {};
 //# sourceMappingURL=getTokenPaymasterQuotes.d.ts.map

@@ -7,7 +7,8 @@ import {
   type WalletClient,
   createPublicClient,
   createWalletClient,
-  parseUnits
+  parseUnits,
+  toHex
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { paymasterTruthy, toNetwork } from "../../test/testSetup"
@@ -244,8 +245,8 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       ]
     })
 
-    const quote = await paymaster.getTokenPaymasterQuotes({ userOp, tokenList })
-    expect(quote.mode).toBe("ERC20")
+    // Todo: Update test cases later.
+    const quote = await paymaster.getTokenPaymasterQuotes({ userOp, chainId: toHex(chain.id) })
     expect(quote.paymasterAddress).toBe(STARTALE_TOKEN_PAYMASTER)
     expect(quote.feeQuotes).toBeInstanceOf(Array)
     expect(quote.unsupportedTokens).toBeInstanceOf(Array)
@@ -294,7 +295,7 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
         }
       ]
     })
-    const quote = await paymaster.getTokenPaymasterQuotes({ userOp, tokenList })
+    const quote = await paymaster.getTokenPaymasterQuotes({ userOp, chainId: toHex(chain.id) })
     const usdcFeeAmount = parseUnits(
       quote.feeQuotes[0].maxGasFee.toString(),
       quote.feeQuotes[0].decimal
