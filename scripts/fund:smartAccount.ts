@@ -12,10 +12,12 @@ import {
   publicActions
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
-import { toNexusAccount } from "../src/sdk/account"
+import { toStartaleSmartAccount } from "../src/sdk/account"
 import { getChain } from "../src/sdk/account/utils/getChain"
 import { TokenWithPermitAbi } from "../src/sdk/constants"
-import { mcUSDC, testnetMcUSDC } from "../src/sdk/constants/tokens"
+
+// Soneium Minato address as placeholder
+const usdcAddress = "0xfF0CBFbA43a1Ce2B8d72B2f3121558BcBd4B03a6"
 
 dotenv.config()
 
@@ -36,7 +38,7 @@ async function main() {
     console.error(
       "Please provide at least one chain ID as a command line argument"
     )
-    console.error("Example: bun run fund:nexus 10 420 84531")
+    console.error("Example: bun run fund:smartAccount 10 420 84531")
     process.exit(1)
   }
 
@@ -65,58 +67,29 @@ async function processChain(
     const chain = getChain(chainId)
     console.log(`\n=== Processing Chain: ${chain.name} (${chainId}) ===`)
 
-    // Determine if this is a testnet or mainnet
-    const isTestnet = isTestnetChain(chainId)
-
-    // Get the appropriate USDC address
-    const usdcAddress = isTestnet
-      ? testnetMcUSDC.addressOn(chainId)
-      : mcUSDC.addressOn(chainId)
-
-    if (!usdcAddress) {
-      console.warn(
-        `No USDC token address found for chain ${chainId}. Skipping USDC funding.`
-      )
-    }
-
-    // Check master account balances
-    const [masterNativeBalance, masterUsdcBalance] = await getBalances(
-      { chainId, tokenAddress: usdcAddress },
-      account.address
-    )
-
-    console.log(
-      `Master Native Token Balance: ${formatEther(masterNativeBalance)} ETH`
-    )
-    if (usdcAddress) {
-      console.log(
-        `Master USDC Balance: ${formatUnits(masterUsdcBalance, 6)} USDC`
-      )
-    }
-
-    // Create the Nexus account for this chain
-    const nexus = await toNexusAccount({
+    // Create the smart account for this chain
+    const smartAccount = await toStartaleSmartAccount({
       chain,
       signer: account,
       transport: http(),
       index: accountIndex
     })
 
-    const nexusAddress = await nexus.getAddress()
-    console.log(`Nexus Account Address: ${nexusAddress}`)
+    const smartAccountAddress = await smartAccount.getAddress()
+    console.log(`Smart Account Address: ${smartAccountAddress}`)
 
-    // Check Nexus account balances
-    const [nexusNativeBalance, nexusUsdcBalance] = await getBalances(
+    // Check account balances
+    const [accountNativeBalance, accountUsdcBalance] = await getBalances(
       { chainId, tokenAddress: usdcAddress },
-      nexusAddress
+      smartAccountAddress
     )
 
     console.log(
-      `Nexus Native Token Balance: ${formatEther(nexusNativeBalance)} ETH`
+      `Smart Account Native Token Balance: ${formatEther(accountNativeBalance)} ETH`
     )
     if (usdcAddress) {
       console.log(
-        `Nexus USDC Balance: ${formatUnits(nexusUsdcBalance, 6)} USDC`
+        `Smart Account USDC Balance: ${formatUnits(accountUsdcBalance, 6)} USDC`
       )
     }
 
@@ -128,55 +101,23 @@ async function processChain(
     }).extend(publicActions)
 
     // Fund with native token if needed
-    if (nexusNativeBalance < NATIVE_TOKEN_AMOUNT) {
-      if (masterNativeBalance < NATIVE_TOKEN_AMOUNT) {
-        console.warn(
-          `Insufficient master account balance to fund native token on ${chain.name}`
-        )
-      } else {
+    if (accountNativeBalance < NATIVE_TOKEN_AMOUNT) {
         console.log(
-          `Funding Nexus account with native token on ${chain.name}...`
+          `Funding smart account with native token on ${chain.name}...`
         )
-        const nativeTx = await walletClient.sendTransaction({
-          to: nexusAddress,
-          value: NATIVE_TOKEN_AMOUNT
+       const nativeTx = await walletClient.sendTransaction({
+         to: smartAccountAddress,
+         value: NATIVE_TOKEN_AMOUNT
         })
 
         const nativeTxReceipt = await walletClient.waitForTransactionReceipt({
           hash: nativeTx
         })
         console.log(`Native Transaction: ${nativeTxReceipt.transactionHash}`)
-      }
     } else {
       console.log(
-        `Nexus account already has sufficient native token on ${chain.name}`
+        `Smart account already has sufficient native token on ${chain.name}`
       )
-    }
-
-    // Fund with USDC if needed
-    if (usdcAddress && nexusUsdcBalance < USDC_TOKEN_AMOUNT) {
-      if (masterUsdcBalance < USDC_TOKEN_AMOUNT) {
-        console.warn(
-          `Insufficient master account USDC balance on ${chain.name}`
-        )
-      } else {
-        console.log(`Funding Nexus account with USDC on ${chain.name}...`)
-        const usdcTx = await walletClient.sendTransaction({
-          to: usdcAddress,
-          data: encodeFunctionData({
-            abi: TokenWithPermitAbi,
-            functionName: "transfer",
-            args: [nexusAddress, USDC_TOKEN_AMOUNT]
-          })
-        })
-
-        const usdcTxReceipt = await walletClient.waitForTransactionReceipt({
-          hash: usdcTx
-        })
-        console.log(`USDC Transaction: ${usdcTxReceipt.transactionHash}`)
-      }
-    } else if (usdcAddress) {
-      console.log(`Nexus account already has sufficient USDC on ${chain.name}`)
     }
 
     console.log(`\n✅ Completed processing for ${chain.name} (${chainId})`)

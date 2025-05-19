@@ -1,6 +1,6 @@
 import type { Account, Chain, Client, Hex, Transport } from "viem";
-import type { BicoRpcSchema } from ".";
-export type BicoUserOperationGasPriceWithBigIntAsHex = {
+import type { MiscRpcSchema } from ".";
+export type UserOperationGasPriceWithBigIntAsHex = {
     slow: {
         maxFeePerGas: Hex;
         maxPriorityFeePerGas: Hex;
@@ -31,7 +31,7 @@ export type GetGasFeeValuesReturnType = {
 /**
  * Returns the live gas prices that you can use to send a user operation.
  *
- * @param client that you created using viem's createClient whose transport url is pointing to the Biconomy's bundler.
+ * @param client that you created using viem's createClient whose transport url is pointing to the bundler.
  * @returns slow, standard & fast values for maxFeePerGas & maxPriorityFeePerGas
  *
  *
@@ -41,11 +41,11 @@ export type GetGasFeeValuesReturnType = {
  *
  * const bundlerClient = createClient({
  *      chain: goerli,
- *      transport: http("https://biconomy.io/api/v3/5/your-api-key"),
+ *      transport: http(<bundler-url>),
  * })
  *
  * await getGasFeeValues(bundlerClient)
  *
  */
-export declare const getGasFeeValues: (client: Client<Transport, Chain | undefined, Account | undefined, BicoRpcSchema>) => Promise<GetGasFeeValuesReturnType>;
+export declare const getGasFeeValues: (client: Client<Transport, Chain | undefined, Account | undefined, MiscRpcSchema>) => Promise<GetGasFeeValuesReturnType>;
 //# sourceMappingURL=getGasFeeValues.d.ts.map

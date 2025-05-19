@@ -1,12 +1,12 @@
 import type { PaymasterClient } from "viem/account-abstraction";
-import type { StartaleAccountClient } from "../../createBicoBundlerClient";
+import type { StartaleAccountClient } from "../../createSCSBundlerClient";
 import { type FeeQuote, type GetTokenPaymasterQuotesParameters, type TokenPaymasterQuotesResponse } from "./getTokenPaymasterQuotes";
 export type TokenPaymasterActions = {
     /**
      * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
      *
      * @param userOp - The UserOperation to get paymaster quotes for
-     * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+     * @param client - Viem Client configured with TokenPaymaster RPC methods
      * @param tokenList - Array of ERC20 token addresses to get quotes for
      *
      * @returns A promise of {@link TokenPaymasterQuotesResponse}
@@ -14,7 +14,7 @@ export type TokenPaymasterActions = {
      * @example
      * ```typescript
      * // Configure client with paymaster RPC
-     * const paymasterClient = createBicoPaymasterClient({
+     * const paymasterClient = createSCSPaymasterClient({
      *     paymasterUrl
      * })
      *
@@ -48,18 +48,18 @@ export type TokenPaymasterActions = {
      */
     getTokenPaymasterQuotes: (parameters: GetTokenPaymasterQuotesParameters) => Promise<TokenPaymasterQuotesResponse>;
     /**
-     * Retrieves the supported tokens for the Biconomy Token Paymaster..
+     * Retrieves the supported tokens for the Token Paymaster..
      *
-     * @param client - The Nexus client instance
+     * @param client - The Startale client instance
      * @returns A promise that resolves to an array of FeeQuote objects.
      *
      * @example
      * ```typescript
-     * const supportedTokens = await paymaster.getSupportedTokens(nexusClient);
+     * const supportedTokens = await paymaster.getSupportedTokens(startaleClient);
      * console.log(supportedTokens);
      * ```
      */
     getSupportedTokens: (client: StartaleAccountClient) => Promise<FeeQuote[]>;
 };
-export declare const bicoTokenPaymasterActions: () => (client: PaymasterClient) => TokenPaymasterActions;
+export declare const scsTokenPaymasterActions: () => (client: PaymasterClient) => TokenPaymasterActions;
 //# sourceMappingURL=index.d.ts.map

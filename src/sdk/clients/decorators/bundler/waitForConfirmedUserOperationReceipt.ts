@@ -4,7 +4,7 @@ import type {
   UserOperationReceipt
 } from "viem/account-abstraction"
 import { getAction, parseAccount } from "viem/utils"
-import type { BicoRpcSchema } from "."
+import type { MiscRpcSchema } from "."
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
 import {
   type GetUserOperationStatusParameters,
@@ -18,7 +18,7 @@ export async function waitForConfirmedUserOperationReceipt<
     Transport,
     Chain | undefined,
     Account | undefined,
-    BicoRpcSchema
+    MiscRpcSchema
   >,
   parameters: GetUserOperationStatusParameters & { account?: TAccount }
 ): Promise<UserOperationReceipt> {

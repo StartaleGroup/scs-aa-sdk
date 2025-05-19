@@ -4,8 +4,10 @@ import { createPaymasterClient } from "viem/account-abstraction"
 import { privateKeyToAccount } from "viem/accounts"
 import { toStartaleSmartAccount } from "../src/sdk/account/toStartaleSmartAccount"
 import { getChain } from "../src/sdk/account/utils/getChain"
-import { createBicoBundlerClient } from "../src/sdk/clients/createBicoBundlerClient"
-import { biconomySponsoredPaymasterContext } from "../src/sdk/clients/createBicoPaymasterClient"
+import { createSCSBundlerClient } from "../src/sdk/clients/createSCSBundlerClient"
+
+// Todo: Update as per SCS sponsorship and token paymaster
+import { scsSponsoredPaymasterContext } from "../src/sdk/clients/createSCSPaymasterClient"
 
 config()
 
@@ -51,7 +53,7 @@ const main = async () => {
     throw new Error(`Insufficient balance at address: ${startaleAccount.address}`)
   }
 
-  const bicoBundler = createBicoBundlerClient({
+  const scsBundler = createSCSBundlerClient({
     chain,
     bundlerUrl,
     account: startaleAccount,
@@ -60,12 +62,12 @@ const main = async () => {
           paymaster: createPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: biconomySponsoredPaymasterContext
+          paymasterContext: scsSponsoredPaymasterContext
         }
       : undefined),
     userOperation: {
       estimateFeesPerGas: async (_) => {
-        const feeData = await bicoBundler.getGasFeeValues()
+        const feeData = await scsBundler.getGasFeeValues()
         return feeData.fast
       }
     }
@@ -74,9 +76,9 @@ const main = async () => {
   const usesAltoBundler = process.env.BUNDLER_URL?.includes("pimlico")
   console.time("read methods")
   const results = await Promise.allSettled([
-    bicoBundler.getChainId(),
-    bicoBundler.getSupportedEntryPoints(),
-    bicoBundler.prepareUserOperation({
+    scsBundler.getChainId(),
+    scsBundler.getSupportedEntryPoints(),
+    scsBundler.prepareUserOperation({
       calls: [
         {
           to: recipient,
@@ -91,7 +93,7 @@ const main = async () => {
   const successCount = results.filter((result) => result.status === "fulfilled")
   const failures = results.filter((result) => result.status === "rejected")
   console.log(
-    `running the ${usesAltoBundler ? "Alto" : "Bico"} bundler with ${
+    `running the ${usesAltoBundler ? "Alto" : "Scs"} bundler with ${
       successCount.length
     } successful calls and ${results.length - successCount.length} failed calls`
   )
@@ -102,7 +104,7 @@ const main = async () => {
   }
 
   console.time("write methods")
-  const hash = await bicoBundler.sendUserOperation({
+  const hash = await scsBundler.sendUserOperation({
     calls: [
       {
         to: recipient,
@@ -111,7 +113,7 @@ const main = async () => {
     ],
     account: startaleAccount
   })
-  const userOpReceipt = await bicoBundler.waitForUserOperationReceipt({ hash })
+  const userOpReceipt = await scsBundler.waitForUserOperationReceipt({ hash })
   const { transactionHash } = await publicClient.waitForTransactionReceipt({
     hash: userOpReceipt.receipt.transactionHash
   })

@@ -32,7 +32,6 @@ import {
   installModule,
   toInstallModuleCalls,
   toInstallWithSafeSenderCalls,
-  toSafeSenderCalls
 } from "./installModule.js"
 import {
   type InstallModulesParameters,
@@ -161,7 +160,6 @@ export const erc7579Calls = {
   toInstallModuleCalls,
   toUninstallModuleCalls,
   toInstallWithSafeSenderCalls,
-  toSafeSenderCalls,
   toUninstallFallbackCalls
 } as const
 

@@ -55,9 +55,9 @@ export function encodeExecutionMode({ type, revertOnError, selector, data }) {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsExecutionMode } from '@scs-aa-sdk'
+ * import { supportsExecutionMode } from 'startale-aa-sdk'
  *
- * const isSupported = await supportsExecutionMode(nexusClient, {
+ * const isSupported = await supportsExecutionMode(startaleClient, {
  *   type: 'call',
  *   revertOnError: true,
  *   selector: '0x12345678'
@@ -68,7 +68,7 @@ export async function supportsExecutionMode(client, args) {
     const { account: account_ = client.account, type, revertOnError, selector, data } = args;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

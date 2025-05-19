@@ -11,7 +11,7 @@ export type SendTokenPaymasterUserOpParameters = {
 /**
  * Prepares and sends a user operation with token paymaster
  *
- * @param client - The Nexus client instance
+ * @param client - The Startale client instance
  * @param args - The parameters for the token paymaster user operation
  * @param args.calls - Array of transactions to be executed
  * @param args.feeTokenAddress - Address of the token to be used for paying gas fees

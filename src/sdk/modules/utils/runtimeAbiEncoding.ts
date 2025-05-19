@@ -8,7 +8,6 @@
 // Github: https://github.com/vr16x
 // Reachout to me if there is any issues or doubts
 // X: https://x.com/vr16x
-// Slack: https://biconomyworkspace.slack.com/team/U08HJN728RM
 
 import {
   type Abi,

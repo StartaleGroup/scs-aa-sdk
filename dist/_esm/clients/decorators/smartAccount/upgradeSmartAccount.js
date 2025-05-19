@@ -12,9 +12,9 @@ import { ACCOUNT_IMPLEMENTATION_ADDRESS } from "../../../constants/index.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { upgradeSmartAccount } from '@scs-aa-sdk'
+ * import { upgradeSmartAccount } from 'startale-aa-sdk'
  *
- * const userOpHash = await upgradeSmartAccount(nexusClient, {
+ * const userOpHash = await upgradeSmartAccount(startaleClient, {
  *   // Optional custom implementation address
  *   implementationAddress: '0x...',
  *   // Optional initialization data
@@ -26,7 +26,7 @@ export async function upgradeSmartAccount(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, implementationAddress = ACCOUNT_IMPLEMENTATION_ADDRESS, initData = "0x", ...rest } = parameters ?? {};
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#upgradeSmartAccount"
+            docsPath: "/startale-client/methods#upgradeSmartAccount"
         });
     }
     const account = parseAccount(account_);

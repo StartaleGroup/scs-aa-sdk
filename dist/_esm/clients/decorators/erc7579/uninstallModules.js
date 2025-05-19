@@ -12,9 +12,9 @@ import { toUninstallModuleCalls } from "./uninstallModule.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModules } from '@scs-aa-sdk'
+ * import { uninstallModules } from 'startale-aa-sdk'
  *
- * const userOpHash = await uninstallModules(nexusClient, {
+ * const userOpHash = await uninstallModules(startaleClient, {
  *   modules: [
  *     { type: 'executor', address: '0x...', context: '0x' },
  *     { type: 'validator', address: '0x...', context: '0x' }
@@ -26,7 +26,7 @@ export async function uninstallModules(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, modules } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

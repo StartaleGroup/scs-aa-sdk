@@ -4,7 +4,7 @@ import type { Transport } from "viem";
 import type { Chain } from "viem";
 import type { Account } from "viem";
 import type { BundlerClient, SmartAccount } from "viem/account-abstraction";
-import type { StartaleAccountClient } from "../../clients/createBicoBundlerClient";
+import type { StartaleAccountClient } from "../../clients/createSCSBundlerClient";
 import type { StartaleSmartAccount } from "../toStartaleSmartAccount";
 import type { Signer } from "./toSigner";
 /**
@@ -16,16 +16,16 @@ export type BundlerClientTypes = BundlerClient | StartaleAccountClient | Client<
  * Extracts the PublicClient from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
  * @returns {PublicClient<Transport, Chain, Account>} The public client instance
- * @throws {Error} If the Nexus account is not found
+ * @throws {Error} If the Smart account is not found
  */
 export declare const fromBundlerClientToPublicClient: (bundlerClient: BundlerClientTypes) => PublicClient<Transport, Chain, Account>;
 /**
- * Extracts the NexusAccount from a bundler client
+ * Extracts the StartaleSmartAccount from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
- * @returns {NexusAccount} The Nexus account instance
- * @throws {Error} If the account is not a valid Nexus smart account
+ * @returns {StartaleSmartAccount} The Startale smart account instance
+ * @throws {Error} If the account is not a valid Startale smart account
  */
-export declare const fromBundlerClientToNexusAccount: (bundlerClient: BundlerClientTypes) => StartaleSmartAccount;
+export declare const fromBundlerClientToStartaleAccount: (bundlerClient: BundlerClientTypes) => StartaleSmartAccount;
 /**
  * Extracts the Chain information from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
@@ -44,7 +44,7 @@ export declare const fromBundlerClientToChainId: (bundlerClient: BundlerClientTy
  * Extracts the Signer from a bundler client
  * @param {BundlerClientTypes} bundlerClient - The bundler client to extract from
  * @returns {Signer} The signer instance
- * @throws {Error} If the Nexus account is not found
+ * @throws {Error} If the Startale smart account is not found
  */
 export declare const fromBundlerClientToSigner: (bundlerClient: BundlerClientTypes) => Signer;
 //# sourceMappingURL=fromBundlerClient.d.ts.map

@@ -21,5 +21,5 @@ export type PrepareForMultiSignPayload = {
     userOpHash: Hex;
     userOp: AnyData;
 };
-export declare function prepareForMultiSign<TModularSmartAccount extends ModularSmartAccount | undefined>(nexusClient: Client<Transport, Chain | undefined, TModularSmartAccount>, parameters: PrepareForMultiSignParameters<TModularSmartAccount>): Promise<PrepareForMultiSignPayload>;
+export declare function prepareForMultiSign<TModularSmartAccount extends ModularSmartAccount | undefined>(startaleAccountClient: Client<Transport, Chain | undefined, TModularSmartAccount>, parameters: PrepareForMultiSignParameters<TModularSmartAccount>): Promise<PrepareForMultiSignPayload>;
 //# sourceMappingURL=prepareForMultiSign.d.ts.map

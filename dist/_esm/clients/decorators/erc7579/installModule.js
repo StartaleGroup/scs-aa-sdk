@@ -3,7 +3,7 @@ import { sendUserOperation } from "viem/account-abstraction";
 import { getAction, parseAccount } from "viem/utils";
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js";
 import { addressEquals } from "../../../account/utils/Utils.js";
-import { findTrustedAttesters, getTrustAttestersAction, MEE_VALIDATOR_ADDRESS, SMART_SESSIONS_ADDRESS, RHINESTONE_ATTESTER_ADDRESS } from "../../../constants/index.js";
+import { findTrustedAttesters, getTrustAttestersAction, SMART_SESSIONS_ADDRESS, RHINESTONE_ATTESTER_ADDRESS } from "../../../constants/index.js";
 import { parseModuleTypeId } from "./supportsModule.js";
 /**
  * Installs a module on a given smart account.
@@ -14,9 +14,9 @@ import { parseModuleTypeId } from "./supportsModule.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModule } from '@scs-aa-sdk'
+ * import { installModule } from 'startale-aa-sdk'
  *
- * const userOpHash = await installModule(nexusClient, {
+ * const userOpHash = await installModule(startaleClient, {
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
@@ -29,7 +29,7 @@ export async function installModule(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, module, module: { address, initData, type }, ...rest } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);
@@ -48,27 +48,6 @@ export async function installModule(client, parameters) {
     };
     return getAction(client, sendUserOperation, "sendUserOperation")(sendUserOperationParams);
 }
-export const toSafeSenderCalls = async (__, { address }) => addressEquals(address, SMART_SESSIONS_ADDRESS)
-    ? [
-        {
-            to: MEE_VALIDATOR_ADDRESS,
-            value: BigInt(0),
-            data: encodeFunctionData({
-                abi: [
-                    {
-                        name: "addSafeSender",
-                        type: "function",
-                        stateMutability: "nonpayable",
-                        inputs: [{ type: "address", name: "sender" }],
-                        outputs: []
-                    }
-                ],
-                functionName: "addSafeSender",
-                args: [address]
-            })
-        }
-    ]
-    : [];
 export const toInstallModuleCalls = async (account, { address, initData, type }) => {
     const calls = [
         {
@@ -125,7 +104,6 @@ export const toInstallModuleCalls = async (account, { address, initData, type })
     return calls;
 };
 export const toInstallWithSafeSenderCalls = async (account, { address, initData, type }) => [
-    ...(await toInstallModuleCalls(account, { address, initData, type })),
-    ...(await toSafeSenderCalls(account, { address, type }))
+    ...(await toInstallModuleCalls(account, { address, initData, type }))
 ];
 //# sourceMappingURL=installModule.js.map

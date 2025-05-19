@@ -14,8 +14,8 @@ import {
   createBundlerClient
 } from "viem/account-abstraction"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
-import { biconomySponsoredPaymasterContext } from "./createBicoPaymasterClient"
-import { type BicoActions, bicoBundlerActions } from "./decorators/bundler"
+import { scsSponsoredPaymasterContext } from "./createSCSPaymasterClient"
+import { type SCSActions, scsBundlerActions } from "./decorators/bundler"
 import { getGasFeeValues } from "./decorators/bundler/getGasFeeValues"
 import { type Erc7579Actions, erc7579Actions } from "./decorators/erc7579"
 import {
@@ -24,7 +24,7 @@ import {
 } from "./decorators/smartAccount"
 
 /**
- * Nexus Client type
+ * Startale Account Client type
  */
 export type StartaleAccountClient<
   transport extends Transport = Transport,
@@ -50,7 +50,7 @@ export type StartaleAccountClient<
   >
 > &
   BundlerActions<ModularSmartAccount> &
-  BicoActions &
+  SCSActions &
   Erc7579Actions<ModularSmartAccount> &
   SmartAccountActions<chain, ModularSmartAccount> & {
     /**
@@ -58,7 +58,7 @@ export type StartaleAccountClient<
      */
     mock: boolean
     /**
-     * The Nexus account associated with this client
+     * The Smart account associated with this client
      */
     account: ModularSmartAccount
     /**
@@ -79,7 +79,7 @@ export type StartaleAccountClient<
     userOperation?: BundlerClientConfig["userOperation"] | undefined
   }
 
-type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
+type SCSBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
   /**
    * Whether to use the test bundler. Conditionally used by the `getGasFeeValues` decorator.
    */
@@ -97,19 +97,19 @@ type BicoBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
   >
 
 /**
- * Creates a Bico Bundler Client with a given Transport configured for a Chain.
+ * Creates SCS Bundler Client with a given Transport configured for a Chain.
  *
- * @param parameters - Configuration for the Bico Bundler Client
- * @returns A Bico Bundler Client
+ * @param parameters - Configuration for the SCS Bundler Client
+ * @returns SCS Bundler Client
  *
  * @example
- * import { createBicoBundlerClient, http } from '@scs-aa-sdk'
+ * import { createSCSBundlerClient, http } from 'startale-aa-sdk'
  * import { mainnet } from 'viem/chains'
  *
- * const bundlerClient = createBicoBundlerClient({ chain: mainnet });
+ * const bundlerClient = createSCSBundlerClient({ chain: mainnet });
  */
-export const createBicoBundlerClient = (
-  parameters: BicoBundlerClientConfig
+export const createSCSBundlerClient = (
+  parameters: SCSBundlerClientConfig
 ) => {
   const {
     mock = false,
@@ -140,7 +140,7 @@ export const createBicoBundlerClient = (
         )
 
   const defaultedPaymasterContext = paymaster
-    ? (paymasterContext ?? biconomySponsoredPaymasterContext)
+    ? (paymasterContext ?? scsSponsoredPaymasterContext)
     : undefined
 
   const defaultedUserOperation = userOperation ?? {
@@ -156,7 +156,7 @@ export const createBicoBundlerClient = (
     userOperation: defaultedUserOperation
   })
     .extend((client: AnyData) => ({ ...client, mock }))
-    .extend(bicoBundlerActions())
+    .extend(scsBundlerActions())
     .extend(erc7579Actions())
     .extend(smartAccountActions()) as unknown as StartaleAccountClient
 
@@ -164,7 +164,7 @@ export const createBicoBundlerClient = (
 }
 
 // Aliases for backwards compatibility
-export const createSmartAccountClient = createBicoBundlerClient
+export const createSmartAccountClient = createSCSBundlerClient
 export const createStartaleAccountClient = createSmartAccountClient
 export const createStartaleSessionClient = createSmartAccountClient
-export type BicoBundlerClient = StartaleAccountClient
+export type SCSBundlerClient = StartaleAccountClient

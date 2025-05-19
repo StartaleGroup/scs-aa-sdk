@@ -3,12 +3,12 @@ import { createBundlerClient } from "viem/account-abstraction"
 import { privateKeyToAccount } from "viem/accounts"
 import { mainnet } from "viem/chains"
 import { describe, expect, it } from "vitest"
-import { toNexusAccount } from "../toNexusAccount"
+import { toStartaleSmartAccount } from "../toStartaleSmartAccount"
 import {
   type BundlerClientTypes,
   fromBundlerClientToChain,
   fromBundlerClientToChainId,
-  fromBundlerClientToNexusAccount,
+  fromBundlerClientToStartaleAccount,
   fromBundlerClientToPublicClient,
   fromBundlerClientToSigner
 } from "./fromBundlerClient"
@@ -36,42 +36,42 @@ describe("utils.fromBundlerClient", async () => {
   // Create a real signer
   const signer = await toSigner({ signer: account })
 
-  // Create a real Nexus account
-  const nexusAccount = await toNexusAccount({
+  // Create a real Startale Smart Account
+  const smartAccount = await toStartaleSmartAccount({
     chain: mainnet,
     signer,
     transport: http()
   })
 
-  // Attach the Nexus account to the bundler client
+  // Attach the Startale Smart Account to the bundler client
   const bundlerClientWithAccount = {
     ...bundlerClient,
-    account: nexusAccount
+    account: smartAccount
   }
 
   describe("fromBundlerClientToPublicClient", () => {
     it("should extract public client successfully", () => {
       const result = fromBundlerClientToPublicClient(bundlerClientWithAccount)
-      expect(result).toBe(nexusAccount.client)
+      expect(result).toBe(smartAccount.client)
       expect(result.chain.id).toBe(mainnet.id)
     })
 
-    it("should throw error if nexus account is not found", () => {
+    it("should throw error if smart account is not found", () => {
       const invalidClient = {
         ...bundlerClient,
         account: { type: "invalid" }
       } as unknown as BundlerClientTypes
 
       expect(() => fromBundlerClientToPublicClient(invalidClient)).toThrow(
-        "Nexus account not found"
+        "Smart account not found"
       )
     })
   })
 
-  describe("fromBundlerClientToNexusAccount", () => {
-    it("should extract nexus account successfully", () => {
-      const result = fromBundlerClientToNexusAccount(bundlerClientWithAccount)
-      expect(result).toBe(nexusAccount)
+  describe("fromBundlerClientToSmartAccount", () => {
+    it("should extract smart account successfully", () => {
+      const result = fromBundlerClientToStartaleAccount(bundlerClientWithAccount)
+      expect(result).toBe(smartAccount)
       expect(result.type).toBe("smart")
     })
 
@@ -81,8 +81,8 @@ describe("utils.fromBundlerClient", async () => {
         account: { type: "eoa" }
       } as unknown as BundlerClientTypes
 
-      expect(() => fromBundlerClientToNexusAccount(invalidClient)).toThrow(
-        "Nexus account not found"
+      expect(() => fromBundlerClientToStartaleAccount(invalidClient)).toThrow(
+        "Smart account not found"
       )
     })
   })
@@ -98,7 +98,7 @@ describe("utils.fromBundlerClient", async () => {
       const invalidClient = {
         ...bundlerClientWithAccount,
         account: {
-          ...nexusAccount,
+          ...smartAccount,
           chain: {}
         }
       }
@@ -119,7 +119,7 @@ describe("utils.fromBundlerClient", async () => {
   describe("fromBundlerClientToSigner", () => {
     it("should extract signer successfully", () => {
       const result = fromBundlerClientToSigner(bundlerClientWithAccount)
-      expect(result).toBe(nexusAccount.signer)
+      expect(result).toBe(smartAccount.signer)
       expect(result.address).toBe(account.address)
     })
   })

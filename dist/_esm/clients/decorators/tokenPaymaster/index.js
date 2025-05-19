@@ -1,11 +1,11 @@
 import { getSupportedTokens } from "./getSupportedTokens.js";
 import { getTokenPaymasterQuotes } from "./getTokenPaymasterQuotes.js";
-export const bicoTokenPaymasterActions = () => (client) => ({
+export const scsTokenPaymasterActions = () => (client) => ({
     /**
      * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
      *
      * @param userOp - The UserOperation to get paymaster quotes for
-     * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+     * @param client - Viem Client configured with TokenPaymaster RPC methods
      * @param tokenList - Array of ERC20 token addresses to get quotes for
      *
      * @returns A promise of {@link TokenPaymasterQuotesResponse}
@@ -13,7 +13,7 @@ export const bicoTokenPaymasterActions = () => (client) => ({
      * @example
      * ```typescript
      * // Configure client with paymaster RPC
-     * const paymasterClient = createBicoPaymasterClient({
+     * const paymasterClient = createSCSPaymasterClient({
      *     paymasterUrl
      * })
      *
@@ -47,14 +47,14 @@ export const bicoTokenPaymasterActions = () => (client) => ({
      */
     getTokenPaymasterQuotes: async (parameters) => getTokenPaymasterQuotes(client, parameters),
     /**
-     * Retrieves the supported tokens for the Biconomy Token Paymaster..
+     * Retrieves the supported tokens for the Token Paymaster..
      *
-     * @param client - The Nexus client instance
+     * @param client - The Startale client instance
      * @returns A promise that resolves to an array of FeeQuote objects.
      *
      * @example
      * ```typescript
-     * const supportedTokens = await paymaster.getSupportedTokens(nexusClient);
+     * const supportedTokens = await paymaster.getSupportedTokens(startaleClient);
      * console.log(supportedTokens);
      * ```
      */

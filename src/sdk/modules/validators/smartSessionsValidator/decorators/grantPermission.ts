@@ -50,9 +50,9 @@ export type GrantPermissionParameters<
  *
  * @example
  * ```typescript
- * import { grantPermission } from '@biconomy/abstractjs'
+ * import { grantPermission } from 'startale-aa-sdk'
  *
- * const result = await grantPermission(nexusClient, {
+ * const result = await grantPermission(startaleClient, {
  *   sessionRequestedInfo: [
  *     {
  *       sessionKeyData: '0x...',
@@ -93,7 +93,7 @@ export async function grantPermission<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

@@ -39,9 +39,9 @@ const abi = [
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { isModuleInstalled } from '@scs-aa-sdk'
+ * import { isModuleInstalled } from 'startale-aa-sdk'
  *
- * const isInstalled = await isModuleInstalled(nexusClient, {
+ * const isInstalled = await isModuleInstalled(startaleClient, {
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
@@ -54,7 +54,7 @@ export async function isModuleInstalled(client, parameters) {
     const { account: account_ = client.account, module: { address, initData, type } } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

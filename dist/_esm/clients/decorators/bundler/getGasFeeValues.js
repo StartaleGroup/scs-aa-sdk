@@ -1,7 +1,8 @@
+import { safeMultiplier } from "../../../account/index.js";
 /**
  * Returns the live gas prices that you can use to send a user operation.
  *
- * @param client that you created using viem's createClient whose transport url is pointing to the Biconomy's bundler.
+ * @param client that you created using viem's createClient whose transport url is pointing to the bundler.
  * @returns slow, standard & fast values for maxFeePerGas & maxPriorityFeePerGas
  *
  *
@@ -11,34 +12,41 @@
  *
  * const bundlerClient = createClient({
  *      chain: goerli,
- *      transport: http("https://biconomy.io/api/v3/5/your-api-key"),
+ *      transport: http(<bundler-url>),
  * })
  *
  * await getGasFeeValues(bundlerClient)
  *
  */
 export const getGasFeeValues = async (client) => {
-    const nexusClient = client;
-    const usePimlico = !!nexusClient?.mock ||
-        !!nexusClient?.transport?.url?.toLowerCase().includes("pimlico");
-    const gasPrice = await client.request({
-        method: usePimlico
-            ? "pimlico_getUserOperationGasPrice"
-            : "biconomy_getGasFeeValues",
+    const accountClient = client;
+    const publicClient = accountClient.client;
+    if (publicClient === null || publicClient === undefined) {
+        throw new Error("client must be passed during initialing smart account client");
+    }
+    const feeData = await publicClient.estimateFeesPerGas();
+    const maxFeePerGas = safeMultiplier(feeData.maxFeePerGas, 1.6);
+    // const maxPriorityFeePerGas = safeMultiplier(
+    //     feeData.maxPriorityFeePerGas,
+    //     1.6
+    // );
+    const feeDataFromSCS = await client.request({
+        method: "rundler_maxPriorityFeePerGas",
         params: []
     });
+    const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(feeDataFromSCS), 1);
     return {
         slow: {
-            maxFeePerGas: BigInt(gasPrice.slow.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.slow.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         },
         standard: {
-            maxFeePerGas: BigInt(gasPrice.standard.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.standard.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         },
         fast: {
-            maxFeePerGas: BigInt(gasPrice.fast.maxFeePerGas),
-            maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas)
+            maxFeePerGas: BigInt(maxFeePerGas),
+            maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
         }
     };
 };

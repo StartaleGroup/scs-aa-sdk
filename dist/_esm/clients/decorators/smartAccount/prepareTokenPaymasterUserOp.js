@@ -1,7 +1,7 @@
 import { erc20Abi, maxUint256 } from "viem";
 import { encodeFunctionData } from "viem";
 import { getAction } from "viem/utils";
-import { BICONOMY_TOKEN_PAYMASTER } from "../../../account/utils/Constants.js";
+import { STARTALE_TOKEN_PAYMASTER } from "../../../account/utils/Constants.js";
 import { prepareUserOperationWithoutSignature } from "./prepareUserOperationWithoutSignature.js";
 /**
  * Prepares a user operation with token paymaster configuration, including ERC20 token approval
@@ -20,7 +20,7 @@ import { prepareUserOperationWithoutSignature } from "./prepareUserOperationWith
  *
  * @example
  * ```typescript
- * const userOp = await prepareTokenPaymasterUserOp(nexusClient, {
+ * const userOp = await prepareTokenPaymasterUserOp(startaleClient, {
  *    txs: [
  *      {
  *        to: recipientAddress,
@@ -43,7 +43,7 @@ export async function prepareTokenPaymasterUserOp(client, args) {
                 data: encodeFunctionData({
                     functionName: "approve",
                     abi: erc20Abi,
-                    args: [BICONOMY_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
+                    args: [STARTALE_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
                 }),
                 value: BigInt(0)
             },

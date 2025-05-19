@@ -14,11 +14,11 @@ import type { MasterClient, NetworkConfig } from "../../../test/testUtils"
 import { getTestAccount, toTestClient, topUp } from "../../../test/testUtils"
 import {
   type StartaleAccountClient,
-  createBicoBundlerClient
-} from "../../clients/createBicoBundlerClient"
+  createSCSBundlerClient
+} from "../../clients/createSCSBundlerClient"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../toStartaleSmartAccount"
 
-describe("account.decorators.getNexusAddress.local", () => {
+describe("account.decorators.getSmartAccountAddress.local", () => {
   let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
@@ -44,7 +44,7 @@ describe("account.decorators.getNexusAddress.local", () => {
       signer: eoaAccount
     })
 
-    startaleClient = createBicoBundlerClient({
+    startaleClient = createSCSBundlerClient({
       mock: true,
       account: startaleAccount,
       transport: http(bundlerUrl)
@@ -69,7 +69,7 @@ describe("account.decorators.getNexusAddress.local", () => {
   })
 })
 
-describe("account.decorators.getNexusAddress.testnet", () => {
+describe("account.decorators.getSmartAccountAddress.testnet", () => {
   let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
@@ -97,7 +97,7 @@ describe("account.decorators.getNexusAddress.testnet", () => {
       signer: eoaAccount
     })
 
-    const startaleClient = createBicoBundlerClient({
+    const startaleClient = createSCSBundlerClient({
       account,
       transport: http(
         `https://api.pimlico.io/v2/${baseSepolia.id}/rpc?apikey=${process.env.PIMLICO_API_KEY}`

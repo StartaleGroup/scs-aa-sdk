@@ -15,11 +15,11 @@ import {
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { getTestAccount, killNetwork } from "../../../../test/testUtils"
-import { type NexusAccount, toNexusAccount } from "../../../account"
+import { type StartaleSmartAccount, toStartaleSmartAccount } from "../../../account"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../../../clients/createBicoBundlerClient"
+} from "../../../clients/createSCSBundlerClient"
 import { ownableActions } from "./decorators"
 import { toOwnableModule } from "./toOwnableModule"
 
@@ -31,9 +31,9 @@ describe("modules.toOwnableModule", () => {
 
   let eoaAccount: LocalAccount
   let redeemerAccount: LocalAccount
-  let nexusClient: StartaleAccountClient
-  let nexusAccountAddress: Address
-  let nexusAccount: NexusAccount
+  let startaleClient: StartaleAccountClient
+  let startaleAccountAddress: Address
+  let startaleAccount: StartaleSmartAccount
   let sessionDetails: string
 
   beforeAll(async () => {
@@ -52,21 +52,21 @@ describe("modules.toOwnableModule", () => {
       owners: [redeemerAccount.address]
     })
 
-    nexusAccount = await toNexusAccount({
+    startaleAccount = await toStartaleSmartAccount({
       signer: eoaAccount,
       chain,
       transport: http(),
       validators: [ownablesModule]
     })
 
-    nexusClient = createSmartAccountClient({
+    startaleClient = createSmartAccountClient({
       bundlerUrl,
-      account: nexusAccount,
+      account: startaleAccount,
       mock: true
     })
-    nexusAccountAddress = await nexusAccount.getAddress()
+    startaleAccountAddress = await startaleAccount.getAddress()
     await testClient.setBalance({
-      address: nexusAccountAddress,
+      address: startaleAccountAddress,
       value: parseEther("100")
     })
   })
@@ -76,7 +76,7 @@ describe("modules.toOwnableModule", () => {
   })
 
   test("demo an ownable account", async () => {
-    const ownablesClient = nexusClient.extend(ownableActions())
+    const ownablesClient = startaleClient.extend(ownableActions())
     const { userOpHash, userOp } = await ownablesClient.prepareForMultiSign({
       calls: [
         {
@@ -93,7 +93,7 @@ describe("modules.toOwnableModule", () => {
       signatures: [sig]
     })
 
-    const receipt = await nexusClient.waitForUserOperationReceipt({
+    const receipt = await startaleClient.waitForUserOperationReceipt({
       hash: multiSigHash
     })
     if (!receipt.success) {

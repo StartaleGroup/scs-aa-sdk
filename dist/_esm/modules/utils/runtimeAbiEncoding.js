@@ -7,7 +7,6 @@
 // Github: https://github.com/vr16x
 // Reachout to me if there is any issues or doubts
 // X: https://x.com/vr16x
-// Slack: https://biconomyworkspace.slack.com/team/U08HJN728RM
 import { AbiEncodingArrayLengthMismatchError, AbiEncodingBytesSizeMismatchError, AbiEncodingLengthMismatchError, BaseError, IntegerOutOfRangeError, InvalidAbiEncodingTypeError, InvalidAddressError, InvalidArrayError, boolToHex, concat, isAddress, numberToHex, padHex, size, slice, stringToHex, toFunctionSelector } from "viem";
 import { isRuntimeComposableValue } from "./composabilityCalls.js";
 // Total list of int and uint types used for regex matching against the data type

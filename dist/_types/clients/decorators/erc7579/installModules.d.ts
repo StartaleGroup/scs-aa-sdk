@@ -22,9 +22,9 @@ export type InstallModulesParameters<TSmartAccount extends SmartAccount | undefi
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModules } from '@scs-aa-sdk'
+ * import { installModules } from 'startale-aa-sdk'
  *
- * const userOpHash = await installModules(nexusClient, {
+ * const userOpHash = await installModules(startaleClient, {
  *   modules: [
  *     { type: 'executor', address: '0x...', context: '0x' },
  *     { type: 'validator', address: '0x...', context: '0x' }

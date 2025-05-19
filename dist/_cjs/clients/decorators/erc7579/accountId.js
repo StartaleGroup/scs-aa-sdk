@@ -12,7 +12,7 @@ async function accountId(client, args) {
     }
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = account_;

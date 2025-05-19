@@ -27,9 +27,9 @@ export type UninstallModulesParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModules } from '@scs-aa-sdk'
+ * import { uninstallModules } from 'startale-aa-sdk'
  *
- * const userOpHash = await uninstallModules(nexusClient, {
+ * const userOpHash = await uninstallModules(startaleClient, {
  *   modules: [
  *     { type: 'executor', address: '0x...', context: '0x' },
  *     { type: 'validator', address: '0x...', context: '0x' }
@@ -53,7 +53,7 @@ export async function uninstallModules<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

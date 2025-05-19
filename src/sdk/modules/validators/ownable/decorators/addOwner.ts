@@ -54,7 +54,7 @@ export async function addOwner<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
@@ -79,7 +79,7 @@ export const toAddOwnerCalls = async (
   parameters: AddOwnerParameters<ModularSmartAccount | undefined>
 ): Promise<Call[]> => {
   const action = await getAddOwnableValidatorOwnerAction({
-    account: { address: account.address, deployedOnChains: [], type: "nexus" },
+    account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
     client: account.client as any,
     owner: parameters.owner
   })

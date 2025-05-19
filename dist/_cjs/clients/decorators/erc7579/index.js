@@ -50,7 +50,6 @@ exports.erc7579Calls = {
     toInstallModuleCalls: installModule_js_1.toInstallModuleCalls,
     toUninstallModuleCalls: uninstallModule_js_1.toUninstallModuleCalls,
     toInstallWithSafeSenderCalls: installModule_js_1.toInstallWithSafeSenderCalls,
-    toSafeSenderCalls: installModule_js_1.toSafeSenderCalls,
     toUninstallFallbackCalls: uninstallFallback_js_1.toUninstallFallbackCalls
 };
 exports.erc7579Reads = {

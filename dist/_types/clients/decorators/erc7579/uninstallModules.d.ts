@@ -18,9 +18,9 @@ export type UninstallModulesParameters<TSmartAccount extends SmartAccount | unde
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModules } from '@scs-aa-sdk'
+ * import { uninstallModules } from 'startale-aa-sdk'
  *
- * const userOpHash = await uninstallModules(nexusClient, {
+ * const userOpHash = await uninstallModules(startaleClient, {
  *   modules: [
  *     { type: 'executor', address: '0x...', context: '0x' },
  *     { type: 'validator', address: '0x...', context: '0x' }

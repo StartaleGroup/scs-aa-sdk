@@ -10,7 +10,7 @@ async function setThreshold(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce } = parameters;
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = (0, utils_1.parseAccount)(account_);

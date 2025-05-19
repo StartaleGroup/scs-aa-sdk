@@ -60,9 +60,9 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getInstalledValidators } from '@scs-aa-sdk'
+ * import { getInstalledValidators } from 'startale-aa-sdk'
  *
- * const [validators, nextCursor] = await getInstalledValidators(nexusClient, {
+ * const [validators, nextCursor] = await getInstalledValidators(startaleClient, {
  *   pageSize: 10n
  * })
  * console.log(validators, nextCursor) // ['0x...', '0x...'], '0x...'
@@ -81,7 +81,7 @@ export async function getInstalledValidators<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

@@ -1,4 +1,4 @@
-# @scs-aa-sdk Testing Framework
+# startale-aa-sdk Testing Framework
 
 ## Testing Setup
 
@@ -7,7 +7,7 @@
 
 ### Network Agnostic Tests
 - Tests are executed against locally deployed ephemeral Anvil chains (each with a different ID) with relevant contracts pre-deployed for each test.
-- Bundlers for testing are instantiated using [prool](https://github.com/wevm/prool), currently utilizing alto instances. We plan to switch to Biconomy's bundlers when they become available via `prool`.
+- Bundlers for testing are instantiated using [prool](https://github.com/wevm/prool), currently utilizing alto instances.
 
 ### Global Scope
 - Use by setting `const NETWORK_TYPE: TestFileNetworkType = "COMMUNAL_ANVIL_NETWORK"` at the top of the test file.
@@ -37,7 +37,7 @@
     - PAYMASTER_URL (tests skipped if unset)
 
 ## Debugging and Client Issues
-It is recommended to use the playground for debugging issues with clients. Please refer to the following guidelines for escalation and handover: [Debugging Client Issues](https://www.notion.so/biconomy/Debugging-Client-Issues-cc01c1cab0224c87b37a4d283370165b)
+It is recommended to use the playground for debugging issues with clients.
 
 ## Testing Helpers
 A [testClient](https://viem.sh/docs/clients/test#extending-with-public--wallet-actions) is available (funded and extended with walletActions and publicActions) during testing. Please use it as a master Client for all things network related. 

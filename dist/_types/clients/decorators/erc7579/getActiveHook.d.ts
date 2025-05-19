@@ -24,9 +24,9 @@ declare const abi: {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getActiveHook } from '@scs-aa-sdk'
+ * import { getActiveHook } from 'startale-aa-sdk'
  *
- * const activeHook = await getActiveHook(nexusClient)
+ * const activeHook = await getActiveHook(startaleClient)
  * console.log(activeHook) // '0x...'
  */
 export declare function getActiveHook<TSmartAccount extends SmartAccount | undefined>(client: Client<Transport, Chain | undefined, TSmartAccount>, parameters?: GetActiveHookParameters<TSmartAccount>): Promise<Hex>;

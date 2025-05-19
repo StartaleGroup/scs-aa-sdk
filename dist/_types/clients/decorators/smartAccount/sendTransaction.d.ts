@@ -10,9 +10,9 @@ import { type SendUserOperationParameters, type SmartAccount } from "viem/accoun
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { sendTransaction } from '@scs-aa-sdk'
+ * import { sendTransaction } from 'startale-aa-sdk'
  *
- * const hash = await sendTransaction(nexusClient, {
+ * const hash = await sendTransaction(startaleClient, {
  *   to: '0x...',
  *   value: parseEther('0.1'),
  *   data: '0x...'

@@ -24,9 +24,9 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { sendTransaction } from '@scs-aa-sdk'
+ * import { sendTransaction } from 'startale-aa-sdk'
  *
- * const hash = await sendTransaction(nexusClient, {
+ * const hash = await sendTransaction(startaleClient, {
  *   to: '0x...',
  *   value: parseEther('0.1'),
  *   data: '0x...'
@@ -60,7 +60,7 @@ export async function sendTransaction<
 
     if (!account_) {
       throw new AccountNotFoundError({
-        docsPath: "/nexus-client/methods#sendtransaction"
+        docsPath: "/startale-client/methods#sendtransaction"
       })
     }
 

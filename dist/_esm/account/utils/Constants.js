@@ -1,6 +1,7 @@
 import { concat, keccak256, pad, toHex } from "viem";
 export const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
-export const BICONOMY_TOKEN_PAYMASTER = "0x00000000301515A5410e0d768aF4f53c416edf19";
+// Todo: Update when final prod contracts are deployed
+export const STARTALE_TOKEN_PAYMASTER = "0x00000000301515A5410e0d768aF4f53c416edf19";
 export const EIP1559_UNSUPPORTED_NETWORKS = [97, 56, 1442, 1101];
 export const PROXY_CREATION_CODE = "0x603d3d8160223d3973600966Ae45ad5BE4be08a70AD99e9cF41e6d6884B06F5155f3363d3d373d3d363d7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc545af43d6000803e6038573d6000fd5b3d6000f3";
 export const ADDRESS_RESOLVER_ADDRESS = "0x00000E81673606e07fC79CE5F1b3B26957844468";
@@ -67,6 +68,7 @@ export const MODE_MODULE_ENABLE = "0x01";
 export const MODULE_ENABLE_MODE_TYPE_HASH = keccak256(toHex("ModuleEnableMode(address module, bytes32 initDataHash)"));
 export const MOCK_MULTI_MODULE_ADDRESS = "0x9C992f91E7Cd4697B81E137007f446E826b8378b";
 export const MODULE_TYPE_MULTI = 0;
+// Todo: Update when final prod contracts are deployed
 export const ACCOUNT_DOMAIN_NAME = "Startale";
 export const ACCOUNT_DOMAIN_VERSION = "0.0.1";
 export const ACCOUNT_DOMAIN_TYPEHASH = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";

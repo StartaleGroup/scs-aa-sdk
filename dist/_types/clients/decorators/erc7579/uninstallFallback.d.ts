@@ -19,9 +19,9 @@ export type UninstallFallbackParameters<TSmartAccount extends SmartAccount | und
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallFallback } from '@scs-aa-sdk'
+ * import { uninstallFallback } from 'startale-aa-sdk'
  *
- * const userOpHash = await uninstallFallback(nexusClient, {
+ * const userOpHash = await uninstallFallback(startaleClient, {
  *   module: {
  *     type: 'fallback',
  *     address: '0x...',

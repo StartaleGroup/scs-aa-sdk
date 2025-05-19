@@ -10,7 +10,7 @@ async function sendTransaction(client, args) {
         const { account: account_ = client.account, data, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce } = args;
         if (!account_) {
             throw new AccountNotFound_1.AccountNotFoundError({
-                docsPath: "/nexus-client/methods#sendtransaction"
+                docsPath: "/startale-client/methods#sendtransaction"
             });
         }
         const account = (0, utils_1.parseAccount)(account_);

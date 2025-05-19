@@ -42,7 +42,7 @@ import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../clients/createBicoBundlerClient"
+} from "../clients/createSCSBundlerClient"
 import { TokenWithPermitAbi } from "../constants/abi/TokenWithPermitAbi"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "./toStartaleSmartAccount"
 import {
@@ -59,7 +59,7 @@ import {
 } from "./utils/Constants"
 import type { BytesLike } from "./utils/Types"
 
-describe("nexus.account", async () => {
+describe("startale.account", async () => {
   let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
@@ -460,7 +460,7 @@ describe("nexus.account", async () => {
       account: startaleAccount
     })
 
-    const nexusResponse = await testClient.readContract({
+    const accountResponse = await testClient.readContract({
       address: startaleAccountAddress,
       abi: parseAbi([
         "function isValidSignature(bytes32,bytes) external view returns (bytes4)"
@@ -496,7 +496,7 @@ describe("nexus.account", async () => {
     })
 
     expect(allowance).toEqual(parseEther("2"))
-    expect(nexusResponse).toEqual("0x1626ba7e")
+    expect(accountResponse).toEqual("0x1626ba7e")
   })
 
   test("check that ethers makeNonceKey creates the same key as the SDK", async () => {

@@ -1,16 +1,16 @@
-import type { StartaleAccountClient } from "../../createBicoBundlerClient"
-import type { BicoPaymasterClient } from "../../createBicoPaymasterClient"
+import type { StartaleAccountClient } from "../../createSCSBundlerClient"
+import type { SCSPaymasterClient } from "../../createSCSPaymasterClient"
 import type { FeeQuote } from "./getTokenPaymasterQuotes"
 
 /**
- * Retrieves the supported tokens for the Biconomy Token Paymaster..
+ * Retrieves the supported tokens for the Startale Token Paymaster..
  *
- * @param client - The Nexus client instance
+ * @param client - The Startale client instance
  * @returns A promise that resolves to an array of FeeQuote objects.
  *
  * @example
  * ```typescript
- * const supportedTokens = await paymaster.getSupportedTokens(nexusClient);
+ * const supportedTokens = await paymaster.getSupportedTokens(startaleClient);
  * console.log(supportedTokens);
  * ```
  */
@@ -26,7 +26,7 @@ export const getSupportedTokens = async (
       }
     ]
   })
-  const paymaster = client.paymaster as BicoPaymasterClient
+  const paymaster = client.paymaster as SCSPaymasterClient
   const quote = await paymaster.getTokenPaymasterQuotes({
     userOp,
     tokenList: []

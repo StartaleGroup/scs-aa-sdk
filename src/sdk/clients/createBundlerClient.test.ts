@@ -14,8 +14,8 @@ import { toNetwork } from "../../test/testSetup"
 import type { NetworkConfig } from "../../test/testUtils"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import { safeMultiplier } from "../account/utils"
-import type { StartaleAccountClient } from "./createBicoBundlerClient"
-import { createBicoBundlerClient } from "./createBicoBundlerClient"
+import type { StartaleAccountClient } from "./createSCSBundlerClient"
+import { createSCSBundlerClient } from "./createSCSBundlerClient"
 import { erc7579Actions } from "./decorators/erc7579"
 import { smartAccountActions } from "./decorators/smartAccount"
 
@@ -45,7 +45,7 @@ const calls = [
 ]
 
 describe.runIf(runPaidTests).each(COMPETITORS)(
-  "nexus.interoperability with $name bundler",
+  "account.interoperability with $name bundler",
   async ({ bundlerUrl, chain, mock }) => {
     const account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY as Hex}`)
     const publicClient = createPublicClient({ chain, transport: http() })
@@ -72,7 +72,7 @@ describe.runIf(runPaidTests).each(COMPETITORS)(
         )
       }
 
-      bundlerClient = createBicoBundlerClient({
+      bundlerClient = createSCSBundlerClient({
         mock,
         chain,
         transport: http(bundlerUrl),

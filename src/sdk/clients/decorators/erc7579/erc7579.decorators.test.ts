@@ -17,13 +17,13 @@ import {
   toTestClient
 } from "../../../../test/testUtils"
 import {
-  type NexusAccount,
-  toNexusAccount
-} from "../../../account/toNexusAccount"
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../../../account/toStartaleSmartAccount"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../../createBicoBundlerClient"
+} from "../../createSCSBundlerClient"
 
 describe("erc7579.decorators", async () => {
   let network: NetworkConfig
@@ -33,9 +33,9 @@ describe("erc7579.decorators", async () => {
   // Test utils
   let testClient: MasterClient
   let eoaAccount: Account
-  let nexusAccount: NexusAccount
-  let nexusClient: StartaleAccountClient
-  let nexusAccountAddress: Address
+  let startaleAccount: StartaleSmartAccount
+  let startaleClient: StartaleAccountClient
+  let startaleAccountAddress: Address
   let recipient: Account
   let recipientAddress: Address
 
@@ -49,20 +49,20 @@ describe("erc7579.decorators", async () => {
     recipientAddress = recipient.address
     testClient = toTestClient(chain, getTestAccount(5))
 
-    nexusAccount = await toNexusAccount({
+    startaleAccount = await toStartaleSmartAccount({
       chain,
       signer: eoaAccount,
       transport: http(network.rpcUrl)
     })
 
-    nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    startaleClient = createSmartAccountClient({
+      account: startaleAccount,
       transport: http(bundlerUrl),
       mock: true
     })
 
-    nexusAccountAddress = await nexusClient.account.getAddress()
-    await fundAndDeployClients(testClient, [nexusClient])
+    startaleAccountAddress = await startaleClient.account.getAddress()
+    await fundAndDeployClients(testClient, [startaleClient])
   })
 
   afterAll(async () => {
@@ -79,16 +79,16 @@ describe("erc7579.decorators", async () => {
       supportsDelegateCall,
       isK1ValidatorInstalled
     ] = await Promise.all([
-      nexusClient.getInstalledValidators(),
-      nexusClient.getInstalledExecutors(),
-      nexusClient.getActiveHook(),
-      nexusClient.getFallbackBySelector({ selector: "0xcb5baf0f" }),
-      nexusClient.supportsModule({ type: "validator" }),
-      nexusClient.supportsExecutionMode({ type: "delegatecall" }),
-      nexusClient.isModuleInstalled({
+      startaleClient.getInstalledValidators(),
+      startaleClient.getInstalledExecutors(),
+      startaleClient.getActiveHook(),
+      startaleClient.getFallbackBySelector({ selector: "0xcb5baf0f" }),
+      startaleClient.supportsModule({ type: "validator" }),
+      startaleClient.supportsExecutionMode({ type: "delegatecall" }),
+      startaleClient.isModuleInstalled({
         module: {
           type: "validator",
-          address: nexusClient.account.getModule().address,
+          address: startaleClient.account.getModule().address,
           initData: "0x"
         }
       })
@@ -96,7 +96,7 @@ describe("erc7579.decorators", async () => {
 
     expect(installedExecutors[0].length).toBeTypeOf("number")
     expect(installedValidators[0]).toEqual([
-      nexusClient.account.getModule().address
+      startaleClient.account.getModule().address
     ])
     expect(isHex(activeHook)).toBe(true)
     expect(fallbackSelector.length).toBeTypeOf("number")

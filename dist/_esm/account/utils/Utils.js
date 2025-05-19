@@ -1,5 +1,5 @@
 import { concat, decodeFunctionResult, encodeAbiParameters, encodeFunctionData, erc20Abi, hexToBytes, keccak256, parseAbi, parseAbiParameters, publicActions, stringToBytes, toBytes, toHex } from "viem";
-import { BICONOMY_TOKEN_PAYMASTER, MOCK_MULTI_MODULE_ADDRESS, MODULE_ENABLE_MODE_TYPE_HASH, ACCOUNT_DOMAIN_NAME, ACCOUNT_DOMAIN_TYPEHASH, ACCOUNT_DOMAIN_VERSION } from "../../account/utils/Constants.js";
+import { STARTALE_TOKEN_PAYMASTER, MOCK_MULTI_MODULE_ADDRESS, MODULE_ENABLE_MODE_TYPE_HASH, ACCOUNT_DOMAIN_NAME, ACCOUNT_DOMAIN_TYPEHASH, ACCOUNT_DOMAIN_VERSION } from "../../account/utils/Constants.js";
 import { EIP1271Abi } from "../../constants/abi/index.js";
 import { moduleTypeIds } from "../../modules/utils/Types.js";
 /**
@@ -278,7 +278,7 @@ export const getTenderlyDetails = () => {
  * @returns The multiplied bigint
  */
 export const safeMultiplier = (bI, multiplier) => BigInt(Math.round(Number(bI) * multiplier));
-export const getAllowance = async (client, owner, tokenAddress, grantee = BICONOMY_TOKEN_PAYMASTER) => {
+export const getAllowance = async (client, owner, tokenAddress, grantee = STARTALE_TOKEN_PAYMASTER) => {
     const approval = await client.readContract({
         address: tokenAddress,
         abi: erc20Abi,

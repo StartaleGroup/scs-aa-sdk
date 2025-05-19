@@ -44,7 +44,6 @@ export declare const erc7579Calls: {
     readonly toInstallModuleCalls: (account: import("../../../modules/utils/Types.js").ModularSmartAccount, { address, initData, type }: import("../../../modules/utils/Types.js").ModuleMeta) => Promise<Call[]>;
     readonly toUninstallModuleCalls: (account: import("../../../modules/utils/Types.js").ModularSmartAccount, { address, deInitData, type }: import("../../../modules/utils/Types.js").ModuleMeta) => Promise<Call[]>;
     readonly toInstallWithSafeSenderCalls: (account: import("../../../modules/utils/Types.js").ModularSmartAccount, { address, initData, type }: import("../../../modules/utils/Types.js").ModuleMeta) => Promise<Call[]>;
-    readonly toSafeSenderCalls: (__: import("../../../modules/utils/Types.js").ModularSmartAccount, { address }: import("../../../modules/utils/Types.js").ModuleMeta) => Promise<Call[]>;
     readonly toUninstallFallbackCalls: (account: import("../../../modules/utils/Types.js").ModularSmartAccount, { address, initData, type }: import("../../../modules/utils/Types.js").ModuleMeta) => Promise<Call[]>;
 };
 export declare const erc7579Reads: {

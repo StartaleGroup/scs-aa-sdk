@@ -13,11 +13,11 @@ import {
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { getTestAccount, killNetwork } from "../../../../test/testUtils"
-import { type NexusAccount, toNexusAccount } from "../../../account"
+import { type StartaleSmartAccount, toStartaleSmartAccount } from "../../../account"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../../../clients/createBicoBundlerClient"
+} from "../../../clients/createSCSBundlerClient"
 import type { Validator } from "../toValidator"
 import { toDefaultModule } from "./toDefaultModule"
 
@@ -29,9 +29,9 @@ describe("modules.toDefaultModule", () => {
 
   let eoaAccount: LocalAccount
   let redeemerAccount: LocalAccount
-  let nexusClient: StartaleAccountClient
-  let nexusAccountAddress: Address
-  let nexusAccount: NexusAccount
+  let startaleClient: StartaleAccountClient
+  let startaleAccountAddress: Address
+  let startaleAccount: StartaleSmartAccount
   let meeModule: Validator
 
   beforeAll(async () => {
@@ -46,20 +46,20 @@ describe("modules.toDefaultModule", () => {
 
     meeModule = toDefaultModule({ signer: eoaAccount })
 
-    nexusAccount = await toNexusAccount({
+    startaleAccount = await toStartaleSmartAccount({
       signer: eoaAccount,
       chain,
       transport: http()
     })
 
-    nexusClient = createSmartAccountClient({
+    startaleClient = createSmartAccountClient({
       bundlerUrl,
-      account: nexusAccount,
+      account: startaleAccount,
       mock: true
     })
-    nexusAccountAddress = await nexusAccount.getAddress()
+    startaleAccountAddress = await startaleAccount.getAddress()
     await testClient.setBalance({
-      address: nexusAccountAddress,
+      address: startaleAccountAddress,
       value: parseEther("100")
     })
   })

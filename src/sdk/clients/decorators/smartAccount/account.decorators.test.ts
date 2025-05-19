@@ -13,13 +13,13 @@ import {
   toTestClient
 } from "../../../../test/testUtils"
 import {
-  type NexusAccount,
-  toNexusAccount
-} from "../../../account/toNexusAccount"
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../../../account/toStartaleSmartAccount"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "../../createBicoBundlerClient"
+} from "../../createSCSBundlerClient"
 
 describe("account.decorators", async () => {
   let network: NetworkConfig
@@ -29,9 +29,9 @@ describe("account.decorators", async () => {
   // Test utils
   let testClient: MasterClient
   let eoaAccount: Account
-  let nexusAccount: NexusAccount
-  let nexusClient: StartaleAccountClient
-  let nexusAccountAddress: Address
+  let startaleAccount: StartaleSmartAccount
+  let startaleClient: StartaleAccountClient
+  let startaleAccountAddress: Address
   let recipient: Account
   let recipientAddress: Address
 
@@ -45,19 +45,19 @@ describe("account.decorators", async () => {
     recipientAddress = recipient.address
     testClient = toTestClient(chain, getTestAccount(5))
 
-    nexusAccount = await toNexusAccount({
+    startaleAccount = await toStartaleSmartAccount({
       chain,
       signer: eoaAccount,
       transport: http()
     })
 
-    nexusClient = createSmartAccountClient({
-      account: nexusAccount,
+    startaleClient = createSmartAccountClient({
+      account: startaleAccount,
       transport: http(bundlerUrl),
       mock: true
     })
-    nexusAccountAddress = await nexusClient.account.getAddress()
-    await fundAndDeployClients(testClient, [nexusClient])
+    startaleAccountAddress = await startaleClient.account.getAddress()
+    await fundAndDeployClients(testClient, [startaleClient])
   })
 
   afterAll(async () => {
@@ -65,14 +65,14 @@ describe("account.decorators", async () => {
   })
 
   test.concurrent("should sign a message", async () => {
-    const signedMessage = await nexusClient.signMessage({ message: "hello" })
+    const signedMessage = await startaleClient.signMessage({ message: "hello" })
 
     expect(isHex(signedMessage)).toBe(true)
   })
 
   test.concurrent("should currently fail to sign with typed data", async () => {
     await expect(
-      nexusClient.signTypedData({
+      startaleClient.signTypedData({
         domain: {
           name: "Ether Mail",
           version: "1",
@@ -109,7 +109,7 @@ describe("account.decorators", async () => {
   test("should send a user operation using sendTransaction", async () => {
     const balanceBefore = await getBalance(testClient, recipientAddress)
 
-    const hash = await nexusClient.sendTransaction({
+    const hash = await startaleClient.sendTransaction({
       calls: [
         {
           to: recipientAddress,
@@ -117,7 +117,7 @@ describe("account.decorators", async () => {
         }
       ]
     })
-    const { status } = await nexusClient.waitForTransactionReceipt({ hash })
+    const { status } = await startaleClient.waitForTransactionReceipt({ hash })
     const balanceAfter = await getBalance(testClient, recipientAddress)
     expect(status).toBe("success")
     expect(balanceAfter - balanceBefore).toBe(1n)
@@ -131,13 +131,13 @@ describe("account.decorators", async () => {
     })
 
     expect(counterValueBefore).toBe(0n)
-    const hash = await nexusClient.writeContract({
+    const hash = await startaleClient.writeContract({
       abi: CounterAbi,
       functionName: "incrementNumber",
       address: COUNTER_ADDRESS,
       chain
     })
-    const { status } = await nexusClient.waitForTransactionReceipt({ hash })
+    const { status } = await startaleClient.waitForTransactionReceipt({ hash })
     const counterValueAfter = await testClient.readContract({
       abi: CounterAbi,
       functionName: "getNumber",

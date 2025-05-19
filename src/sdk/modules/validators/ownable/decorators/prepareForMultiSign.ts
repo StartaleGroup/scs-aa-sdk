@@ -29,29 +29,29 @@ export type PrepareForMultiSignPayload = {
 export async function prepareForMultiSign<
   TModularSmartAccount extends ModularSmartAccount | undefined
 >(
-  nexusClient: Client<Transport, Chain | undefined, TModularSmartAccount>,
+  startaleAccountClient: Client<Transport, Chain | undefined, TModularSmartAccount>,
   parameters: PrepareForMultiSignParameters<TModularSmartAccount>
 ): Promise<PrepareForMultiSignPayload> {
-  const { account: account_ = nexusClient.account, ...rest } = parameters
+  const { account: account_ = startaleAccountClient.account, ...rest } = parameters
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
-  const nexusAccount = parseAccount(account_) as ModularSmartAccount
-  const publicClient = nexusAccount?.client as PublicClient
+  const startaleAccount = parseAccount(account_) as ModularSmartAccount
+  const publicClient = startaleAccount?.client as PublicClient
 
   if (!publicClient) {
     throw new Error("Public client not found")
   }
 
   // @ts-ignore
-  const userOp = await nexusClient.prepareUserOperation(rest)
+  const userOp = await startaleAccountClient.prepareUserOperation(rest)
 
   // @ts-ignore
-  const userOpHash = nexusAccount.getUserOpHash(userOp)
+  const userOpHash = startaleAccount.getUserOpHash(userOp)
 
   return { userOpHash, userOp }
 }

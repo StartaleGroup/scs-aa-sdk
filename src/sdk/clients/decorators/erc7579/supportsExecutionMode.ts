@@ -95,9 +95,9 @@ export function encodeExecutionMode<callType extends CallType>({
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsExecutionMode } from '@scs-aa-sdk'
+ * import { supportsExecutionMode } from 'startale-aa-sdk'
  *
- * const isSupported = await supportsExecutionMode(nexusClient, {
+ * const isSupported = await supportsExecutionMode(startaleClient, {
  *   type: 'call',
  *   revertOnError: true,
  *   selector: '0x12345678'
@@ -121,7 +121,7 @@ export async function supportsExecutionMode<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 

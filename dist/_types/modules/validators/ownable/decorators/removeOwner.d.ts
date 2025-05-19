@@ -34,9 +34,9 @@ export type RemoveOwnerParameters<TModularSmartAccount extends ModularSmartAccou
  *
  * @example
  * ```typescript
- * import { removeOwner } from '@scs-aa-sdk'
+ * import { removeOwner } from 'startale-aa-sdk'
  *
- * const userOpHash = await removeOwner(nexusClient, {
+ * const userOpHash = await removeOwner(startaleClient, {
  *   owner: '0x...'
  * })
  * console.log(userOpHash) // '0x...'

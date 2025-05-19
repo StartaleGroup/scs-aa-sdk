@@ -18,7 +18,7 @@ export async function getRemoveOwnerTx(client, parameters) {
     const { account: account_ = client.account, owner } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);
@@ -27,7 +27,7 @@ export async function getRemoveOwnerTx(client, parameters) {
         throw new Error("Public client not found");
     }
     const action = await getRemoveOwnableValidatorOwnerAction({
-        account: { address: account.address, deployedOnChains: [], type: "nexus" },
+        account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
         client: publicClient,
         owner
     });

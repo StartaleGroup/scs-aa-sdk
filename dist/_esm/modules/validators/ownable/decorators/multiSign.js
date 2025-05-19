@@ -6,7 +6,7 @@ export async function multiSign(client, parameters) {
     const { account: account_ = client.account, signatures, ...rest } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     const account = parseAccount(account_);

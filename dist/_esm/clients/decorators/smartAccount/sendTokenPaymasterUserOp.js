@@ -3,12 +3,12 @@ import { erc20Abi } from "viem";
 import { encodeFunctionData } from "viem";
 import { sendUserOperation } from "viem/account-abstraction";
 import { getAction } from "viem/utils";
-import { BICONOMY_TOKEN_PAYMASTER } from "../../../account/utils/Constants.js";
+import { STARTALE_TOKEN_PAYMASTER } from "../../../account/utils/Constants.js";
 import { prepareTokenPaymasterUserOp } from "./prepareTokenPaymasterUserOp.js";
 /**
  * Prepares and sends a user operation with token paymaster
  *
- * @param client - The Nexus client instance
+ * @param client - The Startale client instance
  * @param args - The parameters for the token paymaster user operation
  * @param args.calls - Array of transactions to be executed
  * @param args.feeTokenAddress - Address of the token to be used for paying gas fees
@@ -38,7 +38,7 @@ export async function sendTokenPaymasterUserOp(client, args) {
                 data: encodeFunctionData({
                     functionName: "approve",
                     abi: erc20Abi,
-                    args: [BICONOMY_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
+                    args: [STARTALE_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
                 }),
                 value: BigInt(0)
             },

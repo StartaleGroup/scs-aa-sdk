@@ -81,9 +81,9 @@ describe("utils.toSigner", () => {
   it("should work with ethers JsonRpcSigner", async () => {
     const provider = new JsonRpcProvider(network.rpcUrl)
     const signer = await provider.getSigner()
-    const nexusSigner = await toSigner({ signer: signer as AnyData })
-    expect(nexusSigner.address).toBe(await signer.getAddress())
-    const signedMessage = await nexusSigner.signMessage({
+    const accountSigner = await toSigner({ signer: signer as AnyData })
+    expect(accountSigner.address).toBe(await signer.getAddress())
+    const signedMessage = await accountSigner.signMessage({
       message: "Hello World"
     })
     expect(signedMessage).toBeDefined()

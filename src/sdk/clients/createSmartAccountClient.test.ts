@@ -34,9 +34,9 @@ import { getChain } from "../account/utils/getChain"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
-} from "./createBicoBundlerClient"
+} from "./createSCSBundlerClient"
 
-describe("nexus.client", async () => {
+describe("startale.client", async () => {
   let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
@@ -46,8 +46,8 @@ describe("nexus.client", async () => {
   let eoaAccount: Account
   let recipientAccount: Account
   let recipientAddress: Address
-  let nexusClient: StartaleAccountClient
-  let nexusAccountAddress: Address
+  let startaleClient: StartaleAccountClient
+  let startaleAccountAddress: Address
   let privKey: Hex
 
   beforeAll(async () => {
@@ -70,60 +70,60 @@ describe("nexus.client", async () => {
       transport: http()
     })
 
-    nexusClient = createSmartAccountClient({
+    startaleClient = createSmartAccountClient({
       bundlerUrl,
       account: startaleAccount,
       mock: true
     })
-    nexusAccountAddress = await startaleAccount.getAddress()
+    startaleAccountAddress = await startaleAccount.getAddress()
   })
   afterAll(async () => {
     await killNetwork([network?.rpcPort, network?.bundlerPort])
   })
 
   test("should deploy smart account if not deployed", async () => {
-    const isDeployed = await nexusClient.account.isDeployed()
+    const isDeployed = await startaleClient.account.isDeployed()
 
     if (!isDeployed) {
       // Fund the account first
-      await topUp(testClient, nexusAccountAddress, parseEther("0.01"))
+      await topUp(testClient, startaleAccountAddress, parseEther("0.01"))
 
-      const hash = await nexusClient.sendTransaction({
+      const hash = await startaleClient.sendTransaction({
         calls: [
           {
-            to: nexusAccountAddress,
+            to: startaleAccountAddress,
             value: 0n,
             data: "0x"
           }
         ]
       })
-      const { status } = await nexusClient.waitForTransactionReceipt({
+      const { status } = await startaleClient.waitForTransactionReceipt({
         hash
       })
       expect(status).toBe("success")
 
-      const isNowDeployed = await nexusClient.account.isDeployed()
+      const isNowDeployed = await startaleClient.account.isDeployed()
       expect(isNowDeployed).toBe(true)
     } else {
       console.log("Smart account already deployed")
     }
 
     // Verify the account is now deployed
-    const finalDeploymentStatus = await nexusClient.account.isDeployed()
+    const finalDeploymentStatus = await startaleClient.account.isDeployed()
     expect(finalDeploymentStatus).toBe(true)
   })
 
   test("should fund the smart account", async () => {
-    await topUp(testClient, nexusAccountAddress, parseEther("0.01"))
+    await topUp(testClient, startaleAccountAddress, parseEther("0.01"))
 
-    const balance = await getBalance(testClient, nexusAccountAddress)
+    const balance = await getBalance(testClient, startaleAccountAddress)
     expect(balance > 0)
   })
 
   test("should have account addresses", async () => {
     const addresses = await Promise.all([
       eoaAccount.address,
-      nexusClient.account.getAddress()
+      startaleClient.account.getAddress()
     ])
     expect(addresses.every(Boolean)).to.be.true
     expect(addresses.every((address) => isHex(address))).toBe(true)
@@ -139,8 +139,8 @@ describe("nexus.client", async () => {
       data: encodedCall
     }
     const results = await Promise.all([
-      nexusClient.estimateUserOperationGas({ calls: [call] }),
-      nexusClient.estimateUserOperationGas({ calls: [call, call] })
+      startaleClient.estimateUserOperationGas({ calls: [call] }),
+      startaleClient.estimateUserOperationGas({ calls: [call, call] })
     ])
 
     const increasingGasExpenditure = results.every(
@@ -154,7 +154,7 @@ describe("nexus.client", async () => {
   test("should check enable mode", async () => {
     const { name, version } = await getAccountMeta(
       testClient,
-      nexusAccountAddress
+      startaleAccountAddress
     )
 
     const result = makeInstallDataAndHash(
@@ -173,7 +173,7 @@ describe("nexus.client", async () => {
   }, 30000)
 
   test("should read estimated user op gas values", async () => {
-    const userOp = await nexusClient.prepareUserOperation({
+    const userOp = await startaleClient.prepareUserOperation({
       calls: [
         {
           to: recipientAccount.address,
@@ -182,7 +182,7 @@ describe("nexus.client", async () => {
       ]
     })
 
-    const estimatedGas = await nexusClient.estimateUserOperationGas(userOp)
+    const estimatedGas = await startaleClient.estimateUserOperationGas(userOp)
     expect(estimatedGas.verificationGasLimit).toBeTruthy()
     expect(estimatedGas.callGasLimit).toBeTruthy()
     expect(estimatedGas.preVerificationGas).toBeTruthy()
@@ -217,29 +217,28 @@ describe("nexus.client", async () => {
     expect(() => getChain(chainId)).toThrow("Chain 0 not found.")
   })
 
-  test("should have attached erc757 actions", async () => {
+  test("should have attached erc7579 actions", async () => {
     const [
       accountId,
       isModuleInstalled,
       supportsExecutionMode,
       supportsModule
     ] = await Promise.all([
-      nexusClient.accountId(),
-      nexusClient.isModuleInstalled({
+      startaleClient.accountId(),
+      startaleClient.isModuleInstalled({
         module: {
           type: "validator",
-          address: nexusClient.account.getModule().address,
+          address: startaleClient.account.getModule().address,
           initData: "0x"
         }
       }),
-      nexusClient.supportsExecutionMode({
+      startaleClient.supportsExecutionMode({
         type: "delegatecall"
       }),
-      nexusClient.supportsModule({
+      startaleClient.supportsModule({
         type: "validator"
       })
     ])
-    expect(accountId.indexOf("biconomy.nexus") > -1).toBe(true)
     expect(isModuleInstalled).toBe(false)
     expect(supportsExecutionMode).toBe(true)
     expect(supportsModule).toBe(true)
@@ -248,8 +247,8 @@ describe("nexus.client", async () => {
   test("should send eth twice", async () => {
     const balanceBefore = await getBalance(testClient, recipientAddress)
     const tx = { to: recipientAddress, value: 1n }
-    const hash = await nexusClient.sendTransaction({ calls: [tx, tx] })
-    const { status } = await nexusClient.waitForTransactionReceipt({ hash })
+    const hash = await startaleClient.sendTransaction({ calls: [tx, tx] })
+    const { status } = await startaleClient.waitForTransactionReceipt({ hash })
     const balanceAfter = await getBalance(testClient, recipientAddress)
     expect(status).toBe("success")
     expect(balanceAfter - balanceBefore).toBe(2n)
@@ -271,20 +270,20 @@ describe("nexus.client", async () => {
       transport: http()
     })
 
-    const viemNexusClient = createSmartAccountClient({
+    const viemSmartAccountClient = createSmartAccountClient({
       bundlerUrl,
       account: viemAccount,
       mock: true
     })
 
-    const ethersNexusClient = createSmartAccountClient({
+    const ethersSmartAccountClient = createSmartAccountClient({
       bundlerUrl,
       account: ethersAccount,
       mock: true
     })
 
-    const sig1 = await viemNexusClient.signMessage({ message: "123" })
-    const sig2 = await ethersNexusClient.signMessage({ message: "123" })
+    const sig1 = await viemSmartAccountClient.signMessage({ message: "123" })
+    const sig2 = await ethersSmartAccountClient.signMessage({ message: "123" })
 
     expect(sig1).toBe(sig2)
   })
@@ -298,13 +297,13 @@ describe("nexus.client", async () => {
       transport: http()
     })
 
-    const ethersNexusClient = createSmartAccountClient({
+    const ethersSmartAccountClient = createSmartAccountClient({
       bundlerUrl,
       account: ethersAccount,
       mock: true
     })
 
-    const hash = await ethersNexusClient.sendUserOperation({
+    const hash = await ethersSmartAccountClient.sendUserOperation({
       calls: [
         {
           to: recipientAddress,
@@ -312,7 +311,7 @@ describe("nexus.client", async () => {
         }
       ]
     })
-    const receipt = await ethersNexusClient.waitForUserOperationReceipt({
+    const receipt = await ethersSmartAccountClient.waitForUserOperationReceipt({
       hash
     })
     expect(receipt.success).toBe(true)
@@ -322,7 +321,7 @@ describe("nexus.client", async () => {
     const start = performance.now()
     const receipts: UserOperationReceipt[] = []
     for (let i = 0; i < 3; i++) {
-      const hash = await nexusClient.sendUserOperation({
+      const hash = await startaleClient.sendUserOperation({
         calls: [
           {
             to: recipientAddress,
@@ -330,7 +329,7 @@ describe("nexus.client", async () => {
           }
         ]
       })
-      const receipt = await nexusClient.waitForUserOperationReceipt({ hash })
+      const receipt = await startaleClient.waitForUserOperationReceipt({ hash })
       receipts.push(receipt)
     }
     expect(receipts.every((receipt) => receipt.success)).toBeTruthy()
@@ -343,7 +342,7 @@ describe("nexus.client", async () => {
     const userOpPromises: Promise<`0x${string}`>[] = []
     for (let i = 0; i < 3; i++) {
       userOpPromises.push(
-        nexusClient.sendUserOperation({
+        startaleClient.sendUserOperation({
           calls: [
             {
               to: recipientAddress,
@@ -356,7 +355,7 @@ describe("nexus.client", async () => {
     const hashes = await Promise.all(userOpPromises)
     expect(hashes.length).toBe(3)
     const receipts = await Promise.all(
-      hashes.map((hash) => nexusClient.waitForUserOperationReceipt({ hash }))
+      hashes.map((hash) => startaleClient.waitForUserOperationReceipt({ hash }))
     )
     expect(receipts.every((receipt) => receipt.success)).toBeTruthy()
     const end = performance.now()

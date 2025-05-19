@@ -1,7 +1,7 @@
 import type { Account, Address, Chain, Client, Transport } from "viem";
 import type { UserOperation } from "viem/account-abstraction";
 import type { AnyData } from "../../../modules";
-export type BicoTokenPaymasterRpcSchema = [
+export type TokenPaymasterRpcSchema = [
     {
         Method: "pm_getFeeQuoteOrData";
         Parameters: [TokenPaymasterUserOpParams, TokenPaymasterConfigParams];
@@ -41,28 +41,18 @@ export type TokenPaymasterUserOpParams = {
     paymasterVerificationGasLimit: string;
 };
 export type TokenPaymasterConfigParams = {
-    mode: PaymasterMode;
-    sponsorshipInfo: {
-        smartAccountInfo: {
-            name: string;
-            version: string;
-        };
-    };
-    tokenInfo: {
-        tokenList: Address[];
-    };
-    expiryDuration: number;
-    calculateGasLimits: boolean;
+    expiryDuration?: number;
+    calculateGasLimits?: boolean;
 };
 export type GetTokenPaymasterQuotesParameters = {
     userOp: UserOperation;
-    tokenList: Address[];
+    tokenList?: Address[];
 };
 /**
  * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
  *
  * @param userOp - The UserOperation to get paymaster quotes for
- * @param client - Viem Client configured with BicoTokenPaymaster RPC methods
+ * @param client - Viem Client configured with TokenPaymaster RPC methods
  * @param tokenList - Array of ERC20 token addresses to get quotes for
  *
  * @returns A promise of {@link TokenPaymasterQuotesResponse}
@@ -70,7 +60,7 @@ export type GetTokenPaymasterQuotesParameters = {
  * @example
  * ```typescript
  * // Configure client with paymaster RPC
- * const paymasterClient = createBicoPaymasterClient({
+ * const paymasterClient = createSCSPaymasterClient({
  *     paymasterUrl
  * })
  *
@@ -102,6 +92,6 @@ export type GetTokenPaymasterQuotesParameters = {
  * // }
  * ```
  */
-export declare const getTokenPaymasterQuotes: (client: Client<Transport, Chain | undefined, Account | undefined, BicoTokenPaymasterRpcSchema>, parameters: GetTokenPaymasterQuotesParameters) => Promise<TokenPaymasterQuotesResponse>;
+export declare const getTokenPaymasterQuotes: (client: Client<Transport, Chain | undefined, Account | undefined, TokenPaymasterRpcSchema>, parameters: GetTokenPaymasterQuotesParameters) => Promise<TokenPaymasterQuotesResponse>;
 export {};
 //# sourceMappingURL=getTokenPaymasterQuotes.d.ts.map
