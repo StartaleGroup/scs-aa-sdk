@@ -1,3 +1,4 @@
+import { toHex } from "viem";
 /**
  * Retrieves the supported tokens for the Startale Token Paymaster..
  *
@@ -21,9 +22,13 @@ export const getSupportedTokens = async (client) => {
         ]
     });
     const paymaster = client.paymaster;
+    if (!client?.chain?.id)
+        throw new Error('Chain ID is required');
     const quote = await paymaster.getTokenPaymasterQuotes({
         userOp,
-        tokenList: []
+        chainId: toHex(client.chain.id)
+        // Review: can be removed
+        // tokenList: []
     });
     return quote.feeQuotes;
 };

@@ -1,28 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTokenPaymasterQuotes = void 0;
+const viem_1 = require("viem");
+const constants_1 = require("../../../constants/index.js");
 const getTokenPaymasterQuotes = async (client, parameters) => {
-    const { userOp } = parameters;
+    const { userOp, chainId } = parameters;
     const quote = await client.request({
-        method: "pm_getFeeQuoteOrData",
+        method: "pm_getFeeQuotes",
         params: [
             {
                 sender: userOp.sender,
-                nonce: userOp.nonce.toString(),
+                nonce: (0, viem_1.toHex)(userOp.nonce),
                 factory: userOp.factory,
                 factoryData: userOp.factoryData,
                 callData: userOp.callData,
                 maxFeePerGas: userOp.maxFeePerGas.toString(),
                 maxPriorityFeePerGas: userOp.maxPriorityFeePerGas.toString(),
-                verificationGasLimit: BigInt(userOp.verificationGasLimit).toString(),
-                callGasLimit: BigInt(userOp.callGasLimit).toString(),
-                preVerificationGas: BigInt(userOp.preVerificationGas).toString(),
-                paymasterPostOpGasLimit: userOp.paymasterPostOpGasLimit?.toString() ?? "0",
-                paymasterVerificationGasLimit: userOp.paymasterVerificationGasLimit?.toString() ?? "0"
+                verificationGasLimit: (0, viem_1.toHex)(Number(userOp.verificationGasLimit)),
+                callGasLimit: (0, viem_1.toHex)(Number(userOp.callGasLimit)),
+                preVerificationGas: (0, viem_1.toHex)(Number(userOp.preVerificationGas)),
+                paymasterPostOpGasLimit: (0, viem_1.toHex)(Number(userOp.paymasterPostOpGasLimit ?? 0x0)),
+                paymasterVerificationGasLimit: (0, viem_1.toHex)(Number(userOp.paymasterVerificationGasLimit ?? 0x0))
             },
+            constants_1.ENTRY_POINT_ADDRESS,
+            chainId,
             {
                 calculateGasLimits: true
-            }
+            },
         ]
     });
     return quote;

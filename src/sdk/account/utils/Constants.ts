@@ -3,7 +3,7 @@ export const ADDRESS_ZERO: Hex = "0x0000000000000000000000000000000000000000"
 
 // Todo: Update when final prod contracts are deployed
 export const STARTALE_TOKEN_PAYMASTER: Hex =
-  "0x00000000301515A5410e0d768aF4f53c416edf19"
+  "0xC7d6d41DeDbfB365469FF2FFB2c89c11aC41d4f0"
 
 export const EIP1559_UNSUPPORTED_NETWORKS: Array<number> = [97, 56, 1442, 1101]
 

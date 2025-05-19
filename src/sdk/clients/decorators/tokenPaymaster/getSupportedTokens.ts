@@ -1,3 +1,4 @@
+import { toHex } from "viem"
 import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 import type { SCSPaymasterClient } from "../../createSCSPaymasterClient"
 import type { FeeQuote } from "./getTokenPaymasterQuotes"
@@ -27,9 +28,12 @@ export const getSupportedTokens = async (
     ]
   })
   const paymaster = client.paymaster as SCSPaymasterClient
+  if (!client?.chain?.id) throw new Error('Chain ID is required')
   const quote = await paymaster.getTokenPaymasterQuotes({
     userOp,
-    tokenList: []
+    chainId: toHex(client.chain.id)
+    // Review: can be removed
+    // tokenList: []
   })
 
   return quote.feeQuotes
