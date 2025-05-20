@@ -25,7 +25,7 @@ export type GetPreviousModuleParameters<
  * @example
  * import { getPreviousModule } from 'startale-aa-sdk'
  *
- * const previousModuleAddress = await getPreviousModule(nexusClient, {
+ * const previousModuleAddress = await getPreviousModule(startaleClient, {
  *   module: {
  *     type: 'validator',
  *     moduleAddress: '0x...',
@@ -43,7 +43,7 @@ export async function getPreviousModule<
 
   if (!account_) {
     throw new AccountNotFoundError({
-      docsPath: "/nexus-client/methods#sendtransaction"
+      docsPath: "/startale-client/methods#sendtransaction"
     })
   }
 
