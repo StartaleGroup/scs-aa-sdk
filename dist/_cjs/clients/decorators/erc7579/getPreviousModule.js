@@ -8,7 +8,7 @@ async function getPreviousModule(client, parameters) {
     const { account: account_ = client.account, module } = parameters;
     if (!account_) {
         throw new AccountNotFound_1.AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     let installedModules;
