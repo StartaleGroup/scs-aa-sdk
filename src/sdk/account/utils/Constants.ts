@@ -1,15 +1,16 @@
 import { type Hex, concat, keccak256, pad, toHex } from "viem"
 export const ADDRESS_ZERO: Hex = "0x0000000000000000000000000000000000000000"
 
-// Todo: Update when final prod contracts are deployed
+// Note: This is only applicable when prod env is used.
 export const STARTALE_TOKEN_PAYMASTER: Hex =
-  "0xC7d6d41DeDbfB365469FF2FFB2c89c11aC41d4f0"
+  "0x0000006C18daC1Ff8F50Df743F7587a8b7d8a8a7"
 
 export const EIP1559_UNSUPPORTED_NETWORKS: Array<number> = [97, 56, 1442, 1101]
 
 export const PROXY_CREATION_CODE =
   "0x603d3d8160223d3973600966Ae45ad5BE4be08a70AD99e9cF41e6d6884B06F5155f3363d3d373d3d363d7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc545af43d6000803e6038573d6000fd5b3d6000f3"
 
+// REview: Deploy in future if we need one
 export const ADDRESS_RESOLVER_ADDRESS =
   "0x00000E81673606e07fC79CE5F1b3B26957844468"
 

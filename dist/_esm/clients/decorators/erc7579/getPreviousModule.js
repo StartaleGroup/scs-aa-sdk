@@ -13,7 +13,7 @@ const SENTINEL_ADDRESS = "0x0000000000000000000000000000000000000001";
  * @example
  * import { getPreviousModule } from 'startale-aa-sdk'
  *
- * const previousModuleAddress = await getPreviousModule(nexusClient, {
+ * const previousModuleAddress = await getPreviousModule(startaleClient, {
  *   module: {
  *     type: 'validator',
  *     moduleAddress: '0x...',
@@ -25,7 +25,7 @@ export async function getPreviousModule(client, parameters) {
     const { account: account_ = client.account, module } = parameters;
     if (!account_) {
         throw new AccountNotFoundError({
-            docsPath: "/nexus-client/methods#sendtransaction"
+            docsPath: "/startale-client/methods#sendtransaction"
         });
     }
     let installedModules;

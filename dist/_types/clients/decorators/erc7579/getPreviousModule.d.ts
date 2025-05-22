@@ -20,7 +20,7 @@ export type GetPreviousModuleParameters<TSmartAccount extends SmartAccount | und
  * @example
  * import { getPreviousModule } from 'startale-aa-sdk'
  *
- * const previousModuleAddress = await getPreviousModule(nexusClient, {
+ * const previousModuleAddress = await getPreviousModule(startaleClient, {
  *   module: {
  *     type: 'validator',
  *     moduleAddress: '0x...',
