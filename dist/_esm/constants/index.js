@@ -2,9 +2,9 @@ import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUsageLim
 export * from "./abi/index.js";
 export const ENTRY_POINT_ADDRESS = "0x0000000071727De22E5E9d8BAf0edAc6f37da032";
 export const ENTRYPOINT_SIMULATIONS_ADDRESS = "0x74Cb5e4eE81b86e70f9045036a1C5477de69eE87";
-export const BOOTSTRAP_ADDRESS = "0x000000FaA917a0609c30dF288B1dea4f1F7096a9";
-export const ACCOUNT_FACTORY_ADDRESS = "0x0000003CC24A4678aC636aB1327C592D84898a46";
-export const ACCOUNT_IMPLEMENTATION_ADDRESS = "0x000000FcA5d013e9e1D1C9f9F65ebc0c74f41d9B";
+export const BOOTSTRAP_ADDRESS = "0x000000552A5fAe3Db7a8F3917C435448F49BA6a9";
+export const ACCOUNT_FACTORY_ADDRESS = "0x0000003B3E7b530b4f981aE80d9350392Defef90";
+export const ACCOUNT_IMPLEMENTATION_ADDRESS = "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A";
 // Rhinestone constants
 export { SMART_SESSIONS_ADDRESS, OWNABLE_VALIDATOR_ADDRESS, OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
 export const UNIVERSAL_ACTION_POLICY_ADDRESS = '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F';

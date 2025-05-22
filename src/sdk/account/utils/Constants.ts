@@ -1,8 +1,9 @@
 import { type Hex, concat, keccak256, pad, toHex } from "viem"
 export const ADDRESS_ZERO: Hex = "0x0000000000000000000000000000000000000000"
 
+// Note: This is only applicable when prod env is used.
 export const STARTALE_TOKEN_PAYMASTER: Hex =
-  "0x000000AF44af54512581c0c05aeCAb9BDfC0bA26"
+  "0x0000006C18daC1Ff8F50Df743F7587a8b7d8a8a7"
 
 export const EIP1559_UNSUPPORTED_NETWORKS: Array<number> = [97, 56, 1442, 1101]
 
