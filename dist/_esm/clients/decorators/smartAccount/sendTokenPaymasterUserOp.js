@@ -1,9 +1,6 @@
-import { maxUint256 } from "viem";
-import { erc20Abi } from "viem";
-import { encodeFunctionData } from "viem";
+import {} from "viem";
 import { sendUserOperation } from "viem/account-abstraction";
 import { getAction } from "viem/utils";
-import { STARTALE_TOKEN_PAYMASTER } from "../../../account/utils/Constants.js";
 import { prepareTokenPaymasterUserOp } from "./prepareTokenPaymasterUserOp.js";
 /**
  * Prepares and sends a user operation with token paymaster
@@ -32,18 +29,8 @@ import { prepareTokenPaymasterUserOp } from "./prepareTokenPaymasterUserOp.js";
 export async function sendTokenPaymasterUserOp(client, args) {
     const { calls, feeTokenAddress, customApprovalAmount } = args;
     const userOp = await getAction(client, prepareTokenPaymasterUserOp, "prepareTokenPaymasterUserOperation")({
-        calls: [
-            {
-                to: feeTokenAddress,
-                data: encodeFunctionData({
-                    functionName: "approve",
-                    abi: erc20Abi,
-                    args: [STARTALE_TOKEN_PAYMASTER, customApprovalAmount ?? maxUint256]
-                }),
-                value: BigInt(0)
-            },
-            ...calls
-        ],
+        calls,
+        // Removed batching approval here as it is part of prepareTokenPaymasterUserOp
         feeTokenAddress,
         customApprovalAmount
     });
