@@ -24,7 +24,7 @@ declare const abi: {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getActiveHook } from 'startale-aa-sdk'
+ * import { getActiveHook } from '@startale-scs/test-sdk'
  *
  * const activeHook = await getActiveHook(startaleClient)
  * console.log(activeHook) // '0x...'

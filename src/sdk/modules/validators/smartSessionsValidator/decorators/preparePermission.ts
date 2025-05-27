@@ -228,7 +228,7 @@ export const getPermissionAction = async ({
  *
  * @example
  * ```typescript
- * import { preparePermission } from 'startale-aa-sdk'
+ * import { preparePermission } from '@startale-scs/test-sdk'
  *
  * const result = await preparePermission(startaleClient, {
  *   sessionRequestedInfo: [

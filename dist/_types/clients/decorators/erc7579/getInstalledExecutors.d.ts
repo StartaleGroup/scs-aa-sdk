@@ -39,7 +39,7 @@ declare const abi: readonly [{
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getInstalledExecutors } from 'startale-aa-sdk'
+ * import { getInstalledExecutors } from '@startale-scs/test-sdk'
  *
  * const [executors, nextCursor] = await getInstalledExecutors(startaleClient, {
  *   pageSize: 10n

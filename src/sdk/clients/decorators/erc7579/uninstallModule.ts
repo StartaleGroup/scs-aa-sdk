@@ -37,7 +37,7 @@ export type UninstallModuleParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModule } from 'startale-aa-sdk'
+ * import { uninstallModule } from '@startale-scs/test-sdk'
  *
  * const userOpHash = await uninstallModule(startaleClient, {
  *   module: {

@@ -10,7 +10,7 @@ import type { Hex } from "viem"
  *
  * @example
  * ```typescript
- * import { getVersion } from 'startale-aa-sdk'
+ * import { getVersion } from '@startale-scs/test-sdk'
  *
  * console.log(`Using SCS SDK version: ${getVersion()}`)
  * ```
@@ -44,7 +44,7 @@ export function getVersion(): string {
  *
  * @example
  * ```typescript
- * import { semverCompare } from 'startale-aa-sdk'
+ * import { semverCompare } from '@startale-scs/test-sdk'
  *
  * // Returns negative number (a < b)
  * semverCompare("1.2.3", "1.3.0")
@@ -85,7 +85,7 @@ export const semverCompare = (a: string, b: string): number => {
  *
  * @example
  * ```typescript
- * import { versionMeetsRequirement } from 'startale-aa-sdk'
+ * import { versionMeetsRequirement } from '@startale-scs/test-sdk'
  *
  * // Returns true (current version exceeds required)
  * versionMeetsRequirement("1.3.0", "1.2.0")
@@ -120,7 +120,7 @@ export const versionMeetsRequirement = (
  *
  * @example
  * ```typescript
- * import { isVersionOlder } from 'startale-aa-sdk'
+ * import { isVersionOlder } from '@startale-scs/test-sdk'
  *
  * // Returns true (current version is older than reference)
  * isVersionOlder("1.2.0", "1.3.0")
@@ -155,7 +155,7 @@ export const isVersionOlder = (
  *
  * @example
  * ```typescript
- * import { isVersionNewer } from 'startale-aa-sdk'
+ * import { isVersionNewer } from '@startale-scs/test-sdk'
  *
  * // Returns true (current version is newer than reference)
  * isVersionNewer("1.3.0", "1.2.3")

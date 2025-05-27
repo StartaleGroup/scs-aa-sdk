@@ -39,7 +39,7 @@ export type UpgradeSmartAccountParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { upgradeSmartAccount } from 'startale-aa-sdk'
+ * import { upgradeSmartAccount } from '@startale-scs/test-sdk'
  *
  * const userOpHash = await upgradeSmartAccount(startaleClient, {
  *   // Optional custom implementation address

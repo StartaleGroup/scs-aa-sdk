@@ -54,7 +54,7 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getFallbackBySelector } from 'startale-aa-sdk'
+ * import { getFallbackBySelector } from '@startale-scs/test-sdk'
  *
  * const [callType, handlerAddress] = await getFallbackBySelector(startaleClient, {
  *   selector: '0x12345678'

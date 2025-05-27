@@ -28,7 +28,7 @@ export type SCSActions = {
      * @example
      *
      * import { createClient } from "viem"
-     * import { scsBundlerActions } from "startale-aa-sdk"
+     * import { scsBundlerActions } from "@startale-scs/test-sdk"
      *
      * const bundlerClient = createClient({
      *      chain: goerli,

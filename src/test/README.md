@@ -1,4 +1,4 @@
-# startale-aa-sdk Testing Framework
+# @startale-scs/test-sdk Testing Framework
 
 ## Testing Setup
 

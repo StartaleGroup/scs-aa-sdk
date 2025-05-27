@@ -24,7 +24,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { sendTransaction } from 'startale-aa-sdk'
+ * import { sendTransaction } from '@startale-scs/test-sdk'
  *
  * const hash = await sendTransaction(startaleClient, {
  *   to: '0x...',

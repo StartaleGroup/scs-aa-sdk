@@ -13,7 +13,7 @@ import { parseModuleTypeId } from "./supportsModule.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallFallback } from 'startale-aa-sdk'
+ * import { uninstallFallback } from '@startale-scs/test-sdk'
  *
  * const userOpHash = await uninstallFallback(startaleClient, {
  *   module: {

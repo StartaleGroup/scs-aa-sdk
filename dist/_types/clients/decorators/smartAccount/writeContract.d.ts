@@ -9,7 +9,7 @@ import type { SmartAccount } from "viem/account-abstraction";
  * @throws {Error} If the 'to' address is missing in the request.
  *
  * @example
- * import { writeContract } from 'startale-aa-sdk'
+ * import { writeContract } from '@startale-scs/test-sdk'
  * import { encodeFunctionData } from 'viem'
  *
  * const encodedCall = encodeFunctionData({
