@@ -27,6 +27,9 @@ config()
 export const BASE_SEPOLIA_RPC_URL =
   "https://virtual.base-sepolia.rpc.tenderly.co/3c4d2e0f-2d96-457e-bbfe-02c5b60c0cf1"
 
+export const SONEIUM_MINATO_RPC_URL =
+  "https://virtual.soneium-minato.rpc.tenderly.co/c29ef0cd-b48b-4691-a0a0-8268aad7d0ec"
+
 type AnvilInstance = ReturnType<typeof anvil>
 type BundlerInstance = ReturnType<typeof alto>
 type BundlerDto = {
