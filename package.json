@@ -1,6 +1,6 @@
 {
-  "name": "startale-aa-sdk",
-  "version": "0.0.19",
+  "name": "@startale-scs/test-sdk",
+  "version": "1.0.0",
   "author": "SCS",
   "repository": {
     "type": "git",
