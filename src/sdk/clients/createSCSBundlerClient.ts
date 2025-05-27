@@ -103,7 +103,7 @@ type SCSBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
  * @returns SCS Bundler Client
  *
  * @example
- * import { createSCSBundlerClient, http } from '@startale-scs/test-sdk'
+ * import { createSCSBundlerClient, http } from '@startale-scs/aa-sdk'
  * import { mainnet } from 'viem/chains'
  *
  * const bundlerClient = createSCSBundlerClient({ chain: mainnet });

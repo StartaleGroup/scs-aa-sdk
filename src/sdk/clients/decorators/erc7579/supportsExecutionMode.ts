@@ -95,7 +95,7 @@ export function encodeExecutionMode<callType extends CallType>({
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsExecutionMode } from '@startale-scs/test-sdk'
+ * import { supportsExecutionMode } from '@startale-scs/aa-sdk'
  *
  * const isSupported = await supportsExecutionMode(startaleClient, {
  *   type: 'call',

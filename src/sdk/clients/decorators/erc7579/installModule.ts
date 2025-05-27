@@ -46,7 +46,7 @@ export type InstallModuleParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModule } from '@startale-scs/test-sdk'
+ * import { installModule } from '@startale-scs/aa-sdk'
  *
  * const userOpHash = await installModule(startaleClient, {
  *   module: {

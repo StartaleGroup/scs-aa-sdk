@@ -21,7 +21,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { accountId } from '@startale-scs/test-sdk'
+ * import { accountId } from '@startale-scs/aa-sdk'
  *
  * const id = await accountId(startaleClient)
  * console.log(id) // 'example_account_id'

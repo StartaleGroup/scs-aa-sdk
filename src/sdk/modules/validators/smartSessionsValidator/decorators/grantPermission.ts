@@ -50,7 +50,7 @@ export type GrantPermissionParameters<
  *
  * @example
  * ```typescript
- * import { grantPermission } from '@startale-scs/test-sdk'
+ * import { grantPermission } from '@startale-scs/aa-sdk'
  *
  * const result = await grantPermission(startaleClient, {
  *   sessionRequestedInfo: [

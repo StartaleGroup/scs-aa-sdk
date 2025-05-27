@@ -35,7 +35,7 @@ export declare function parseModuleTypeId(type: ModuleType): bigint;
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsModule } from '@startale-scs/test-sdk'
+ * import { supportsModule } from '@startale-scs/aa-sdk'
  *
  * const isSupported = await supportsModule(startaleClient, {
  *   type: 'executor'

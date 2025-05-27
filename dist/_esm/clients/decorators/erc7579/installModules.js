@@ -11,7 +11,7 @@ import { toInstallWithSafeSenderCalls } from "./installModule.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModules } from '@startale-scs/test-sdk'
+ * import { installModules } from '@startale-scs/aa-sdk'
  *
  * const userOpHash = await installModules(startaleClient, {
  *   modules: [

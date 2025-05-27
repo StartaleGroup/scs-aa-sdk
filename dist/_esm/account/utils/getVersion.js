@@ -8,7 +8,7 @@
  *
  * @example
  * ```typescript
- * import { getVersion } from '@startale-scs/test-sdk'
+ * import { getVersion } from '@startale-scs/aa-sdk'
  *
  * console.log(`Using SCS SDK version: ${getVersion()}`)
  * ```
@@ -42,7 +42,7 @@ export function getVersion() {
  *
  * @example
  * ```typescript
- * import { semverCompare } from '@startale-scs/test-sdk'
+ * import { semverCompare } from '@startale-scs/aa-sdk'
  *
  * // Returns negative number (a < b)
  * semverCompare("1.2.3", "1.3.0")
@@ -82,7 +82,7 @@ export const semverCompare = (a, b) => {
  *
  * @example
  * ```typescript
- * import { versionMeetsRequirement } from '@startale-scs/test-sdk'
+ * import { versionMeetsRequirement } from '@startale-scs/aa-sdk'
  *
  * // Returns true (current version exceeds required)
  * versionMeetsRequirement("1.3.0", "1.2.0")
@@ -112,7 +112,7 @@ export const versionMeetsRequirement = (currentVersion, requiredVersion) => {
  *
  * @example
  * ```typescript
- * import { isVersionOlder } from '@startale-scs/test-sdk'
+ * import { isVersionOlder } from '@startale-scs/aa-sdk'
  *
  * // Returns true (current version is older than reference)
  * isVersionOlder("1.2.0", "1.3.0")
@@ -142,7 +142,7 @@ export const isVersionOlder = (currentVersion, referenceVersion) => {
  *
  * @example
  * ```typescript
- * import { isVersionNewer } from '@startale-scs/test-sdk'
+ * import { isVersionNewer } from '@startale-scs/aa-sdk'
  *
  * // Returns true (current version is newer than reference)
  * isVersionNewer("1.3.0", "1.2.3")

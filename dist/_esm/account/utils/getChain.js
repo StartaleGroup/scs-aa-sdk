@@ -56,7 +56,7 @@ export const stringOrStringsToArray = (str) => Array.isArray(str) ? str : [str];
  *
  * @example
  *
- * import { getCustomChain, createSmartAccountClient } from "@startale-scs/test-sdk"
+ * import { getCustomChain, createSmartAccountClient } from "@startale-scs/aa-sdk"
  *
  * const customChain = getCustomChain(
  *   "My Custom Chain",

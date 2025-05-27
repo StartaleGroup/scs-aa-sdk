@@ -60,7 +60,7 @@ const abi = [
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { getInstalledValidators } from '@startale-scs/test-sdk'
+ * import { getInstalledValidators } from '@startale-scs/aa-sdk'
  *
  * const [validators, nextCursor] = await getInstalledValidators(startaleClient, {
  *   pageSize: 10n
