@@ -1,5 +1,5 @@
 import { http, type Prettify, type Transport } from "viem"
-import { type Chain, base, optimism } from "viem/chains"
+import { type Chain, base, optimism, soneium, soneiumMinato } from "viem/chains"
 import { test } from "vitest"
 import {
   BASE_SEPOLIA_RPC_URL,
@@ -8,10 +8,11 @@ import {
   initNetwork
 } from "./testUtils"
 
-const MAINNET_CHAINS_FOR_TESTING: Chain[] = [optimism, base]
+const MAINNET_CHAINS_FOR_TESTING: Chain[] = [optimism, base, soneium]
 const MAINNET_TRANSPORTS_FOR_TESTING: Transport[] = [
   http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`),
-  http(`https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`)
+  http(`https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`),
+  // Soneium mainnet
 ]
 
 export const testnetTest = test.extend<{
@@ -32,6 +33,8 @@ export type TestFileNetworkType =
   | "COMMUNAL_ANVIL_NETWORK"
 
 type PrettifiedNetworkConfig = Prettify<NetworkConfig>
+
+// Review: Based on this it would pick desired network for testing
 export const toNetwork = async (
   networkType: TestFileNetworkType = "BESPOKE_ANVIL_NETWORK"
 ): Promise<PrettifiedNetworkConfig> => {
@@ -68,6 +71,7 @@ export const paymasterTruthy = () => {
  * @returns The sorted chains of the order: [optimism, base]
  * @throws {Error} If the chain is not supported
  */
+// Review and add accordingly
 export const getTestChainConfig = (
   network: NetworkConfig
 ): [Chain[], Transport[]] => {

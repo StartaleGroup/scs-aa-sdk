@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { getAddress, isHex } from "viem"
-import { base, baseSepolia, optimism } from "viem/chains"
+import { base, baseSepolia, optimism, soneiumMinato } from "viem/chains"
 import coinDataFromJson from "../.data/coinData.json"
 import coinIdsFromJson from "../.data/coinIds.json"
 import networkIdMap from "../.data/networkIdMap.json"

@@ -8,7 +8,7 @@ import {
   createPublicClient
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
-import { baseSepolia } from "viem/chains"
+import { soneiumMinato, baseSepolia } from "viem/chains"
 import { beforeAll, describe, expect, inject, test } from "vitest"
 import { toNetwork } from "../../test/testSetup"
 import type { NetworkConfig } from "../../test/testUtils"
@@ -25,7 +25,7 @@ const { runPaidTests } = inject("settings")
 const COMPETITORS = [
   {
     name: "Alto",
-    chain: baseSepolia,
+    chain: soneiumMinato,
     bundlerUrl: `https://api.pimlico.io/v2/${baseSepolia.id}/rpc?apikey=${process.env.PIMLICO_API_KEY}`,
     mock: true
   },

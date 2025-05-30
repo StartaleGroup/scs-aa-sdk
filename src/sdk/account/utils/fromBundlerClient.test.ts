@@ -1,7 +1,7 @@
 import { http, createPublicClient, createWalletClient } from "viem"
 import { createBundlerClient } from "viem/account-abstraction"
 import { privateKeyToAccount } from "viem/accounts"
-import { mainnet } from "viem/chains"
+import { soneium } from "viem/chains"
 import { describe, expect, it } from "vitest"
 import { toStartaleSmartAccount } from "../toStartaleSmartAccount"
 import {
@@ -18,7 +18,7 @@ describe("utils.fromBundlerClient", async () => {
   // Create real instances for testing
   const transport = http()
   const publicClient = createPublicClient({
-    chain: mainnet,
+    chain: soneium,
     transport
   })
 
@@ -29,7 +29,7 @@ describe("utils.fromBundlerClient", async () => {
 
   // Create a real bundler client
   const bundlerClient = createBundlerClient({
-    chain: mainnet,
+    chain: soneium,
     transport
   })
 
@@ -38,7 +38,7 @@ describe("utils.fromBundlerClient", async () => {
 
   // Create a real Startale Smart Account
   const smartAccount = await toStartaleSmartAccount({
-    chain: mainnet,
+    chain: soneium,
     signer,
     transport: http()
   })
@@ -53,7 +53,7 @@ describe("utils.fromBundlerClient", async () => {
     it("should extract public client successfully", () => {
       const result = fromBundlerClientToPublicClient(bundlerClientWithAccount)
       expect(result).toBe(smartAccount.client)
-      expect(result.chain.id).toBe(mainnet.id)
+      expect(result.chain.id).toBe(soneium.id)
     })
 
     it("should throw error if smart account is not found", () => {
@@ -63,7 +63,7 @@ describe("utils.fromBundlerClient", async () => {
       } as unknown as BundlerClientTypes
 
       expect(() => fromBundlerClientToPublicClient(invalidClient)).toThrow(
-        "Smart account not found"
+        "Startale account not found"
       )
     })
   })
@@ -82,7 +82,7 @@ describe("utils.fromBundlerClient", async () => {
       } as unknown as BundlerClientTypes
 
       expect(() => fromBundlerClientToStartaleAccount(invalidClient)).toThrow(
-        "Smart account not found"
+        "Startale account not found"
       )
     })
   })
@@ -90,8 +90,8 @@ describe("utils.fromBundlerClient", async () => {
   describe("fromBundlerClientToChain", () => {
     it("should extract chain successfully", () => {
       const result = fromBundlerClientToChain(bundlerClientWithAccount)
-      expect(result.id).toBe(mainnet.id)
-      expect(result.name).toBe(mainnet.name)
+      expect(result.id).toBe(soneium.id)
+      expect(result.name).toBe(soneium.name)
     })
 
     it("should throw error if chain is not found", () => {
@@ -112,7 +112,7 @@ describe("utils.fromBundlerClient", async () => {
   describe("fromBundlerClientToChainId", () => {
     it("should extract chain ID successfully", () => {
       const result = fromBundlerClientToChainId(bundlerClientWithAccount)
-      expect(result).toBe(mainnet.id)
+      expect(result).toBe(soneium.id)
     })
   })
 

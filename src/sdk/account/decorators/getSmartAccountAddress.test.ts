@@ -7,7 +7,7 @@ import {
   createPublicClient
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
-import { baseSepolia } from "viem/chains"
+import { baseSepolia, soneiumMinato } from "viem/chains"
 import { beforeAll, describe, expect, test } from "vitest"
 import { toNetwork } from "../../../test/testSetup"
 import type { MasterClient, NetworkConfig } from "../../../test/testUtils"
@@ -97,10 +97,12 @@ describe("account.decorators.getSmartAccountAddress.testnet", () => {
       signer: eoaAccount
     })
 
+    // updating url
+    // https://soneium-minato.bundler.scs.startale.com?apikey=SCS_API_KEY
     const startaleClient = createSCSBundlerClient({
       account,
       transport: http(
-        `https://api.pimlico.io/v2/${baseSepolia.id}/rpc?apikey=${process.env.PIMLICO_API_KEY}`
+        `https://soneium-minato.bundler.scs.startale.com?apikey=${process.env.SCS_MINATO_BUNDLER_API_KEY}`
       )
     })
 
