@@ -81,7 +81,7 @@ export type SmartAccountActions<TChain extends Chain | undefined = Chain | undef
      * @throws {AccountNotFoundError} If the account is not found.
      *
      * @example
-     * import { sendTransaction } from 'startale-aa-sdk'
+     * import { sendTransaction } from '@startale-scs/aa-sdk'
      *
      * const hash = await startaleClient.sendTransaction({calls: [{to: '0x...', value: parseEther('0.1'), data: '0x...'}]})
      * console.log(hash) // '0x...'

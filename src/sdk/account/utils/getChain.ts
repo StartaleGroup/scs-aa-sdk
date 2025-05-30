@@ -66,7 +66,7 @@ type StringOrStrings = string | string[]
  *
  * @example
  *
- * import { getCustomChain, createSmartAccountClient } from "startale-aa-sdk"
+ * import { getCustomChain, createSmartAccountClient } from "@startale-scs/aa-sdk"
  *
  * const customChain = getCustomChain(
  *   "My Custom Chain",

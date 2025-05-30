@@ -14,7 +14,7 @@ import { parseModuleTypeId } from "./supportsModule.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { uninstallModule } from 'startale-aa-sdk'
+ * import { uninstallModule } from '@startale-scs/aa-sdk'
  *
  * const userOpHash = await uninstallModule(startaleClient, {
  *   module: {

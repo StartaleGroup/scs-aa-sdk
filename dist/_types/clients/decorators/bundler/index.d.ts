@@ -14,6 +14,11 @@ export type MiscRpcSchema = [
         ReturnType: any;
     },
     {
+        Method: "eth_getBlockByNumber";
+        Parameters: [string, boolean];
+        ReturnType: any;
+    },
+    {
         Method: "biconomy_getUserOperationStatus";
         Parameters: [string];
         ReturnType: GetUserOperationStatusReturnType;
@@ -28,7 +33,7 @@ export type SCSActions = {
      * @example
      *
      * import { createClient } from "viem"
-     * import { scsBundlerActions } from "startale-aa-sdk"
+     * import { scsBundlerActions } from "@startale-scs/aa-sdk"
      *
      * const bundlerClient = createClient({
      *      chain: goerli,

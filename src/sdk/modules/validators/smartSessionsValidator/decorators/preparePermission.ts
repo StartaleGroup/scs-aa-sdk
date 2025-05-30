@@ -82,11 +82,13 @@ export const getPermissionAction = async ({
     const policyData: PolicyData[] = []
 
     // create time frame policy here..
-    // const timeFramePolicyData = getTimeFramePolicy({
+    // const timeFramePolicy = getTimeFramePolicy({
     //   validUntil: actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
     //   validAfter: actionPolicyInfo.validAfter ?? 0
     // })
-    // policyData.push(timeFramePolicyData)
+    // Todo: Get TimeFramePolicy audited and deploy on Soneium
+    // Note: currently this throws UnsupportedPolicy
+    // policyData.push(timeFramePolicy)
 
     const hasValidRules =
       actionPolicyInfo?.rules && actionPolicyInfo?.rules?.length > 0
@@ -226,7 +228,7 @@ export const getPermissionAction = async ({
  *
  * @example
  * ```typescript
- * import { preparePermission } from 'startale-aa-sdk'
+ * import { preparePermission } from '@startale-scs/aa-sdk'
  *
  * const result = await preparePermission(startaleClient, {
  *   sessionRequestedInfo: [

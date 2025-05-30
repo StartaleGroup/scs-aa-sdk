@@ -51,7 +51,7 @@ export function parseModuleTypeId(type) {
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { supportsModule } from 'startale-aa-sdk'
+ * import { supportsModule } from '@startale-scs/aa-sdk'
  *
  * const isSupported = await supportsModule(startaleClient, {
  *   type: 'executor'

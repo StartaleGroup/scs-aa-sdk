@@ -11,7 +11,7 @@ const SENTINEL_ADDRESS = "0x0000000000000000000000000000000000000001";
  * @throws {Error} If the module type is unknown or the module is not found.
  *
  * @example
- * import { getPreviousModule } from 'startale-aa-sdk'
+ * import { getPreviousModule } from '@startale-scs/aa-sdk'
  *
  * const previousModuleAddress = await getPreviousModule(startaleClient, {
  *   module: {

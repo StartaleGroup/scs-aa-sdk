@@ -1,4 +1,4 @@
-import type { Account, Chain, Client, Hex, Transport } from "viem";
+import { type Account, type Chain, type Client, type Hex, type Transport } from "viem";
 import type { MiscRpcSchema } from ".";
 export type UserOperationGasPriceWithBigIntAsHex = {
     slow: {

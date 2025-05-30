@@ -23,7 +23,7 @@ export type GetPreviousModuleParameters<
  * @throws {Error} If the module type is unknown or the module is not found.
  *
  * @example
- * import { getPreviousModule } from 'startale-aa-sdk'
+ * import { getPreviousModule } from '@startale-scs/aa-sdk'
  *
  * const previousModuleAddress = await getPreviousModule(startaleClient, {
  *   module: {

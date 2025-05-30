@@ -26,7 +26,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { signTypedData } from 'startale-aa-sdk'
+ * import { signTypedData } from '@startale-scs/aa-sdk'
  * import { keccak256, encodeAbiParameters, parseAbiParameters } from 'viem'
  *
  * const domain = {

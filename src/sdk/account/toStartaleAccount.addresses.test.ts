@@ -6,7 +6,7 @@ import {
   type WalletClient,
   createWalletClient
 } from "viem"
-import { base, baseSepolia } from "viem/chains"
+import { base, baseSepolia, soneium, soneiumMinato } from "viem/chains"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { toNetwork } from "../../test/testSetup"
 import { getTestAccount, killNetwork, toTestClient } from "../../test/testUtils"
@@ -93,7 +93,7 @@ describe("startale.account.addresses", async () => {
   test("should check that mainnet and testnet addresses are different", async () => {
     const mainnetClient = createSmartAccountClient({
       account: await toStartaleSmartAccount({
-        chain: base,
+        chain: soneium,
         signer: eoaAccount,
         transport: http()
       }),
@@ -103,7 +103,7 @@ describe("startale.account.addresses", async () => {
 
     const testnetClient = createSmartAccountClient({
       account: await toStartaleSmartAccount({
-        chain: baseSepolia,
+        chain: soneiumMinato,
         signer: eoaAccount,
         transport: http()
       }),

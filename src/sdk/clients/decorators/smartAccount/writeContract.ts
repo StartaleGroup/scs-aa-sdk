@@ -24,7 +24,7 @@ import { sendTransaction } from "./sendTransaction"
  * @throws {Error} If the 'to' address is missing in the request.
  *
  * @example
- * import { writeContract } from 'startale-aa-sdk'
+ * import { writeContract } from '@startale-scs/aa-sdk'
  * import { encodeFunctionData } from 'viem'
  *
  * const encodedCall = encodeFunctionData({

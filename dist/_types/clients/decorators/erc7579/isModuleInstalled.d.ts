@@ -34,7 +34,7 @@ declare const abi: readonly [{
  * @throws {Error} If the accountId result is empty.
  *
  * @example
- * import { isModuleInstalled } from 'startale-aa-sdk'
+ * import { isModuleInstalled } from '@startale-scs/aa-sdk'
  *
  * const isInstalled = await isModuleInstalled(startaleClient, {
  *   module: {

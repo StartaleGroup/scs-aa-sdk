@@ -12,7 +12,7 @@ import { ACCOUNT_IMPLEMENTATION_ADDRESS } from "../../../constants/index.js";
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { upgradeSmartAccount } from 'startale-aa-sdk'
+ * import { upgradeSmartAccount } from '@startale-scs/aa-sdk'
  *
  * const userOpHash = await upgradeSmartAccount(startaleClient, {
  *   // Optional custom implementation address

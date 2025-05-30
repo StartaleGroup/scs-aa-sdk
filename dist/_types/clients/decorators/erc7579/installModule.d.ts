@@ -19,7 +19,7 @@ export type InstallModuleParameters<TSmartAccount extends SmartAccount | undefin
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { installModule } from 'startale-aa-sdk'
+ * import { installModule } from '@startale-scs/aa-sdk'
  *
  * const userOpHash = await installModule(startaleClient, {
  *   module: {

@@ -12,7 +12,7 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js"
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { signMessage } from 'startale-aa-sdk'
+ * import { signMessage } from '@startale-scs/aa-sdk'
  *
  * const signature = await signMessage(startaleClient, {
  *   message: 'Hello, World!!'
