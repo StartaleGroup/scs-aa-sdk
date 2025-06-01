@@ -38,24 +38,13 @@ type SCSPaymasterClientConfig = Omit<PaymasterClientConfig, "transport"> &
   >
 
 /**
- * Context for the SCS SPONSORED Paymaster.
+ * Possible Context for the SCS Paymaster.
  */
 export type SCSPaymasterContext = {
-  // mode: "ERC20" | "SPONSORED"
-  // sponsorshipInfo?: {
-  //   smartAccountInfo: {
-  //     name: string
-  //     version: string
-  //   }
-  // }
-  // tokenInfo?: {
-  //   feeTokenAddress: Address
-  // }
   paymasterId?: string
   token?: Address
   // expiryDuration?: number
   calculateGasLimits?: boolean
-
 }
 
 type ToSCSTokenPaymasterContextParams = {
@@ -65,20 +54,18 @@ type ToSCSTokenPaymasterContextParams = {
   calculateGasLimits?: boolean
 }
 
-export const scsSponsoredPaymasterContext: SCSPaymasterContext = {
-  // mode: "SPONSORED",
-  // Note: This is fixed from the SCS Pm service backend
-  // expiryDuration: 300,
-  calculateGasLimits: true,
-  // Review this has to be dynamic
-  paymasterId: "pm_test"
-}
+// These should not be any default hardcoded context
+// export const scsSponsoredPaymasterContext: SCSPaymasterContext = {
+//   calculateGasLimits: true,
+//   // Review this has to be dynamic
+//   // paymasterId: "pm_test"
+// }
 
 export const toSCSSponsoredPaymasterContext = (
   params?: Partial<SCSPaymasterContext>
 ): SCSPaymasterContext => {
   return {
-    ...scsSponsoredPaymasterContext,
+    calculateGasLimits: true,
     ...params
   }
 }
@@ -89,8 +76,6 @@ export const toSCSTokenPaymasterContext = (
   const { calculateGasLimits } = params
   return {
     token: params.token,
-    // Note: This is fixed from the SCS Pm service backend
-    // expiryDuration: expiryDuration ?? 6000,
     calculateGasLimits: calculateGasLimits ?? true
   }
 }
@@ -136,7 +121,7 @@ export const createSCSPaymasterClient = (
     : parameters.paymasterUrl
       ? http(parameters.paymasterUrl)
       : http(
-          `https://paymaster.biconomy.io/api/v2/${parameters.chainId}/${parameters.apiKey}`
+          `https://paymaster.scs.startale.com/v1?apikey=${parameters.apiKey}`
         )
 
   // Todo: Update default to https://dev.paymaster.scs.startale.com/v1?apikey=scsadmin-paymaster (or prod)

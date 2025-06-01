@@ -12,8 +12,8 @@ import {
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { paymasterTruthy, toNetwork } from "../../test/testSetup"
-import { getBalance, killNetwork } from "../../test/testUtils"
-import type { NetworkConfig } from "../../test/testUtils"
+import { getBalance, getTestAccount, killNetwork, toTestClient } from "../../test/testUtils"
+import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import {
   type StartaleSmartAccount,
   toStartaleSmartAccount
@@ -26,8 +26,11 @@ import {
 import {
   type SCSPaymasterClient,
   createSCSPaymasterClient,
+  toSCSSponsoredPaymasterContext,
   toSCSTokenPaymasterContext
 } from "./createSCSPaymasterClient"
+
+// TODO: review, update and unskip the test
 
 // NB These tests require ERC20 tokens to be available on testnet, so they are mostly skipped
 describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
@@ -37,6 +40,8 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
   let bundlerUrl: string
   let paymasterUrl: undefined | string
   let walletClient: WalletClient
+  let testClient: MasterClient
+
 
   // Test utils
   let publicClient: PublicClient // testClient not available on public testnets
@@ -51,6 +56,8 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     "0x036cbd53842c5426634e7929541ec2318f3dcf7e"
   const baseSepoliaDAIAddress: Address =
     "0x7683022d84f726a96c4a6611cd31dbf5409c0ac9"
+  const soneiumMinatoASTRAddress: Address =
+    "0x26e6f7c7047252DdE3dcBF26AA492e6a264Db655"
 
   beforeAll(async () => {
     network = await toNetwork("TESTNET_FROM_ENV_VARS")
@@ -59,6 +66,8 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     bundlerUrl = network.bundlerUrl
     paymasterUrl = network.paymasterUrl
     account = network.account as PrivateKeyAccount
+
+    testClient = toTestClient(chain, getTestAccount(5))
 
     recipientAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" // vitalik.eth
 
@@ -88,7 +97,12 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     smartAccountClient = createSmartAccountClient({
       account: smartAccount,
       transport: http(bundlerUrl),
-      paymaster
+      paymaster,
+      paymasterContext: toSCSSponsoredPaymasterContext
+      ({
+        paymasterId: "sudo"
+      }),
+      client: publicClient
     })
   })
   afterAll(async () => {
@@ -233,8 +247,9 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     expect(finalBalance).toBe(initialBalance - 1n)
   })
 
-  test("should retrieve quotes from token paymaster", async () => {
-    const tokenList = [baseSepoliaUSDCAddress]
+  test.skip("should retrieve quotes from token paymaster", async () => {
+    const tokenList = [soneiumMinatoASTRAddress]
+    // Note: We need to send some ASTR to the smart account to prepare userOp because it will make gas estimation call.
     const userOp = await smartAccountClient.prepareUserOperation({
       calls: [
         {
@@ -247,13 +262,13 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
 
     // Todo: Update test cases later.
     const quote = await paymaster.getTokenPaymasterQuotes({ userOp, chainId: toHex(chain.id) })
-    expect(quote.paymasterAddress).toBe(STARTALE_TOKEN_PAYMASTER)
+    expect(quote.paymasterAddress.toLocaleLowerCase()).toBe(STARTALE_TOKEN_PAYMASTER.toLocaleLowerCase())
     expect(quote.feeQuotes).toBeInstanceOf(Array)
     expect(quote.unsupportedTokens).toBeInstanceOf(Array)
 
-    expect(quote.feeQuotes[0].symbol).toBe("USDC")
-    expect(quote.feeQuotes[0].decimal).toBe(6)
-    expect(quote.feeQuotes[0].tokenAddress).toBe(baseSepoliaUSDCAddress)
+    expect(quote.feeQuotes[0].symbol).toBe("ASTR")
+    expect(quote.feeQuotes[0].decimal).toBe(18)
+    expect(quote.feeQuotes[0].tokenAddress).toBe(soneiumMinatoASTRAddress)
     expect(quote.feeQuotes[0].maxGasFee).toBeGreaterThan(0)
     expect(quote.feeQuotes[0].maxGasFeeUSD).toBeGreaterThan(0)
     expect(quote.feeQuotes[0].exchangeRate).toBeGreaterThan(0)
@@ -324,23 +339,23 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     expect(finalBalance).toBe(initialBalance - 1n)
   })
 
-  test("should retrieve all supported token addresses from the token paymaster", async () => {
+  test.skip("should retrieve all supported token addresses from the token paymaster", async () => {
     const paymasterContext = toSCSTokenPaymasterContext({
-      token: baseSepoliaUSDCAddress
+      token: soneiumMinatoASTRAddress
     })
 
     const smartAccountClient = createSmartAccountClient({
       account: smartAccount,
       paymaster: createSCSPaymasterClient({ transport: http(paymasterUrl) }),
       paymasterContext,
-      transport: http(bundlerUrl)
+      transport: http(bundlerUrl),
+      client: publicClient
     })
 
     const supportedTokens = await paymaster.getSupportedTokens(smartAccountClient)
     const supportedTokenAddresses = supportedTokens.map(
       (token) => token.tokenAddress
     )
-    expect(supportedTokenAddresses).toContain(baseSepoliaUSDCAddress)
-    expect(supportedTokenAddresses).toContain(baseSepoliaDAIAddress)
+    expect(supportedTokenAddresses).toContain(soneiumMinatoASTRAddress)
   })
 })

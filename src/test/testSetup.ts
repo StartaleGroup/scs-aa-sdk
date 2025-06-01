@@ -4,7 +4,7 @@ import { test } from "vitest"
 import {
   BASE_SEPOLIA_RPC_URL,
   type NetworkConfig,
-  initEcosystem,
+  SONEIUM_MINATO_RPC_URL,
   initNetwork
 } from "./testUtils"
 
@@ -28,6 +28,7 @@ export const testnetTest = test.extend<{
 export type TestFileNetworkType =
   | "BESPOKE_ANVIL_NETWORK"
   | "BESPOKE_ANVIL_NETWORK_FORKING_BASE_SEPOLIA"
+  | "BESPOKE_ANVIL_NETWORK_FORKING_SONEIUM_MINATO"
   | "TESTNET_FROM_ENV_VARS"
   | "MAINNET_FROM_ENV_VARS"
   | "COMMUNAL_ANVIL_NETWORK"
@@ -39,20 +40,27 @@ export const toNetwork = async (
   networkType: TestFileNetworkType = "BESPOKE_ANVIL_NETWORK"
 ): Promise<PrettifiedNetworkConfig> => {
   switch (networkType) {
-    case "BESPOKE_ANVIL_NETWORK": {
-      return await initEcosystem()
-    }
-    case "COMMUNAL_ANVIL_NETWORK": {
-      return await initEcosystem()
-    }
-    case "BESPOKE_ANVIL_NETWORK_FORKING_BASE_SEPOLIA": {
-      return await initEcosystem({ forkUrl: BASE_SEPOLIA_RPC_URL })
-    }
+    // TODO: resolve errors with ecosystem
+    // case "BESPOKE_ANVIL_NETWORK": {
+    //   return await initEcosystem()
+    // }
+    // case "COMMUNAL_ANVIL_NETWORK": {
+    //   return await initEcosystem()
+    // }
+    // case "BESPOKE_ANVIL_NETWORK_FORKING_BASE_SEPOLIA": {
+    //   return await initEcosystem({ forkUrl: BASE_SEPOLIA_RPC_URL })
+    // }
+    // case "BESPOKE_ANVIL_NETWORK_FORKING_SONEIUM_MINATO": {
+    //   return await initEcosystem({ forkUrl: SONEIUM_MINATO_RPC_URL })
+    // }
     case "TESTNET_FROM_ENV_VARS": {
       return await initNetwork(networkType)
     }
     case "MAINNET_FROM_ENV_VARS": {
       return await initNetwork(networkType)
+    }
+    default: {
+      throw new Error(`Unsupported network type: ${networkType}`)
     }
   }
 }

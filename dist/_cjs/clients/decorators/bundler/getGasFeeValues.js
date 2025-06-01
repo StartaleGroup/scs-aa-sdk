@@ -5,14 +5,14 @@ const viem_1 = require("viem");
 const account_1 = require("../../../account/index.js");
 const getGasFeeValues = async (client) => {
     const accountClient = client;
-    const publicClient = accountClient.client;
+    const rpcUrl = accountClient.chain?.rpcUrls.default.http[0];
+    if (!rpcUrl) {
+        throw new Error("getGasFeeValues: rpcUrl is not available");
+    }
     const rpcClient = (0, viem_1.createPublicClient)({
         chain: accountClient.chain,
-        transport: (0, viem_1.http)(accountClient.chain?.rpcUrls.default.http[0])
+        transport: (0, viem_1.http)(rpcUrl)
     });
-    if (publicClient === null || publicClient === undefined) {
-        throw new Error("client must be passed during initialing smart account client");
-    }
     const priorityFeeDataFromSCS = await client.request({
         method: "rundler_maxPriorityFeePerGas",
         params: []

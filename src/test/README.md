@@ -18,6 +18,7 @@
 - Networks scoped locally are isolated to the file in which they are used.
 - Tests within the same file using a local network may conflict with each other. If needed, split tests into separate files or use the Test Scope.
 - `"BESPOKE_ANVIL_NETWORK_FORKING_BASE_SEPOLIA"` does a similar thing, but anvil assumes the current state of base sepolia instead. Overusing this can cause throttling issues from tenderly or the service that you are finding the forkUrl from. 
+- `"BESPOKE_ANVIL_NETWORK_FORKING_SONEIUM_MINATO"` does a similar thing, but anvil assumes the current state of soneium minato instead. Overusing this can cause throttling issues from tenderly or the service that you are finding the forkUrl from. 
 
 ### Testnet Scope
 - Use by setting `const NETWORK_TYPE: TestFileNetworkType = "TESTNET_FROM_ENV_VARS"` for test files that rely on the network, private key and bundler url specified in your env vars.

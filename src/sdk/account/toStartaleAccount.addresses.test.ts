@@ -32,7 +32,7 @@ describe("startale.account.addresses", async () => {
   let walletClient: WalletClient
 
   beforeAll(async () => {
-    network = await toNetwork("BESPOKE_ANVIL_NETWORK_FORKING_BASE_SEPOLIA")
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl
@@ -55,7 +55,8 @@ describe("startale.account.addresses", async () => {
     startaleClient = createSmartAccountClient({
       account: startaleAccount,
       transport: http(bundlerUrl),
-      mock: true
+      mock: true,
+      client: testClient
     })
 
     startaleAccountAddress = await startaleAccount.getAddress()
@@ -78,7 +79,8 @@ describe("startale.account.addresses", async () => {
     const newStartaleClient = createSmartAccountClient({
       account: newStartaleAccount,
       transport: http(bundlerUrl),
-      mock: true
+      mock: true,
+      client: testClient
     })
 
     const accountAddress = await newStartaleClient.account.getAddress()

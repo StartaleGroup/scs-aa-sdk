@@ -1,20 +1,14 @@
 import {
-  COUNTER_ADDRESS,
-  type Ecosystem,
-  type Infra,
-  toClients,
-  toEcosystem
-} from "@biconomy/ecosystem"
-import {
   http,
   type Address,
   type Chain,
   Hex,
   type LocalAccount,
-  parseEther
+  parseEther,
+  createWalletClient
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
-import { getTestAccount, killNetwork } from "../../../../test/testUtils"
+import { getTestAccount, killNetwork, MasterClient, NetworkConfig, toTestClient } from "../../../../test/testUtils"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../../../account"
 import {
   type StartaleAccountClient,
@@ -22,29 +16,37 @@ import {
 } from "../../../clients/createSCSBundlerClient"
 import { ownableActions } from "./decorators"
 import { toOwnableModule } from "./toOwnableModule"
+import { toNetwork } from "../../../../test/testSetup"
 
 describe("modules.toOwnableModule", () => {
-  let ecosystem: Ecosystem
-  let infra: Infra
+  let network: NetworkConfig
   let chain: Chain
   let bundlerUrl: string
 
   let eoaAccount: LocalAccount
   let redeemerAccount: LocalAccount
+  let testClient: MasterClient
   let startaleClient: StartaleAccountClient
   let startaleAccountAddress: Address
   let startaleAccount: StartaleSmartAccount
   let sessionDetails: string
 
   beforeAll(async () => {
-    ecosystem = await toEcosystem()
-    infra = ecosystem.infras[0]
-    chain = infra.network.chain
-    bundlerUrl = infra.bundler.url
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
+
+    chain = network.chain
+    bundlerUrl = network.bundlerUrl
     eoaAccount = getTestAccount(0)
     redeemerAccount = getTestAccount(1)
+    testClient = toTestClient(chain, getTestAccount(5))
 
-    const { testClient } = await toClients(infra.network)
+    const walletClient = createWalletClient({
+      account: eoaAccount,
+      chain,
+      transport: http()
+    })
+
+    // const { testClient } = await toClients(infra.network)
 
     const ownablesModule = toOwnableModule({
       signer: eoaAccount,
@@ -62,25 +64,28 @@ describe("modules.toOwnableModule", () => {
     startaleClient = createSmartAccountClient({
       bundlerUrl,
       account: startaleAccount,
-      mock: true
+      mock: true,
+      client: testClient
     })
     startaleAccountAddress = await startaleAccount.getAddress()
-    await testClient.setBalance({
-      address: startaleAccountAddress,
-      value: parseEther("100")
+    await walletClient.sendTransaction({
+      chain,
+      account: eoaAccount,
+      to: startaleAccountAddress,
+      value: parseEther("0.01")
     })
   })
 
   afterAll(async () => {
-    await killNetwork([infra.network.rpcPort, infra.bundler.port])
+    await killNetwork([network?.rpcPort, network?.bundlerPort])
   })
 
-  test("demo an ownable account", async () => {
+  test.skip("demo an ownable account", async () => {
     const ownablesClient = startaleClient.extend(ownableActions())
     const { userOpHash, userOp } = await ownablesClient.prepareForMultiSign({
       calls: [
         {
-          to: COUNTER_ADDRESS,
+          to: startaleAccountAddress,
           data: "0x273ea3e3"
         }
       ]

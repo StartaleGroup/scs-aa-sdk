@@ -1,4 +1,3 @@
-import { toEcosystem } from "@biconomy/ecosystem"
 import { config } from "dotenv"
 import type { alto, anvil } from "prool/instances"
 import {
@@ -144,30 +143,30 @@ export const initNetwork = async (
   }
 }
 
-export const initEcosystem = async ({ forkUrl }: { forkUrl?: string } = {}) => {
-  const {
-    infras: [{ network, bundler }]
-  } = await toEcosystem({ forkUrl })
+// export const initEcosystem = async ({ forkUrl }: { forkUrl?: string } = {}) => {
+//   const {
+//     infras: [{ network, bundler }]
+//   } = await toEcosystem({ forkUrl })
 
-  global.__ECOSYSTEM_INSTANCES__.set(bundler.port, bundler.instance)
-  global.__ECOSYSTEM_INSTANCES__.set(network.rpcPort, network.instance)
+//   global.__ECOSYSTEM_INSTANCES__.set(bundler.port, bundler.instance)
+//   global.__ECOSYSTEM_INSTANCES__.set(network.rpcPort, network.instance)
 
-  const result = {
-    ...network,
-    chain: network.chain as Chain,
-    account: privateKeyToAccount(network.privateKey),
-    accountTwo: mnemonicToAccount(
-      "test test test test test test test test test test test junk",
-      {
-        addressIndex: 1
-      }
-    ),
-    bundlerInstance: bundler.instance,
-    bundlerUrl: bundler.url,
-    bundlerPort: bundler.port
-  }
-  return result
-}
+//   const result = {
+//     ...network,
+//     chain: network.chain as Chain,
+//     account: privateKeyToAccount(network.privateKey),
+//     accountTwo: mnemonicToAccount(
+//       "test test test test test test test test test test test junk",
+//       {
+//         addressIndex: 1
+//       }
+//     ),
+//     bundlerInstance: bundler.instance,
+//     bundlerUrl: bundler.url,
+//     bundlerPort: bundler.port
+//   }
+//   return result
+// }
 
 export type MasterClient = ReturnType<typeof toTestClient>
 export const toTestClient = (chain: Chain, account: Account) =>
@@ -301,7 +300,6 @@ export const topUp = async (
   return await testClient.waitForTransactionReceipt({ hash })
 }
 
-// Todo
-// http://soneium-minato.dev.bundler.scs.startale.com?apikey=scsadmin
+// Todo: Update based on chainId and public bundler endpoint
 export const getBundlerUrl = (chainId: number) =>
-  `https://bundler.biconomy.io/api/v3/${chainId}/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f14`
+  `https://soneium-minato.bundler.scs.startale.com?apikey=admin`

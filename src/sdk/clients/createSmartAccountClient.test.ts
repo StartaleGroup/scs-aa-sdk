@@ -1,4 +1,3 @@
-import { COUNTER_ADDRESS } from "@biconomy/ecosystem"
 import { Wallet, ethers } from "ethers"
 import {
   http,
@@ -35,6 +34,7 @@ import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "./createSCSBundlerClient"
+import { COUNTER_CONTRACT_ADDRESS_MINATO } from "../constants"
 
 describe("startale.client", async () => {
   let network: NetworkConfig
@@ -51,7 +51,7 @@ describe("startale.client", async () => {
   let privKey: Hex
 
   beforeAll(async () => {
-    network = await toNetwork()
+    network = await toNetwork('TESTNET_FROM_ENV_VARS')
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl
@@ -73,7 +73,8 @@ describe("startale.client", async () => {
     startaleClient = createSmartAccountClient({
       bundlerUrl,
       account: startaleAccount,
-      mock: true
+      mock: true,
+      client: testClient
     })
     startaleAccountAddress = await startaleAccount.getAddress()
   })
@@ -135,7 +136,7 @@ describe("startale.client", async () => {
       functionName: "incrementNumber"
     })
     const call = {
-      to: COUNTER_ADDRESS as Address,
+      to: COUNTER_CONTRACT_ADDRESS_MINATO as Address,
       data: encodedCall
     }
     const results = await Promise.all([
@@ -300,7 +301,8 @@ describe("startale.client", async () => {
     const ethersSmartAccountClient = createSmartAccountClient({
       bundlerUrl,
       account: ethersAccount,
-      mock: true
+      mock: true,
+      client: testClient
     })
 
     const hash = await ethersSmartAccountClient.sendUserOperation({

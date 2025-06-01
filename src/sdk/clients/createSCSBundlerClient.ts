@@ -14,7 +14,6 @@ import {
   createBundlerClient
 } from "viem/account-abstraction"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
-import { scsSponsoredPaymasterContext } from "./createSCSPaymasterClient"
 import { type SCSActions, scsBundlerActions } from "./decorators/bundler"
 import { getGasFeeValues } from "./decorators/bundler/getGasFeeValues"
 import { type Erc7579Actions, erc7579Actions } from "./decorators/erc7579"
@@ -134,13 +133,11 @@ export const createSCSBundlerClient = (
       ? http(bundlerUrl)
       : http(
           // @ts-ignore: Type saftey provided by the if statement above
-          `https://bundler.biconomy.io/api/v3/${chain?.id}/${
-            apiKey ?? "nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f14"
-          }`
+          `https://soneium-minato.bundler.scs.startale.com?apikey=${apiKey ?? "admin"}`
         )
 
   const defaultedPaymasterContext = paymaster
-    ? (paymasterContext ?? scsSponsoredPaymasterContext)
+    ? (paymasterContext)
     : undefined
 
   const defaultedUserOperation = userOperation ?? {

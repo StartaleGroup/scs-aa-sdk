@@ -1,4 +1,3 @@
-import { COUNTER_ADDRESS } from "@biconomy/ecosystem"
 import { http, type Account, type Address, type Chain, isHex } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { CounterAbi } from "../../../../test/__contracts/abi"
@@ -20,6 +19,7 @@ import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "../../createSCSBundlerClient"
+import { COUNTER_CONTRACT_ADDRESS_MINATO } from "../../../constants"
 
 describe("account.decorators", async () => {
   let network: NetworkConfig
@@ -36,7 +36,7 @@ describe("account.decorators", async () => {
   let recipientAddress: Address
 
   beforeAll(async () => {
-    network = await toNetwork()
+    network = await toNetwork('TESTNET_FROM_ENV_VARS')
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl
@@ -54,7 +54,8 @@ describe("account.decorators", async () => {
     startaleClient = createSmartAccountClient({
       account: startaleAccount,
       transport: http(bundlerUrl),
-      mock: true
+      mock: true,
+      client: testClient
     })
     startaleAccountAddress = await startaleClient.account.getAddress()
     await fundAndDeployClients(testClient, [startaleClient])
@@ -127,24 +128,22 @@ describe("account.decorators", async () => {
     const counterValueBefore = await testClient.readContract({
       abi: CounterAbi,
       functionName: "getNumber",
-      address: COUNTER_ADDRESS
+      address: COUNTER_CONTRACT_ADDRESS_MINATO
     })
-
-    expect(counterValueBefore).toBe(0n)
     const hash = await startaleClient.writeContract({
       abi: CounterAbi,
       functionName: "incrementNumber",
-      address: COUNTER_ADDRESS,
+      address: COUNTER_CONTRACT_ADDRESS_MINATO,
       chain
     })
     const { status } = await startaleClient.waitForTransactionReceipt({ hash })
     const counterValueAfter = await testClient.readContract({
       abi: CounterAbi,
       functionName: "getNumber",
-      address: COUNTER_ADDRESS
+      address: COUNTER_CONTRACT_ADDRESS_MINATO
     })
 
     expect(status).toBe("success")
-    expect(counterValueAfter).toBe(1n)
+    expect(counterValueAfter).toBeGreaterThan(counterValueBefore)
   })
 })

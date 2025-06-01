@@ -40,7 +40,7 @@ describe("erc7579.decorators", async () => {
   let recipientAddress: Address
 
   beforeAll(async () => {
-    network = await toNetwork()
+    network = await toNetwork('TESTNET_FROM_ENV_VARS')
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl
@@ -58,7 +58,8 @@ describe("erc7579.decorators", async () => {
     startaleClient = createSmartAccountClient({
       account: startaleAccount,
       transport: http(bundlerUrl),
-      mock: true
+      mock: true,
+      client: testClient
     })
 
     startaleAccountAddress = await startaleClient.account.getAddress()

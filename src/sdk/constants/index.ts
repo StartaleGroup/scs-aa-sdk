@@ -13,6 +13,11 @@ export const ACCOUNT_FACTORY_ADDRESS: Hex =
   "0x0000003B3E7b530b4f981aE80d9350392Defef90"
 export const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex =
   "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A"
+// Todo: Update with multi chain address
+// Review: This deployed contract as expected methods
+export const COUNTER_CONTRACT_ADDRESS_MINATO: Hex =
+  "0x865562898F022904d6ea510931a7776e9a804849"
+
 // Rhinestone constants
 export {
   SMART_SESSIONS_ADDRESS,

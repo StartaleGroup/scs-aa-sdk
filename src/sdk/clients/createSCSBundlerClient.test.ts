@@ -34,7 +34,7 @@ describe("scs.bundler", async () => {
   let startaleAccount: StartaleSmartAccount
 
   beforeAll(async () => {
-    network = await toNetwork()
+    network = await toNetwork('TESTNET_FROM_ENV_VARS')
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl
@@ -50,7 +50,8 @@ describe("scs.bundler", async () => {
     scsBundler = createSCSBundlerClient({
       mock: true,
       bundlerUrl,
-      account: startaleAccount
+      account: startaleAccount,
+      client: testClient
     })
     startaleAccountAddress = await startaleAccount.getAddress()
     await topUp(testClient, startaleAccountAddress)
@@ -74,7 +75,8 @@ describe("scs.bundler", async () => {
 
       const startaleClient = createSmartAccountClient({
         account: startaleAccount,
-        transport: http(bundlerUrl)
+        transport: http(bundlerUrl),
+        client: testClient
       })
 
       const [

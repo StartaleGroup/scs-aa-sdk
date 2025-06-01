@@ -1,4 +1,4 @@
-import { createPublicClient, http, type Account, type Chain, type Client, type Hex, type PublicClient, type Transport } from "viem"
+import { createPublicClient, http, type Account, type Chain, type Client, type Hex, type Transport } from "viem"
 import type { MiscRpcSchema } from "."
 import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 import { safeMultiplier } from "../../../account"
@@ -61,15 +61,20 @@ export const getGasFeeValues = async (
   >
 ): Promise<GetGasFeeValuesReturnType> => {
   const accountClient = client as StartaleAccountClient
-  const publicClient = accountClient.client as PublicClient
+  // const publicClient = accountClient.client as PublicClient
+  const rpcUrl = accountClient.chain?.rpcUrls.default.http[0]
+  if(!rpcUrl) {
+    throw new Error("getGasFeeValues: rpcUrl is not available")
+  }
   const rpcClient = createPublicClient({
     chain: accountClient.chain,
-    transport: http(accountClient.chain?.rpcUrls.default.http[0])
+    transport: http(rpcUrl)
   })
+  // TODO: refactor and error handling can be added
 
-   if(publicClient === null || publicClient === undefined) {
-    throw new Error("client must be passed during initialing smart account client")
-   }
+  //  if(publicClient === null || publicClient === undefined) {
+  //   throw new Error("client must be passed during initialing smart account client")
+  //  }
 
   // const feeData = await publicClient.estimateFeesPerGas()
   // console.log("feeData", feeData)

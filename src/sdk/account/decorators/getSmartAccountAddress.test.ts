@@ -14,7 +14,8 @@ import type { MasterClient, NetworkConfig } from "../../../test/testUtils"
 import { getTestAccount, toTestClient, topUp } from "../../../test/testUtils"
 import {
   type StartaleAccountClient,
-  createSCSBundlerClient
+  createSCSBundlerClient,
+  createSmartAccountClient
 } from "../../clients/createSCSBundlerClient"
 import { type StartaleSmartAccount, toStartaleSmartAccount } from "../toStartaleSmartAccount"
 
@@ -27,12 +28,14 @@ describe("account.decorators.getSmartAccountAddress.local", () => {
   let testClient: MasterClient
   let eoaAccount: LocalAccount
 
-  let startaleAccount: StartaleSmartAccount
-  let startaleClient: StartaleAccountClient
   let startaleAccountAddress: Address
 
+  let startaleAccount: StartaleSmartAccount
+  let startaleClient: StartaleAccountClient
+
   beforeAll(async () => {
-    network = await toNetwork("BESPOKE_ANVIL_NETWORK")
+    // Note: BESPOKE_ANVIL_NETWORK would not work until we deploy artifacts to the network.
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
     chain = network.chain
     bundlerUrl = network.bundlerUrl
     eoaAccount = privateKeyToAccount(`0x${process.env.PRIVATE_KEY!}`)
@@ -44,10 +47,12 @@ describe("account.decorators.getSmartAccountAddress.local", () => {
       signer: eoaAccount
     })
 
-    startaleClient = createSCSBundlerClient({
+    startaleClient = createSmartAccountClient({
       mock: true,
       account: startaleAccount,
-      transport: http(bundlerUrl)
+      transport: http(bundlerUrl),
+      // Note: must be provided to be able to fetch rpcUrl in getGasFees (part of sendUserOperation)
+      client: testClient
     })
 
     startaleAccountAddress = await startaleAccount.getAddress()
@@ -103,7 +108,8 @@ describe("account.decorators.getSmartAccountAddress.testnet", () => {
       account,
       transport: http(
         `https://soneium-minato.bundler.scs.startale.com?apikey=${process.env.SCS_MINATO_BUNDLER_API_KEY}`
-      )
+      ),
+      client: publicClient
     })
 
     const hash = await startaleClient.sendUserOperation({
