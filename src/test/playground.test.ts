@@ -22,8 +22,8 @@ import {
 import {
   type SCSPaymasterClient,
   type SCSPaymasterContext,
-  scsSponsoredPaymasterContext,
-  createSCSPaymasterClient
+  createSCSPaymasterClient,
+  toSCSSponsoredPaymasterContext
 } from "../sdk/clients/createSCSPaymasterClient"
 import { toNetwork } from "./testSetup"
 import type { NetworkConfig } from "./testUtils"
@@ -78,7 +78,10 @@ describe.skipIf(!playgroundTrue())("playground", () => {
           paymaster: createSCSPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: scsSponsoredPaymasterContext
+          paymasterContext: toSCSSponsoredPaymasterContext
+          ({
+            paymasterId: "sudo" // Review
+          })
         }
       : undefined
   })
@@ -92,6 +95,7 @@ describe.skipIf(!playgroundTrue())("playground", () => {
         index
       }),
       transport: http(bundlerUrl),
+      client: publicClient,
       ...(paymasterParams ? paymasterParams : {})
     })
   })
@@ -143,7 +147,7 @@ describe.skipIf(!playgroundTrue())("playground", () => {
     const balanceAfter = await publicClient.getBalance({
       address: recipientAddress
     })
-    expect(success).toBe("true")
+    expect(success).toBe(true);
     expect(balanceAfter - balanceBefore).toBe(1n)
   })
 

@@ -20,7 +20,7 @@ describe("modules.toValidator", async () => {
   let eoaAccount: LocalAccount
 
   beforeAll(async () => {
-    network = await toNetwork()
+    network = await toNetwork('TESTNET_FROM_ENV_VARS')
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl

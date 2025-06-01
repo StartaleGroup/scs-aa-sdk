@@ -21,14 +21,19 @@ import { safeMultiplier } from "../../../account/index.js";
  */
 export const getGasFeeValues = async (client) => {
     const accountClient = client;
-    const publicClient = accountClient.client;
+    // const publicClient = accountClient.client as PublicClient
+    const rpcUrl = accountClient.chain?.rpcUrls.default.http[0];
+    if (!rpcUrl) {
+        throw new Error("getGasFeeValues: rpcUrl is not available");
+    }
     const rpcClient = createPublicClient({
         chain: accountClient.chain,
-        transport: http(accountClient.chain?.rpcUrls.default.http[0])
+        transport: http(rpcUrl)
     });
-    if (publicClient === null || publicClient === undefined) {
-        throw new Error("client must be passed during initialing smart account client");
-    }
+    // TODO: refactor and error handling can be added
+    //  if(publicClient === null || publicClient === undefined) {
+    //   throw new Error("client must be passed during initialing smart account client")
+    //  }
     // const feeData = await publicClient.estimateFeesPerGas()
     // console.log("feeData", feeData)
     // const maxFeePerGas =  safeMultiplier(feeData.maxFeePerGas, 1.6);

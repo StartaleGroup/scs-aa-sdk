@@ -5,9 +5,7 @@ import { privateKeyToAccount } from "viem/accounts"
 import { toStartaleSmartAccount } from "../src/sdk/account/toStartaleSmartAccount"
 import { getChain } from "../src/sdk/account/utils/getChain"
 import { createSCSBundlerClient } from "../src/sdk/clients/createSCSBundlerClient"
-
-// Todo: Update as per SCS sponsorship and token paymaster
-import { scsSponsoredPaymasterContext } from "../src/sdk/clients/createSCSPaymasterClient"
+import { toSCSSponsoredPaymasterContext } from "../src/sdk/clients/createSCSPaymasterClient"
 
 config()
 
@@ -62,7 +60,10 @@ const main = async () => {
           paymaster: createPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: scsSponsoredPaymasterContext
+          paymasterContext: toSCSSponsoredPaymasterContext
+          ({
+            paymasterId: "sudo" // Review
+          })
         }
       : undefined),
     userOperation: {

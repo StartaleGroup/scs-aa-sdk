@@ -14,11 +14,6 @@ export type MiscRpcSchema = [
         ReturnType: any;
     },
     {
-        Method: "eth_getBlockByNumber";
-        Parameters: [string, boolean];
-        ReturnType: any;
-    },
-    {
         Method: "biconomy_getUserOperationStatus";
         Parameters: [string];
         ReturnType: GetUserOperationStatusReturnType;

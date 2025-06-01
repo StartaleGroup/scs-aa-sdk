@@ -28,11 +28,6 @@ export type MiscRpcSchema = [
     ReturnType: any // todo: add type
   },
   {
-    Method: "eth_getBlockByNumber"
-    Parameters: [string, boolean]
-    ReturnType: any // todo: add type
-  },
-  {
     Method: "biconomy_getUserOperationStatus"
     Parameters: [string]
     ReturnType: GetUserOperationStatusReturnType
