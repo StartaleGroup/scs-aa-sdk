@@ -238,6 +238,43 @@ export type ActionConfig = {
   }
 }
 
+export interface ActionConfigFromUpstream {
+  valueLimitPerUse: bigint // uint256 in Solidity
+  paramRules: ParamRules
+}
+
+// ParamRule struct
+export interface ParamRule {
+  condition: ParamCondition
+  offset: bigint
+  isLimited: boolean
+  ref: Hex
+  usage: LimitUsage
+}
+
+// ParamRules struct with fixed length array
+export interface ParamRules {
+  length: bigint
+  rules: [
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+    ParamRule,
+  ] // ParamRule[16] in Solidity
+}
+
 /**
  * Represents the raw configuration for an action.
  */

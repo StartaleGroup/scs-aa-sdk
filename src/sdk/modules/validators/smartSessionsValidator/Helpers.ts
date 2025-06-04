@@ -21,9 +21,11 @@ import {
   import type { AnyData } from "../../utils/Types"
   import type {
     ActionConfig,
+    ActionConfigFromUpstream,
     ActionPolicyInfo,
     CreateSessionDataParams,
     FullCreateSessionDataParams,
+    ParamRule,
     ResolvedActionPolicyInfo,
     Rule
   } from "./Types"
@@ -120,9 +122,9 @@ import {
    * Converts an ActionConfig to a RawActionConfig.
    *
    * @param config - The ActionConfig to convert.
-   * @returns A RawActionConfig object.
+   * @returns A ActionConfigFromUpstream object.
    */
-  export const toActionConfig = (config: ActionConfig) => {
+  export const toActionConfig = (config: ActionConfig): ActionConfigFromUpstream => {
     // Ensure we always have 16 rules, filling with default values if necessary
     const filledRules = [...config.paramRules.rules]
   
@@ -143,8 +145,8 @@ import {
     return {
       valueLimitPerUse: BigInt(config.valueLimitPerUse),
       paramRules: {
-        length: config.paramRules.length,
-        rules: filledRules.map((rule) => {
+        length: BigInt(config.paramRules.length),
+        rules: (filledRules.map((rule) => {
           const parsedRef = parseReferenceValue(rule.ref)
           return {
             condition: rule.condition,
@@ -153,7 +155,13 @@ import {
             ref: parsedRef,
             usage: rule.usage
           }
-        })
+        }).concat(Array(MAX_RULES - filledRules.length).fill({
+          condition: 0,
+          offset: 0,
+          isLimited: false,
+          ref: "0x0000000000000000000000000000000000000000000000000000000000000000",
+          usage: { limit: 0n, used: 0n }
+        })) as unknown) as [ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule, ParamRule]
       }
     }
   }
