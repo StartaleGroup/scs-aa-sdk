@@ -57,7 +57,6 @@ describe("core", async () => {
     })
 
     startaleClient = createSmartAccountClient({
-      mock: true,
       account: startaleAccount,
       transport: http(bundlerUrl),
       client: testClient
@@ -103,8 +102,10 @@ describe("core", async () => {
 
   // TODO: Review and fix
   test.skip("should install smart sessions validator", async () => {
+    const smartSessions = getSmartSessionsValidator({});
+    console.log(smartSessions)
     const hash = await startaleClient.installModule({
-      module: getSmartSessionsValidator({})
+      module: smartSessions
     })
     const receipt = await startaleClient.waitForUserOperationReceipt({ hash })
     expect(receipt.success).toBe(true)
