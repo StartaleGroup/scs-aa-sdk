@@ -26,7 +26,7 @@ const getGasFeeValues = async (client) => {
         }
         return BigInt(block.baseFeePerGas);
     });
-    const maxFeePerGas = (0, account_1.safeMultiplier)(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.1);
+    const maxFeePerGas = (0, account_1.safeMultiplier)(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.3);
     const maxPriorityFeePerGasFromSCS = (0, account_1.safeMultiplier)(BigInt(priorityFeeDataFromSCS), 1);
     return {
         slow: {
