@@ -55,7 +55,7 @@ export const getGasFeeValues = async (client) => {
         return BigInt(block.baseFeePerGas);
     });
     //maxFee = base fee + feeDataFromSCS
-    const maxFeePerGas = safeMultiplier(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.1);
+    const maxFeePerGas = safeMultiplier(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.3);
     const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(priorityFeeDataFromSCS), 1);
     return {
         slow: {
