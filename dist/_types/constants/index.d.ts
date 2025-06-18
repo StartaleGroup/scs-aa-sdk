@@ -6,6 +6,7 @@ export declare const BOOTSTRAP_ADDRESS: Hex;
 export declare const ACCOUNT_FACTORY_ADDRESS: Hex;
 export declare const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex;
 export declare const COUNTER_CONTRACT_ADDRESS_MINATO: Hex;
+export declare const STARTALE_7702_DELEGATION_ADDRESS: Hex;
 export { SMART_SESSIONS_ADDRESS, OWNABLE_VALIDATOR_ADDRESS, OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, type EnableSessionData, type ActionData, type PolicyData, type Session, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
 export declare const UNIVERSAL_ACTION_POLICY_ADDRESS: Address;
 export declare const SUDO_POLICY_ADDRESS: Hex;

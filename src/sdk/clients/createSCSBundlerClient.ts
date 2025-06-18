@@ -11,7 +11,10 @@ import {
 import {
   type BundlerActions,
   type BundlerClientConfig,
-  createBundlerClient
+  createBundlerClient,
+  prepareUserOperation,
+  type PrepareUserOperationParameters,
+  type SmartAccount
 } from "viem/account-abstraction"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
 import { type SCSActions, scsBundlerActions } from "./decorators/bundler"
@@ -21,6 +24,7 @@ import {
   type SmartAccountActions,
   smartAccountActions
 } from "./decorators/smartAccount"
+import { type StartaleSmartAccountImplementation } from "../account"
 
 /**
  * Startale Account Client type
@@ -153,6 +157,26 @@ export const createSCSBundlerClient = (
     userOperation: defaultedUserOperation
   })
     .extend((client: AnyData) => ({ ...client, mock }))
+    .extend((client: AnyData) => ({
+      prepareUserOperation: async (
+          args: PrepareUserOperationParameters
+      ) => {
+          let _args = args
+          console.log("client.account?.authorization", client.account?.authorization)
+          if (client.account?.authorization) {
+              const authorization =
+                  args.authorization ||
+                  (await (
+                      client.account as SmartAccount<StartaleSmartAccountImplementation>
+                  )?.eip7702Authorization?.())
+              _args = {
+                  ...args,
+                  authorization
+              }
+          }
+          return await prepareUserOperation(client, _args)
+      }
+    }))
     .extend(scsBundlerActions())
     .extend(erc7579Actions())
     .extend(smartAccountActions()) as unknown as StartaleAccountClient

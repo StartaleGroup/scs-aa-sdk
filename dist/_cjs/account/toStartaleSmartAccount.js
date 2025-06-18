@@ -5,7 +5,6 @@ const viem_1 = require("viem");
 const account_abstraction_1 = require("viem/account-abstraction");
 const constants_1 = require("../constants/index.js");
 const abi_1 = require("../constants/abi/index.js");
-const ComposabilityAbi_1 = require("../constants/abi/ComposabilityAbi.js");
 const toEmptyHook_1 = require("../modules/toEmptyHook.js");
 const toDefaultModule_1 = require("../modules/validators/default/toDefaultModule.js");
 const getFactoryData_1 = require("./decorators/getFactoryData.js");
@@ -14,9 +13,16 @@ const Constants_1 = require("./utils/Constants.js");
 const Utils_1 = require("./utils/Utils.js");
 const toInitData_1 = require("./utils/toInitData.js");
 const toSigner_1 = require("./utils/toSigner.js");
+const actions_1 = require("viem/actions");
+const utils_1 = require("viem/utils");
+const addressToEmptyAccount_1 = require("./utils/addressToEmptyAccount.js");
 const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account, } = parameters;
+    const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await (0, toSigner_1.toSigner)({ signer: _signer });
+    const localAccount = eip7702Account
+        ? await (0, toSigner_1.toSigner)({ signer: eip7702Account, address: eip7702Account.address })
+        : undefined;
     const walletClient = (0, viem_1.createWalletClient)({
         account: signer,
         chain,
@@ -51,7 +57,12 @@ const toStartaleSmartAccount = async (parameters) => {
         prevalidationHooks
     });
     const factoryData = (0, getFactoryData_1.getFactoryData)({ initData, index });
-    const getInitCode = () => (0, viem_1.concatHex)([factoryAddress, factoryData]);
+    const getInitCode = () => {
+        if (isEip7702) {
+            return "0x";
+        }
+        return (0, viem_1.concatHex)([factoryAddress, factoryData]);
+    };
     let _accountAddress = accountAddress_;
     const getAddress = async () => {
         if (!(0, Utils_1.isNullOrUndefined)(_accountAddress))
@@ -105,22 +116,6 @@ const toStartaleSmartAccount = async (parameters) => {
             ]),
             functionName: "execute",
             args: [mode, executionCalldata]
-        });
-    };
-    const encodeExecuteComposable = async (calls) => {
-        const composableCalls = calls.map((call) => {
-            return {
-                to: call.to,
-                value: call.value,
-                functionSig: call.functionSig,
-                inputParams: call.inputParams,
-                outputParams: call.outputParams
-            };
-        });
-        return (0, viem_1.encodeFunctionData)({
-            abi: ComposabilityAbi_1.COMPOSABILITY_MODULE_ABI,
-            functionName: "executeComposable",
-            args: [composableCalls]
         });
     };
     const getNonce = async (parameters) => {
@@ -188,6 +183,37 @@ const toStartaleSmartAccount = async (parameters) => {
         }
         module = validationModule;
     };
+    const signAuthorization = async () => {
+        const code = await (0, actions_1.getCode)(walletClient, { address: signer.address });
+        console.log("code", code);
+        if (!code ||
+            code.length === 0 ||
+            !code
+                .toLowerCase()
+                .startsWith(`0xef0100${accountImplementationAddress.slice(2).toLowerCase()}`)) {
+            if (eip7702Auth &&
+                !(0, viem_1.isAddressEqual)(eip7702Auth.address, accountImplementationAddress)) {
+                throw new Error("EIP-7702 authorization delegate address does not match account implementation address");
+            }
+            const auth = eip7702Auth ??
+                (await (0, actions_1.signAuthorization)(walletClient, {
+                    account: localAccount,
+                    address: accountImplementationAddress,
+                    chainId: chain.id
+                }));
+            const verified = await (0, utils_1.verifyAuthorization)({
+                authorization: auth,
+                address: accountAddress_ ?? signer.address
+            });
+            console.log("verified", verified);
+            console.log("ever here?");
+            if (!verified) {
+                throw new Error("Authorization verification failed");
+            }
+            return auth;
+        }
+        return undefined;
+    };
     return (0, account_abstraction_1.toSmartAccount)({
         client: walletClient,
         entryPoint: {
@@ -195,22 +221,35 @@ const toStartaleSmartAccount = async (parameters) => {
             address: constants_1.ENTRY_POINT_ADDRESS,
             version: "0.7"
         },
+        authorization: isEip7702
+            ? {
+                account: localAccount ??
+                    (0, addressToEmptyAccount_1.addressToEmptyAccount)(accountAddress_ ?? signer.address),
+                address: accountImplementationAddress
+            }
+            : undefined,
         getAddress,
         encodeCalls: (calls) => {
             return calls.length === 1
                 ? encodeExecute(calls[0])
                 : encodeExecuteBatch(calls);
         },
-        getFactoryArgs: async () => ({
-            factory: factoryAddress,
-            factoryData
-        }),
+        getFactoryArgs: async () => {
+            if (isEip7702) {
+                return { factory: undefined, factoryData: undefined };
+            }
+            return {
+                factory: factoryAddress,
+                factoryData
+            };
+        },
         getStubSignature: async () => module.getStubSignature(),
         async signMessage({ message }) {
             const tempSignature = await module.signMessage(message);
             return (0, viem_1.encodePacked)(["address", "bytes"], [module.module, tempSignature]);
         },
         signTypedData,
+        eip7702Authorization: signAuthorization,
         signUserOperation: async (parameters) => {
             const { chainId = publicClient.chain.id, ...userOpWithoutSender } = parameters;
             const address = await getAddress();
@@ -233,10 +272,10 @@ const toStartaleSmartAccount = async (parameters) => {
             getInitCode,
             encodeExecute,
             encodeExecuteBatch,
-            encodeExecuteComposable,
             getUserOpHash,
             factoryData,
             factoryAddress,
+            accountImplementationAddress,
             registryAddress,
             signer,
             walletClient,
