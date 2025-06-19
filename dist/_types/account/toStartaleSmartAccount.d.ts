@@ -87,6 +87,7 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<type
     walletClient: WalletClient;
     /** The blockchain network */
     chain: Chain;
+    accountImplementationAddress: Address;
     /** Get the active module */
     getModule: () => Validator;
     /** Set the active module */
