@@ -185,7 +185,6 @@ const toStartaleSmartAccount = async (parameters) => {
     };
     const signAuthorization = async () => {
         const code = await (0, actions_1.getCode)(walletClient, { address: signer.address });
-        console.log("code", code);
         if (!code ||
             code.length === 0 ||
             !code
@@ -205,8 +204,6 @@ const toStartaleSmartAccount = async (parameters) => {
                 authorization: auth,
                 address: accountAddress_ ?? signer.address
             });
-            console.log("verified", verified);
-            console.log("ever here?");
             if (!verified) {
                 throw new Error("Authorization verification failed");
             }

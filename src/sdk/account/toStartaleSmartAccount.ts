@@ -261,9 +261,9 @@ export const toStartaleSmartAccount = async (
   const isEip7702 = !!eip7702Account || !!eip7702Auth
   const signer = await toSigner({ signer: _signer })
 
-  // Todo: Review what address should be.
+  // Review
   // Has to be EOA signer who does sign the authorization.
-  // Might as well use signer interchangeably.
+  // Note: Might as well use signer interchangeably.
   const localAccount = eip7702Account
     ? await toSigner({ signer: eip7702Account, address: eip7702Account.address })
     : undefined
@@ -558,7 +558,6 @@ export const toStartaleSmartAccount = async (
     // Could also be accountAddress assuming we would have overriden the address.
     const code = await getCode(walletClient, { address: signer.address })
     // check if account has not activated 7702 with implementation address
-    console.log("code", code)
     if (
         !code ||
         code.length === 0 ||
@@ -591,8 +590,6 @@ export const toStartaleSmartAccount = async (
             authorization: auth,
             address: accountAddress_ ?? signer.address as Address
         })
-        console.log("verified", verified)
-        console.log("ever here?")
         if (!verified) {
             throw new Error("Authorization verification failed")
         }

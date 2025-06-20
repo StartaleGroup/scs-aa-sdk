@@ -14,6 +14,8 @@ import {
   createBundlerClient,
   prepareUserOperation,
   type PrepareUserOperationParameters,
+  type SendUserOperationParameters,
+  sendUserOperation,
   type SmartAccount
 } from "viem/account-abstraction"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
@@ -162,7 +164,6 @@ export const createSCSBundlerClient = (
           args: PrepareUserOperationParameters
       ) => {
           let _args = args
-          console.log("client.account?.authorization", client.account?.authorization)
           if (client.account?.authorization) {
               const authorization =
                   args.authorization ||
@@ -175,6 +176,25 @@ export const createSCSBundlerClient = (
               }
           }
           return await prepareUserOperation(client, _args)
+      }
+    }))
+    .extend((client: AnyData) => ({
+      sendUserOperation: async (
+          args: SendUserOperationParameters
+      ) => {
+          let _args = args
+          if (client.account?.authorization) {
+              const authorization =
+                  args.authorization ||
+                  (await (
+                      client.account as SmartAccount<StartaleSmartAccountImplementation>
+                  )?.eip7702Authorization?.())
+              _args = {
+                  ...args,
+                  authorization
+              }
+          }
+          return await sendUserOperation(client, _args)
       }
     }))
     .extend(scsBundlerActions())

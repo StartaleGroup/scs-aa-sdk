@@ -27,6 +27,7 @@ export type MiscRpcSchema = [
     Parameters: []
     ReturnType: any // todo: add type
   },
+  // Review and remove
   {
     Method: "biconomy_getUserOperationStatus"
     Parameters: [string]
