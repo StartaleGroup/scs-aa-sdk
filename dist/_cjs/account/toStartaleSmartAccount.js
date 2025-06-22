@@ -138,6 +138,32 @@ const toStartaleSmartAccount = async (parameters) => {
             return 0n;
         }
     };
+    async function isDelegated() {
+        const code = await publicClient.getCode({ address: signer.address });
+        return (!!code &&
+            code
+                ?.toLowerCase()
+                .includes(constants_1.STARTALE_7702_DELEGATION_ADDRESS.substring(2).toLowerCase()));
+    }
+    async function unDelegate() {
+        const deAuthorization = await walletClient.signAuthorization({
+            address: viem_1.zeroAddress,
+            executor: "self"
+        });
+        return await walletClient.sendTransaction({
+            to: signer.address,
+            data: "0xdeadbeef",
+            type: "eip7702",
+            authorizationList: [deAuthorization]
+        });
+    }
+    async function eip7702DelegateTo(delegatedContract) {
+        const contractAddress = delegatedContract || accountImplementationAddress;
+        const authorization = await walletClient.signAuthorization({
+            contractAddress
+        });
+        return authorization;
+    }
     async function signTypedData(parameters) {
         const { message, primaryType, types: _types, domain } = parameters;
         if (!domain)
@@ -264,6 +290,9 @@ const toStartaleSmartAccount = async (parameters) => {
         },
         getNonce,
         extend: {
+            unDelegate,
+            isDelegated,
+            eip7702DelegateTo,
             entryPointAddress: account_abstraction_1.entryPoint07Address,
             getAddress,
             getInitCode,

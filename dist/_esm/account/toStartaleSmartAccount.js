@@ -198,6 +198,51 @@ export const toStartaleSmartAccount = async (parameters) => {
         }
     };
     /**
+     * @description Checks if the account is delegated to the implementation address
+     * @returns True if the account is delegated, false otherwise
+     */
+    async function isDelegated() {
+        const code = await publicClient.getCode({ address: signer.address });
+        return (!!code &&
+            code
+                ?.toLowerCase()
+                .includes(STARTALE_7702_DELEGATION_ADDRESS.substring(2).toLowerCase()));
+    }
+    /**
+     * @description Get authorization data to unauthorize the account
+     * @returns Hex of the transaction hash
+     *
+     * @example
+     * const eip7702Auth = await nexusAccount.unDelegate()
+     */
+    async function unDelegate() {
+        const deAuthorization = await walletClient.signAuthorization({
+            address: zeroAddress,
+            executor: "self"
+        });
+        return await walletClient.sendTransaction({
+            to: signer.address, // any target
+            data: "0xdeadbeef", // any data
+            type: "eip7702",
+            authorizationList: [deAuthorization]
+        });
+    }
+    /**
+     * @description Get authorization data for the EOA to Nexus Account
+     * @param forMee - Whether to return the authorization data formatted for MEE. Defaults to false.
+     * @param delegatedContract - The contract address to delegate the authorization to. Defaults to the implementation address.
+     *
+     * @example
+     * const eip7702Auth = await nexusAccount.toDelegation() // Returns MeeAuthorization
+     */
+    async function eip7702DelegateTo(delegatedContract) {
+        const contractAddress = delegatedContract || accountImplementationAddress;
+        const authorization = await walletClient.signAuthorization({
+            contractAddress
+        });
+        return authorization;
+    }
+    /**
      * @description Signs typed data
      * @param parameters - The typed data parameters
      * @returns The signature
@@ -345,6 +390,9 @@ export const toStartaleSmartAccount = async (parameters) => {
         },
         getNonce,
         extend: {
+            unDelegate,
+            isDelegated,
+            eip7702DelegateTo,
             entryPointAddress: entryPoint07Address,
             getAddress,
             getInitCode,

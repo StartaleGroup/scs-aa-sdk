@@ -94,6 +94,16 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<type
     setModule: (validationModule: Module) => void;
     /** EIP-7702 Authorization */
     eip7702Authorization?: (() => Promise<SignAuthorizationReturnType | undefined>) | undefined;
+    /**
+     * @description Delegate the account to the code of the given address
+     * @param delegationAddress - The address to delegate the account to
+     * @returns The authorization data
+     */
+    eip7702DelegateTo: (delegationAddress: Address) => Promise<SignAuthorizationReturnType>;
+    /** Execute the transaction to unauthorize the account */
+    unDelegate: () => Promise<Hex>;
+    /** Check if the account is delegated to the implementation address */
+    isDelegated: () => Promise<boolean>;
 }>;
 /**
  * @description Create a Startale Smart Account.
