@@ -1,6 +1,6 @@
 import type { Chain, Client, Prettify, Transport } from "viem";
 import type { WaitForUserOperationReceiptParameters, WaitForUserOperationReceiptReturnType } from "viem/account-abstraction";
-import { type UserOperationGasPriceWithBigIntAsHex, type GetGasFeeValuesReturnType } from "./getGasFeeValues";
+import { type GetGasFeeValuesReturnType, type UserOperationGasPriceWithBigIntAsHex } from "./getGasFeeValues";
 import { type GetUserOperationStatusParameters, type GetUserOperationStatusReturnType } from "./getUserOperationStatus";
 export type MiscRpcSchema = [
     {

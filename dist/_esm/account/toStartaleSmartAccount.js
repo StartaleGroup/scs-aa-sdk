@@ -1,9 +1,8 @@
-import { concat, concatHex, createPublicClient, createWalletClient, domainSeparator, encodeAbiParameters, encodeFunctionData, encodePacked, getContract, keccak256, parseAbi, parseAbiParameters, publicActions, toBytes, toHex, validateTypedData, zeroAddress } from "viem";
+import { concat, concatHex, createPublicClient, createWalletClient, domainSeparator, encodeAbiParameters, encodeFunctionData, encodePacked, getContract, isAddressEqual, keccak256, parseAbi, parseAbiParameters, publicActions, toBytes, toHex, validateTypedData, zeroAddress } from "viem";
 import { entryPoint07Address, getUserOperationHash, toSmartAccount } from "viem/account-abstraction";
-import { ENTRY_POINT_ADDRESS, ACCOUNT_FACTORY_ADDRESS, BOOTSTRAP_ADDRESS } from "../constants/index.js";
+import { ACCOUNT_FACTORY_ADDRESS, BOOTSTRAP_ADDRESS, ENTRY_POINT_ADDRESS, STARTALE_7702_DELEGATION_ADDRESS } from "../constants/index.js";
 // Constants
 import { EntrypointAbi } from "../constants/abi/index.js";
-import { COMPOSABILITY_MODULE_ABI } from "../constants/abi/ComposabilityAbi.js";
 import { toEmptyHook } from "../modules/toEmptyHook.js";
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule.js";
 import { getFactoryData, getInitData } from "./decorators/getFactoryData.js";
@@ -12,6 +11,9 @@ import { EXECUTE_BATCH, EXECUTE_SINGLE, PARENT_TYPEHASH } from "./utils/Constant
 import { addressEquals, eip712WrapHash, getAccountDomainStructFields, getTypesForEIP712Domain, isNullOrUndefined, typeToString } from "./utils/Utils.js";
 import { toInitData } from "./utils/toInitData.js";
 import { toSigner } from "./utils/toSigner.js";
+import { getCode, signAuthorization as signAuthorizationAction } from "viem/actions";
+import { verifyAuthorization } from "viem/utils";
+import { addressToEmptyAccount } from "./utils/addressToEmptyAccount.js";
 /**
  * @description Create a Startale Smart Account.
  *
@@ -30,8 +32,19 @@ import { toSigner } from "./utils/toSigner.js";
  * })
  */
 export const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
+    // Note: we could also accept deliberate optional flag to enable EIP-7702
+    const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await toSigner({ signer: _signer });
+    // Review
+    // Has to be EOA signer who does sign the authorization.
+    // Note: Might as well use signer interchangeably.
+    const localAccount = eip7702Account
+        ? await toSigner({
+            signer: eip7702Account,
+            address: eip7702Account.address
+        })
+        : undefined;
     const walletClient = createWalletClient({
         account: signer,
         chain,
@@ -78,7 +91,12 @@ export const toStartaleSmartAccount = async (parameters) => {
      * @description Gets the init code for the account
      * @returns The init code as a hexadecimal string
      */
-    const getInitCode = () => concatHex([factoryAddress, factoryData]);
+    const getInitCode = () => {
+        if (isEip7702) {
+            return "0x";
+        }
+        return concatHex([factoryAddress, factoryData]);
+    };
     let _accountAddress = accountAddress_;
     /**
      * @description Gets the counterfactual address of the account
@@ -86,6 +104,8 @@ export const toStartaleSmartAccount = async (parameters) => {
      * @throws {Error} If unable to get the counterfactual address
      */
     const getAddress = async () => {
+        // In case of EIP-7702, the account address is the EOA address. We could provide an override always.
+        // Note: there may be ways to find out by checking bytecode.
         if (!isNullOrUndefined(_accountAddress))
             return _accountAddress;
         const addressFromFactory = await getStartaleAccountAddress({
@@ -157,27 +177,6 @@ export const toStartaleSmartAccount = async (parameters) => {
         });
     };
     /**
-     * @description Encodes a composable calls for execution
-     * @param call - The calls to encode
-     * @returns The encoded composable compatible call
-     */
-    const encodeExecuteComposable = async (calls) => {
-        const composableCalls = calls.map((call) => {
-            return {
-                to: call.to,
-                value: call.value,
-                functionSig: call.functionSig,
-                inputParams: call.inputParams,
-                outputParams: call.outputParams
-            };
-        });
-        return encodeFunctionData({
-            abi: COMPOSABILITY_MODULE_ABI,
-            functionName: "executeComposable", // Function selector in Composability feature which executes the composable calls.
-            args: [composableCalls] // Multiple composable calls can be batched here.
-        });
-    };
-    /**
      * @description Gets the nonce for the account
      * @param parameters - Optional parameters for getting the nonce
      * @returns The nonce
@@ -202,6 +201,36 @@ export const toStartaleSmartAccount = async (parameters) => {
             return 0n;
         }
     };
+    /**
+     * @description Checks if the account is delegated to the implementation address
+     * @returns True if the account is delegated, false otherwise
+     */
+    async function isDelegated() {
+        const code = await publicClient.getCode({ address: signer.address });
+        return (!!code &&
+            code
+                ?.toLowerCase()
+                .includes(STARTALE_7702_DELEGATION_ADDRESS.substring(2).toLowerCase()));
+    }
+    /**
+     * @description Get authorization data to unauthorize the account
+     * @returns Hex of the transaction hash. You can wait for the receipt on this hash.
+     *
+     * @example
+     * const undelegateTxHash = await startaleSmartAccount.unDelegate()
+     */
+    async function unDelegate() {
+        const deAuthorization = await walletClient.signAuthorization({
+            address: zeroAddress,
+            executor: "self"
+        });
+        return await walletClient.sendTransaction({
+            to: signer.address, // any target
+            data: "0xdeadbeef", // any data
+            type: "eip7702",
+            authorizationList: [deAuthorization]
+        });
+    }
     /**
      * @description Signs typed data
      * @param parameters - The typed data parameters
@@ -259,6 +288,38 @@ export const toStartaleSmartAccount = async (parameters) => {
         }
         module = validationModule;
     };
+    // Todo: We could also implement unDelegate. and isDelegated = isEIP7702
+    const signAuthorization = async () => {
+        // Note: Signer would be EOA signer
+        // Could also be accountAddress assuming we would have overriden the address.
+        const code = await getCode(walletClient, { address: signer.address });
+        // check if account has not activated 7702 with implementation address
+        if (!code ||
+            code.length === 0 ||
+            !code
+                .toLowerCase()
+                .startsWith(`0xef0100${accountImplementationAddress.slice(2).toLowerCase()}`)) {
+            if (eip7702Auth &&
+                !isAddressEqual(eip7702Auth.address, accountImplementationAddress)) {
+                throw new Error("EIP-7702 authorization delegate address does not match account implementation address");
+            }
+            const auth = eip7702Auth ??
+                (await signAuthorizationAction(walletClient, {
+                    account: localAccount,
+                    address: accountImplementationAddress,
+                    chainId: chain.id
+                }));
+            const verified = await verifyAuthorization({
+                authorization: auth,
+                address: accountAddress_ ?? signer.address
+            });
+            if (!verified) {
+                throw new Error("Authorization verification failed");
+            }
+            return auth;
+        }
+        return undefined;
+    };
     return toSmartAccount({
         client: walletClient,
         entryPoint: {
@@ -266,16 +327,28 @@ export const toStartaleSmartAccount = async (parameters) => {
             address: ENTRY_POINT_ADDRESS,
             version: "0.7"
         },
+        authorization: isEip7702
+            ? {
+                account: localAccount ??
+                    addressToEmptyAccount(accountAddress_ ?? signer.address), // Review
+                address: accountImplementationAddress
+            }
+            : undefined,
         getAddress,
         encodeCalls: (calls) => {
             return calls.length === 1
                 ? encodeExecute(calls[0])
                 : encodeExecuteBatch(calls);
         },
-        getFactoryArgs: async () => ({
-            factory: factoryAddress,
-            factoryData
-        }),
+        getFactoryArgs: async () => {
+            if (isEip7702) {
+                return { factory: undefined, factoryData: undefined };
+            }
+            return {
+                factory: factoryAddress,
+                factoryData
+            };
+        },
         getStubSignature: async () => module.getStubSignature(),
         /**
          * @description Signs a message
@@ -288,6 +361,7 @@ export const toStartaleSmartAccount = async (parameters) => {
             return encodePacked(["address", "bytes"], [module.module, tempSignature]);
         },
         signTypedData,
+        eip7702Authorization: signAuthorization,
         signUserOperation: async (parameters) => {
             const { chainId = publicClient.chain.id, ...userOpWithoutSender } = parameters;
             const address = await getAddress();
@@ -305,15 +379,17 @@ export const toStartaleSmartAccount = async (parameters) => {
         },
         getNonce,
         extend: {
+            unDelegate,
+            isDelegated,
             entryPointAddress: entryPoint07Address,
             getAddress,
             getInitCode,
             encodeExecute,
             encodeExecuteBatch,
-            encodeExecuteComposable,
             getUserOpHash,
             factoryData,
             factoryAddress,
+            accountImplementationAddress,
             registryAddress,
             signer,
             walletClient,

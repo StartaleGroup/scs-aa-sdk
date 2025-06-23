@@ -8,9 +8,10 @@ export const ACCOUNT_IMPLEMENTATION_ADDRESS = "0x000000b8f5f723A680d3D7EE624Fe0b
 // Todo: Update with multi chain address
 // Review: This deployed contract as expected methods
 export const COUNTER_CONTRACT_ADDRESS_MINATO = "0x865562898F022904d6ea510931a7776e9a804849";
+export const STARTALE_7702_DELEGATION_ADDRESS = "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A";
 // Rhinestone constants
 export { SMART_SESSIONS_ADDRESS, OWNABLE_VALIDATOR_ADDRESS, OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
-export const UNIVERSAL_ACTION_POLICY_ADDRESS = '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F';
+export const UNIVERSAL_ACTION_POLICY_ADDRESS = "0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F";
 export const SUDO_POLICY_ADDRESS = getSudoPolicy().address;
 export const TIME_FRAME_POLICY_ADDRESS = getTimeFramePolicy({
     validUntil: 0,

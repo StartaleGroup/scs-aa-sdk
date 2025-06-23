@@ -15,7 +15,10 @@ import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "../clients/createSCSBundlerClient"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "./toStartaleSmartAccount"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "./toStartaleSmartAccount"
 
 describe("startale.account.addresses", async () => {
   let network: NetworkConfig

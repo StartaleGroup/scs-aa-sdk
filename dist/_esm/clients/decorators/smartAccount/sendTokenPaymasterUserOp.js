@@ -1,4 +1,3 @@
-import {} from "viem";
 import { sendUserOperation } from "viem/account-abstraction";
 import { getAction } from "viem/utils";
 import { prepareTokenPaymasterUserOp } from "./prepareTokenPaymasterUserOp.js";

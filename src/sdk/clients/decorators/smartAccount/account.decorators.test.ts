@@ -15,11 +15,11 @@ import {
   type StartaleSmartAccount,
   toStartaleSmartAccount
 } from "../../../account/toStartaleSmartAccount"
+import { COUNTER_CONTRACT_ADDRESS_MINATO } from "../../../constants"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "../../createSCSBundlerClient"
-import { COUNTER_CONTRACT_ADDRESS_MINATO } from "../../../constants"
 
 describe("account.decorators", async () => {
   let network: NetworkConfig
@@ -36,7 +36,7 @@ describe("account.decorators", async () => {
   let recipientAddress: Address
 
   beforeAll(async () => {
-    network = await toNetwork('TESTNET_FROM_ENV_VARS')
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl

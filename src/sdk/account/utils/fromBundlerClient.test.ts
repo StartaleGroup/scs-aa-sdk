@@ -8,9 +8,9 @@ import {
   type BundlerClientTypes,
   fromBundlerClientToChain,
   fromBundlerClientToChainId,
-  fromBundlerClientToStartaleAccount,
   fromBundlerClientToPublicClient,
-  fromBundlerClientToSigner
+  fromBundlerClientToSigner,
+  fromBundlerClientToStartaleAccount
 } from "./fromBundlerClient"
 import { toSigner } from "./toSigner"
 
@@ -70,7 +70,9 @@ describe("utils.fromBundlerClient", async () => {
 
   describe("fromBundlerClientToSmartAccount", () => {
     it("should extract smart account successfully", () => {
-      const result = fromBundlerClientToStartaleAccount(bundlerClientWithAccount)
+      const result = fromBundlerClientToStartaleAccount(
+        bundlerClientWithAccount
+      )
       expect(result).toBe(smartAccount)
       expect(result.type).toBe("smart")
     })

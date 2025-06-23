@@ -11,7 +11,7 @@ import {
 const MAINNET_CHAINS_FOR_TESTING: Chain[] = [optimism, base, soneium]
 const MAINNET_TRANSPORTS_FOR_TESTING: Transport[] = [
   http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`),
-  http(`https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`),
+  http(`https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`)
   // Soneium mainnet
 ]
 

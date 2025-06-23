@@ -3,19 +3,28 @@ import {
   type Address,
   type Chain,
   type LocalAccount,
-  parseEther,
-  createWalletClient
+  createWalletClient,
+  parseEther
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
-import { getTestAccount, killNetwork, MasterClient, NetworkConfig, toTestClient } from "../../../../test/testUtils"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "../../../account"
+import { toNetwork } from "../../../../test/testSetup"
+import {
+  type MasterClient,
+  type NetworkConfig,
+  getTestAccount,
+  killNetwork,
+  toTestClient
+} from "../../../../test/testUtils"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../../../account"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "../../../clients/createSCSBundlerClient"
 import type { Validator } from "../toValidator"
 import { toDefaultModule } from "./toDefaultModule"
-import { toNetwork } from "../../../../test/testSetup"
 
 describe("modules.toDefaultModule", () => {
   let chain: Chain

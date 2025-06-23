@@ -7,10 +7,14 @@ import { parseErrorMessage } from "../account/utils/parseErrorMessage.js";
 export const createHttpClient = (url, apiKey) => {
     const request = async (requesParams) => {
         const { path, method = "POST", body, params } = requesParams;
-        const urlParams = params ? `?${Object.entries(params).reduce((searchParams, [key, value]) => {
-            searchParams.append(key, value);
-            return searchParams;
-        }, new URLSearchParams()).toString()}` : "";
+        const urlParams = params
+            ? `?${Object.entries(params)
+                .reduce((searchParams, [key, value]) => {
+                searchParams.append(key, value);
+                return searchParams;
+            }, new URLSearchParams())
+                .toString()}`
+            : "";
         const fullPath = `${url}/${path}${urlParams}`;
         const result = await fetch(fullPath, {
             method,

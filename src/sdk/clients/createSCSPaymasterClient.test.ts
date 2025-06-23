@@ -12,7 +12,12 @@ import {
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { paymasterTruthy, toNetwork } from "../../test/testSetup"
-import { getBalance, getTestAccount, killNetwork, toTestClient } from "../../test/testUtils"
+import {
+  getBalance,
+  getTestAccount,
+  killNetwork,
+  toTestClient
+} from "../../test/testUtils"
 import type { MasterClient, NetworkConfig } from "../../test/testUtils"
 import {
   type StartaleSmartAccount,
@@ -41,7 +46,6 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
   let paymasterUrl: undefined | string
   let walletClient: WalletClient
   let testClient: MasterClient
-
 
   // Test utils
   let publicClient: PublicClient // testClient not available on public testnets
@@ -98,8 +102,7 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       account: smartAccount,
       transport: http(bundlerUrl),
       paymaster,
-      paymasterContext: toSCSSponsoredPaymasterContext
-      ({
+      paymasterContext: toSCSSponsoredPaymasterContext({
         paymasterId: "sudo"
       }),
       client: publicClient
@@ -156,9 +159,10 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       ]
     })
 
-    const receipt = await smartAccountClient.waitForConfirmedUserOperationReceipt({
-      hash
-    })
+    const receipt =
+      await smartAccountClient.waitForConfirmedUserOperationReceipt({
+        hash
+      })
 
     expect(receipt.success).toBe("true")
   })
@@ -188,7 +192,9 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       ],
       feeTokenAddress: baseSepoliaUSDCAddress
     })
-    const receipt = await smartAccountClient.waitForUserOperationReceipt({ hash })
+    const receipt = await smartAccountClient.waitForUserOperationReceipt({
+      hash
+    })
 
     expect(receipt.success).toBe("true")
 
@@ -220,16 +226,17 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       address: smartAccountAddress
     })
 
-    const tokenPaymasterUserOp = await smartAccountClient.prepareTokenPaymasterUserOp({
-      calls: [
-        {
-          to: recipientAddress,
-          value: 1n,
-          data: "0x"
-        }
-      ],
-      feeTokenAddress: baseSepoliaUSDCAddress
-    })
+    const tokenPaymasterUserOp =
+      await smartAccountClient.prepareTokenPaymasterUserOp({
+        calls: [
+          {
+            to: recipientAddress,
+            value: 1n,
+            data: "0x"
+          }
+        ],
+        feeTokenAddress: baseSepoliaUSDCAddress
+      })
 
     const hash = await smartAccountClient.sendTransaction(tokenPaymasterUserOp)
 
@@ -261,8 +268,13 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     })
 
     // Todo: Update test cases later.
-    const quote = await paymaster.getTokenPaymasterQuotes({ userOp, chainId: toHex(chain.id) })
-    expect(quote.paymasterAddress.toLocaleLowerCase()).toBe(STARTALE_TOKEN_PAYMASTER.toLocaleLowerCase())
+    const quote = await paymaster.getTokenPaymasterQuotes({
+      userOp,
+      chainId: toHex(chain.id)
+    })
+    expect(quote.paymasterAddress.toLocaleLowerCase()).toBe(
+      STARTALE_TOKEN_PAYMASTER.toLocaleLowerCase()
+    )
     expect(quote.feeQuotes).toBeInstanceOf(Array)
     expect(quote.unsupportedTokens).toBeInstanceOf(Array)
 
@@ -310,7 +322,10 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
         }
       ]
     })
-    const quote = await paymaster.getTokenPaymasterQuotes({ userOp, chainId: toHex(chain.id) })
+    const quote = await paymaster.getTokenPaymasterQuotes({
+      userOp,
+      chainId: toHex(chain.id)
+    })
     const usdcFeeAmount = parseUnits(
       quote.feeQuotes[0].maxGasFee.toString(),
       quote.feeQuotes[0].decimal
@@ -328,7 +343,9 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       customApprovalAmount: usdcFeeAmount
     })
 
-    const receipt = await smartAccountClient.waitForUserOperationReceipt({ hash })
+    const receipt = await smartAccountClient.waitForUserOperationReceipt({
+      hash
+    })
 
     expect(receipt.success).toBe("true")
 
@@ -352,7 +369,8 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       client: publicClient
     })
 
-    const supportedTokens = await paymaster.getSupportedTokens(smartAccountClient)
+    const supportedTokens =
+      await paymaster.getSupportedTokens(smartAccountClient)
     const supportedTokenAddresses = supportedTokens.map(
       (token) => token.tokenAddress
     )

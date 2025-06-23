@@ -3,7 +3,7 @@ import { sendUserOperation } from "viem/account-abstraction";
 import { getAction, parseAccount } from "viem/utils";
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js";
 import { addressEquals } from "../../../account/utils/Utils.js";
-import { findTrustedAttesters, getTrustAttestersAction, SMART_SESSIONS_ADDRESS, RHINESTONE_ATTESTER_ADDRESS } from "../../../constants/index.js";
+import { RHINESTONE_ATTESTER_ADDRESS, SMART_SESSIONS_ADDRESS, findTrustedAttesters, getTrustAttestersAction } from "../../../constants/index.js";
 import { parseModuleTypeId } from "./supportsModule.js";
 /**
  * Installs a module on a given smart account.

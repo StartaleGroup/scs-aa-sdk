@@ -4,8 +4,8 @@ import type {
   WaitForUserOperationReceiptReturnType
 } from "viem/account-abstraction"
 import {
-  type UserOperationGasPriceWithBigIntAsHex,
   type GetGasFeeValuesReturnType,
+  type UserOperationGasPriceWithBigIntAsHex,
   getGasFeeValues
 } from "./getGasFeeValues"
 import {
@@ -27,6 +27,7 @@ export type MiscRpcSchema = [
     Parameters: []
     ReturnType: any // todo: add type
   },
+  // Review and remove
   {
     Method: "biconomy_getUserOperationStatus"
     Parameters: [string]

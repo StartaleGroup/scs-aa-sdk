@@ -1,12 +1,25 @@
-import { toHex, type Account, type Address, type Chain, type Client, type Hex, type Transport } from "viem"
+import {
+  type Account,
+  type Address,
+  type Chain,
+  type Client,
+  type Hex,
+  type Transport,
+  toHex
+} from "viem"
 import type { UserOperation } from "viem/account-abstraction"
-import type { AnyData } from "../../../modules"
 import { ENTRY_POINT_ADDRESS } from "../../../constants"
+import type { AnyData } from "../../../modules"
 
 export type TokenPaymasterRpcSchema = [
   {
     Method: "pm_getFeeQuotes"
-    Parameters: [TokenPaymasterUserOpParams, Address, Hex, TokenPaymasterConfigParams]
+    Parameters: [
+      TokenPaymasterUserOpParams,
+      Address,
+      Hex,
+      TokenPaymasterConfigParams
+    ]
     ReturnType: TokenPaymasterQuotesResponse
   }
 ]
@@ -51,8 +64,8 @@ export type TokenPaymasterConfigParams = {
 
 // Review
 export type GetTokenPaymasterQuotesParameters = {
-  userOp: UserOperation,
-  chainId: Hex,
+  userOp: UserOperation
+  chainId: Hex
   // Note: May use this in the future
   // tokenList?: Address[],
 }
@@ -87,7 +100,7 @@ export type GetTokenPaymasterQuotesParameters = {
  * //     maxGasFee: "5000000",
  * //     maxGasFeeUSD: "5",
  * //     exchangeRate: "0x94ede635",
- * //     requiredAmount: "0x57",   
+ * //     requiredAmount: "0x57",
  * //     logoUrl: "https://...",
  * //     premiumPercentage: 5,
  * //   }],
@@ -120,16 +133,18 @@ export const getTokenPaymasterQuotes = async (
         verificationGasLimit: toHex(Number(userOp.verificationGasLimit)),
         callGasLimit: toHex(Number(userOp.callGasLimit)),
         preVerificationGas: toHex(Number(userOp.preVerificationGas)),
-        paymasterPostOpGasLimit:
-          toHex(Number(userOp.paymasterPostOpGasLimit ?? 0x0)),
-        paymasterVerificationGasLimit:
-          toHex(Number(userOp.paymasterVerificationGasLimit ?? 0x0))
+        paymasterPostOpGasLimit: toHex(
+          Number(userOp.paymasterPostOpGasLimit ?? 0x0)
+        ),
+        paymasterVerificationGasLimit: toHex(
+          Number(userOp.paymasterVerificationGasLimit ?? 0x0)
+        )
       },
       ENTRY_POINT_ADDRESS,
       chainId,
       {
         calculateGasLimits: true
-      },
+      }
     ]
   })
 

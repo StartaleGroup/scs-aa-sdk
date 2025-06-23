@@ -14,7 +14,10 @@ import {
   topUp
 } from "../../test/testUtils"
 import type { MasterClient, NetworkConfig } from "../../test/testUtils"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../account/toStartaleSmartAccount"
 import {
   type SCSBundlerClient,
   createSCSBundlerClient,
@@ -34,7 +37,7 @@ describe("scs.bundler", async () => {
   let startaleAccount: StartaleSmartAccount
 
   beforeAll(async () => {
-    network = await toNetwork('TESTNET_FROM_ENV_VARS')
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl

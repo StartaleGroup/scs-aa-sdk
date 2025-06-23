@@ -1,6 +1,6 @@
 import type { Chain, Hash, Transport } from "viem";
 import type { Client } from "viem";
-import { type Address } from "viem";
+import type { Address } from "viem";
 import { type SmartAccount } from "viem/account-abstraction";
 import { type Transaction } from "./prepareTokenPaymasterUserOp";
 export type SendTokenPaymasterUserOpParameters = {

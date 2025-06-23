@@ -14,7 +14,7 @@ const getSupportedTokens = async (client) => {
     });
     const paymaster = client.paymaster;
     if (!client?.chain?.id)
-        throw new Error('Chain ID is required');
+        throw new Error("Chain ID is required");
     const quote = await paymaster.getTokenPaymasterQuotes({
         userOp,
         chainId: (0, viem_1.toHex)(client.chain.id)

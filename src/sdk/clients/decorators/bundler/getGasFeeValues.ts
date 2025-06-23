@@ -1,7 +1,15 @@
-import { createPublicClient, http, type Account, type Chain, type Client, type Hex, type Transport } from "viem"
+import {
+  http,
+  type Account,
+  type Chain,
+  type Client,
+  type Hex,
+  type Transport,
+  createPublicClient
+} from "viem"
 import type { MiscRpcSchema } from "."
-import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 import { safeMultiplier } from "../../../account"
+import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 
 export type UserOperationGasPriceWithBigIntAsHex = {
   slow: {
@@ -63,7 +71,7 @@ export const getGasFeeValues = async (
   const accountClient = client as StartaleAccountClient
   // const publicClient = accountClient.client as PublicClient
   const rpcUrl = accountClient.chain?.rpcUrls.default.http[0]
-  if(!rpcUrl) {
+  if (!rpcUrl) {
     throw new Error("getGasFeeValues: rpcUrl is not available")
   }
   const rpcClient = createPublicClient({
@@ -83,28 +91,35 @@ export const getGasFeeValues = async (
   //     feeData.maxPriorityFeePerGas,
   //     1.6
   // );
-  
+
   const priorityFeeDataFromSCS = await client.request({
     method: "rundler_maxPriorityFeePerGas",
     params: []
   })
 
-  const baseFeePerGas = await rpcClient.request({
-    method: "eth_getBlockByNumber",
-    params: ["latest", false]
-  }).then((block) => {
-    if (!block || !block.baseFeePerGas) {
-      throw new Error("Base fee not available");
-    }
-    return BigInt(block.baseFeePerGas);
-  });
+  const baseFeePerGas = await rpcClient
+    .request({
+      method: "eth_getBlockByNumber",
+      params: ["latest", false]
+    })
+    .then((block) => {
+      if (!block || !block.baseFeePerGas) {
+        throw new Error("Base fee not available")
+      }
+      return BigInt(block.baseFeePerGas)
+    })
 
   //maxFee = base fee + feeDataFromSCS
-  const maxFeePerGas = safeMultiplier(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.3);
-  
-  
-  const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(priorityFeeDataFromSCS), 1);
-  
+  const maxFeePerGas = safeMultiplier(
+    baseFeePerGas + BigInt(priorityFeeDataFromSCS),
+    1.3
+  )
+
+  const maxPriorityFeePerGasFromSCS = safeMultiplier(
+    BigInt(priorityFeeDataFromSCS),
+    1
+  )
+
   return {
     slow: {
       maxFeePerGas: BigInt(maxFeePerGas),

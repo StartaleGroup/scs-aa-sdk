@@ -27,7 +27,11 @@ export async function getRemoveOwnerTx(client, parameters) {
         throw new Error("Public client not found");
     }
     const action = await getRemoveOwnableValidatorOwnerAction({
-        account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
+        account: {
+            address: account.address,
+            deployedOnChains: [],
+            type: "erc7579-implementation"
+        },
         client: publicClient,
         owner
     });

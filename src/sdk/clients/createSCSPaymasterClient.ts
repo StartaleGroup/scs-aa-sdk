@@ -9,10 +9,7 @@ import {
   scsTokenPaymasterActions
 } from "./decorators/tokenPaymaster"
 
-export type SCSPaymasterClient = Omit<
-  PaymasterClient,
-  "getPaymasterStubData"
-> &
+export type SCSPaymasterClient = Omit<PaymasterClient, "getPaymasterStubData"> &
   TokenPaymasterActions
 
 /**

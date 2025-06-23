@@ -34,7 +34,11 @@ export async function addOwner(client, parameters) {
 }
 export const toAddOwnerCalls = async (account, parameters) => {
     const action = await getAddOwnableValidatorOwnerAction({
-        account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
+        account: {
+            address: account.address,
+            deployedOnChains: [],
+            type: "erc7579-implementation"
+        },
         client: account.client,
         owner: parameters.owner
     });

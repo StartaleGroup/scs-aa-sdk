@@ -48,7 +48,9 @@ const main = async () => {
   })
 
   if (startaleBalance === 0n) {
-    throw new Error(`Insufficient balance at address: ${startaleAccount.address}`)
+    throw new Error(
+      `Insufficient balance at address: ${startaleAccount.address}`
+    )
   }
 
   const scsBundler = createSCSBundlerClient({
@@ -60,8 +62,7 @@ const main = async () => {
           paymaster: createPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: toSCSSponsoredPaymasterContext
-          ({
+          paymasterContext: toSCSSponsoredPaymasterContext({
             paymasterId: "sudo" // Review
           })
         }

@@ -53,16 +53,19 @@ export function tenderlySimulation(
   params.append("network", chainId.toString())
   params.append("contractFunction", "0x765e827f") // handleOps
   params.append("functionInputs", JSON.stringify([packedUserOp]))
-  params.append("stateOverrides", JSON.stringify([
-    {
-      contractAddress: packedUserOp.sender,
-      balance: "100000000000000000000"
-    },
-    {
-      contractAddress: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", // vitalek.eth
-      balance: "100000000000000000000"
-    }
-  ]))
+  params.append(
+    "stateOverrides",
+    JSON.stringify([
+      {
+        contractAddress: packedUserOp.sender,
+        balance: "100000000000000000000"
+      },
+      {
+        contractAddress: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", // vitalek.eth
+        balance: "100000000000000000000"
+      }
+    ])
+  )
 
   tenderlyUrl.search = params.toString()
   return tenderlyUrl.toString()

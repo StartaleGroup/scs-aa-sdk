@@ -102,18 +102,16 @@ async function processChain(
 
     // Fund with native token if needed
     if (accountNativeBalance < NATIVE_TOKEN_AMOUNT) {
-        console.log(
-          `Funding smart account with native token on ${chain.name}...`
-        )
-       const nativeTx = await walletClient.sendTransaction({
-         to: smartAccountAddress,
-         value: NATIVE_TOKEN_AMOUNT
-        })
+      console.log(`Funding smart account with native token on ${chain.name}...`)
+      const nativeTx = await walletClient.sendTransaction({
+        to: smartAccountAddress,
+        value: NATIVE_TOKEN_AMOUNT
+      })
 
-        const nativeTxReceipt = await walletClient.waitForTransactionReceipt({
-          hash: nativeTx
-        })
-        console.log(`Native Transaction: ${nativeTxReceipt.transactionHash}`)
+      const nativeTxReceipt = await walletClient.waitForTransactionReceipt({
+        hash: nativeTx
+      })
+      console.log(`Native Transaction: ${nativeTxReceipt.transactionHash}`)
     } else {
       console.log(
         `Smart account already has sufficient native token on ${chain.name}`

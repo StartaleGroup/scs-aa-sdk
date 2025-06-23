@@ -16,4 +16,5 @@ export * from "./tenderlySimulation.js";
 export * from "./toInitData.js";
 export * from "./toInstallData.js";
 export * from "./toSigner.js";
+export * from "./eip7702Utils.js";
 //# sourceMappingURL=index.js.map

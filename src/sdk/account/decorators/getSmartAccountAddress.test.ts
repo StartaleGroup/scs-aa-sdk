@@ -17,7 +17,10 @@ import {
   createSCSBundlerClient,
   createSmartAccountClient
 } from "../../clients/createSCSBundlerClient"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "../toStartaleSmartAccount"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../toStartaleSmartAccount"
 
 describe("account.decorators.getSmartAccountAddress.local", () => {
   let network: NetworkConfig

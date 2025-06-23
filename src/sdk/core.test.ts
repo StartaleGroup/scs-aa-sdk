@@ -1,24 +1,27 @@
+import { getSmartSessionsValidator } from "@rhinestone/module-sdk"
 import {
   http,
   type Address,
   type Chain,
+  Hex,
   type LocalAccount,
   type WalletClient,
   createWalletClient,
-  parseEther,
-  Hex
+  parseEther
 } from "viem"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { toNetwork } from "../test/testSetup"
 import { getTestAccount, killNetwork, toTestClient } from "../test/testUtils"
 import type { MasterClient, NetworkConfig } from "../test/testUtils"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "./account/toStartaleSmartAccount"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "./account/toStartaleSmartAccount"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "./clients/createSCSBundlerClient"
 import { toSmartSessionsValidator } from "./modules/validators/smartSessionsValidator/toSmartSessionsValidator"
-import { getSmartSessionsValidator } from "@rhinestone/module-sdk"
 
 describe("core", async () => {
   let network: NetworkConfig
@@ -35,7 +38,7 @@ describe("core", async () => {
   let walletClient: WalletClient
 
   beforeAll(async () => {
-    network = await toNetwork('TESTNET_FROM_ENV_VARS')
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl
@@ -78,15 +81,15 @@ describe("core", async () => {
     const smartAccountBalance = await testClient.getBalance({
       address: startaleAccountAddress
     })
-    if(smartAccountBalance == 0n) {
-    const hash = await walletClient.sendTransaction({
-      chain,
-      account: eoaAccount,
-      to: startaleAccountAddress,
-      value: parseEther("0.01")
-    })
-    const receipt = await testClient.waitForTransactionReceipt({ hash })
-    expect(receipt.status).toBe("success")
+    if (smartAccountBalance == 0n) {
+      const hash = await walletClient.sendTransaction({
+        chain,
+        account: eoaAccount,
+        to: startaleAccountAddress,
+        value: parseEther("0.01")
+      })
+      const receipt = await testClient.waitForTransactionReceipt({ hash })
+      expect(receipt.status).toBe("success")
     }
     const hash = await startaleClient.sendUserOperation({
       calls: [

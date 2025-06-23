@@ -1,4 +1,10 @@
-import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUsageLimitPolicy, getValueLimitPolicy } from "@rhinestone/module-sdk"
+import {
+  getSpendingLimitsPolicy,
+  getSudoPolicy,
+  getTimeFramePolicy,
+  getUsageLimitPolicy,
+  getValueLimitPolicy
+} from "@rhinestone/module-sdk"
 import type { Address, Hex } from "viem"
 
 export * from "./abi"
@@ -17,6 +23,9 @@ export const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex =
 // Review: This deployed contract as expected methods
 export const COUNTER_CONTRACT_ADDRESS_MINATO: Hex =
   "0x865562898F022904d6ea510931a7776e9a804849"
+
+export const STARTALE_7702_DELEGATION_ADDRESS: Hex =
+  "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A"
 
 // Rhinestone constants
 export {
@@ -57,9 +66,9 @@ export {
 } from "@rhinestone/module-sdk"
 
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
-  '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F'
+  "0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F"
 
-export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address;
+export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address
 
 export const TIME_FRAME_POLICY_ADDRESS: Hex = getTimeFramePolicy({
   validUntil: 0,
