@@ -268,6 +268,7 @@ export const toStartaleSmartAccount = async (
     eip7702Account,
   } = parameters
 
+  // Note: we could also accept deliberate optional flag to enable EIP-7702
   const isEip7702 = !!eip7702Account || !!eip7702Auth
   const signer = await toSigner({ signer: _signer })
 

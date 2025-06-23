@@ -33,6 +33,7 @@ import { addressToEmptyAccount } from "./utils/addressToEmptyAccount.js";
  */
 export const toStartaleSmartAccount = async (parameters) => {
     const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account, } = parameters;
+    // Note: we could also accept deliberate optional flag to enable EIP-7702
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await toSigner({ signer: _signer });
     // Review
