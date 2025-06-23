@@ -1,6 +1,6 @@
 import type { Chain, Hash, Transport } from "viem"
 import type { Client } from "viem"
-import { type Address } from "viem"
+import type { Address } from "viem"
 import { type SmartAccount, sendUserOperation } from "viem/account-abstraction"
 import { getAction } from "viem/utils"
 import {

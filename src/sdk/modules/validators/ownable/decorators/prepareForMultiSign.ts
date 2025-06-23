@@ -29,10 +29,15 @@ export type PrepareForMultiSignPayload = {
 export async function prepareForMultiSign<
   TModularSmartAccount extends ModularSmartAccount | undefined
 >(
-  startaleAccountClient: Client<Transport, Chain | undefined, TModularSmartAccount>,
+  startaleAccountClient: Client<
+    Transport,
+    Chain | undefined,
+    TModularSmartAccount
+  >,
   parameters: PrepareForMultiSignParameters<TModularSmartAccount>
 ): Promise<PrepareForMultiSignPayload> {
-  const { account: account_ = startaleAccountClient.account, ...rest } = parameters
+  const { account: account_ = startaleAccountClient.account, ...rest } =
+    parameters
 
   if (!account_) {
     throw new AccountNotFoundError({

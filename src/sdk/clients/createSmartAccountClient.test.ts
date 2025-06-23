@@ -30,11 +30,11 @@ import {
   makeInstallDataAndHash
 } from "../account/utils/Utils"
 import { getChain } from "../account/utils/getChain"
+import { COUNTER_CONTRACT_ADDRESS_MINATO } from "../constants"
 import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "./createSCSBundlerClient"
-import { COUNTER_CONTRACT_ADDRESS_MINATO } from "../constants"
 
 describe("startale.client", async () => {
   let network: NetworkConfig
@@ -51,7 +51,7 @@ describe("startale.client", async () => {
   let privKey: Hex
 
   beforeAll(async () => {
-    network = await toNetwork('TESTNET_FROM_ENV_VARS')
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl

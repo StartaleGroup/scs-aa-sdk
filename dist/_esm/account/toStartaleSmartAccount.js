@@ -1,6 +1,6 @@
 import { concat, concatHex, createPublicClient, createWalletClient, domainSeparator, encodeAbiParameters, encodeFunctionData, encodePacked, getContract, isAddressEqual, keccak256, parseAbi, parseAbiParameters, publicActions, toBytes, toHex, validateTypedData, zeroAddress } from "viem";
 import { entryPoint07Address, getUserOperationHash, toSmartAccount } from "viem/account-abstraction";
-import { ENTRY_POINT_ADDRESS, ACCOUNT_FACTORY_ADDRESS, BOOTSTRAP_ADDRESS, STARTALE_7702_DELEGATION_ADDRESS } from "../constants/index.js";
+import { ACCOUNT_FACTORY_ADDRESS, BOOTSTRAP_ADDRESS, ENTRY_POINT_ADDRESS, STARTALE_7702_DELEGATION_ADDRESS } from "../constants/index.js";
 // Constants
 import { EntrypointAbi } from "../constants/abi/index.js";
 import { toEmptyHook } from "../modules/toEmptyHook.js";
@@ -32,7 +32,7 @@ import { addressToEmptyAccount } from "./utils/addressToEmptyAccount.js";
  * })
  */
 export const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account, } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
     // Note: we could also accept deliberate optional flag to enable EIP-7702
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await toSigner({ signer: _signer });
@@ -40,7 +40,10 @@ export const toStartaleSmartAccount = async (parameters) => {
     // Has to be EOA signer who does sign the authorization.
     // Note: Might as well use signer interchangeably.
     const localAccount = eip7702Account
-        ? await toSigner({ signer: eip7702Account, address: eip7702Account.address })
+        ? await toSigner({
+            signer: eip7702Account,
+            address: eip7702Account.address
+        })
         : undefined;
     const walletClient = createWalletClient({
         account: signer,

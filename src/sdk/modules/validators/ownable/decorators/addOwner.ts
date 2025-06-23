@@ -79,7 +79,11 @@ export const toAddOwnerCalls = async (
   parameters: AddOwnerParameters<ModularSmartAccount | undefined>
 ): Promise<Call[]> => {
   const action = await getAddOwnableValidatorOwnerAction({
-    account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
+    account: {
+      address: account.address,
+      deployedOnChains: [],
+      type: "erc7579-implementation"
+    },
     client: account.client as any,
     owner: parameters.owner
   })

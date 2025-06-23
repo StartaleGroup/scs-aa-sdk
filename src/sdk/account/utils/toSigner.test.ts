@@ -32,7 +32,7 @@ describe("utils.toSigner", () => {
   let network: NetworkConfig
 
   beforeAll(async () => {
-    network = await toNetwork('TESTNET_FROM_ENV_VARS')
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
   })
 
   afterAll(async () => {

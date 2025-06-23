@@ -53,7 +53,11 @@ export async function getRemoveOwnerTx<
   }
 
   const action = await getRemoveOwnableValidatorOwnerAction({
-    account: { address: account.address, deployedOnChains: [], type: "erc7579-implementation" },
+    account: {
+      address: account.address,
+      deployedOnChains: [],
+      type: "erc7579-implementation"
+    },
     client: publicClient as any,
     owner
   })

@@ -17,10 +17,10 @@ import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
 import type { Call } from "../../../account/utils/Types"
 import { addressEquals } from "../../../account/utils/Utils"
 import {
-  findTrustedAttesters,
-  getTrustAttestersAction,
+  RHINESTONE_ATTESTER_ADDRESS,
   SMART_SESSIONS_ADDRESS,
-  RHINESTONE_ATTESTER_ADDRESS
+  findTrustedAttesters,
+  getTrustAttestersAction
 } from "../../../constants"
 import type {
   ModularSmartAccount,
@@ -143,7 +143,6 @@ export const toInstallModuleCalls = async (
   // These changes are done to ensure trustAttesters is a batch action.
 
   if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
-    
     const publicClient = account?.client as PublicClient
 
     const trustedAttesters = await findTrustedAttesters({

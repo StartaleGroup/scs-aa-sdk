@@ -1,8 +1,8 @@
 import { type Account, type Address, type Chain, type ClientConfig, type Hex, type LocalAccount, type OneOf, type Prettify, type PublicClient, type RpcSchema, type SignAuthorizationReturnType, type Transport, type WalletClient } from "viem";
 import { type SmartAccount, type SmartAccountImplementation, type UserOperation } from "viem/account-abstraction";
 import { EntrypointAbi } from "../constants/abi";
-import type { Validator } from "../modules/validators/toValidator";
 import type { Module } from "../modules/utils/Types";
+import type { Validator } from "../modules/validators/toValidator";
 import type { Call } from "./utils/Types";
 import { type EthersWallet } from "./utils/Utils";
 import { type EthereumProvider, type Signer } from "./utils/toSigner";

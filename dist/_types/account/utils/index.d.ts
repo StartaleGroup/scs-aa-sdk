@@ -16,4 +16,5 @@ export * from "./tenderlySimulation";
 export * from "./toInitData";
 export * from "./toInstallData";
 export * from "./toSigner";
+export * from "./eip7702Utils";
 //# sourceMappingURL=index.d.ts.map

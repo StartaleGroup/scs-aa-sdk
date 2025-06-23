@@ -271,7 +271,7 @@ export interface ParamRules {
     ParamRule,
     ParamRule,
     ParamRule,
-    ParamRule,
+    ParamRule
   ] // ParamRule[16] in Solidity
 }
 

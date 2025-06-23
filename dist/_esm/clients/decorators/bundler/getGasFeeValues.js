@@ -1,4 +1,4 @@
-import { createPublicClient, http } from "viem";
+import { http, createPublicClient } from "viem";
 import { safeMultiplier } from "../../../account/index.js";
 /**
  * Returns the live gas prices that you can use to send a user operation.
@@ -45,10 +45,12 @@ export const getGasFeeValues = async (client) => {
         method: "rundler_maxPriorityFeePerGas",
         params: []
     });
-    const baseFeePerGas = await rpcClient.request({
+    const baseFeePerGas = await rpcClient
+        .request({
         method: "eth_getBlockByNumber",
         params: ["latest", false]
-    }).then((block) => {
+    })
+        .then((block) => {
         if (!block || !block.baseFeePerGas) {
             throw new Error("Base fee not available");
         }

@@ -24,4 +24,5 @@ tslib_1.__exportStar(require("./tenderlySimulation.js"), exports);
 tslib_1.__exportStar(require("./toInitData.js"), exports);
 tslib_1.__exportStar(require("./toInstallData.js"), exports);
 tslib_1.__exportStar(require("./toSigner.js"), exports);
+tslib_1.__exportStar(require("./eip7702Utils.js"), exports);
 //# sourceMappingURL=index.js.map

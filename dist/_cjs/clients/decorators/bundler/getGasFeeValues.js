@@ -17,10 +17,12 @@ const getGasFeeValues = async (client) => {
         method: "rundler_maxPriorityFeePerGas",
         params: []
     });
-    const baseFeePerGas = await rpcClient.request({
+    const baseFeePerGas = await rpcClient
+        .request({
         method: "eth_getBlockByNumber",
         params: ["latest", false]
-    }).then((block) => {
+    })
+        .then((block) => {
         if (!block || !block.baseFeePerGas) {
             throw new Error("Base fee not available");
         }

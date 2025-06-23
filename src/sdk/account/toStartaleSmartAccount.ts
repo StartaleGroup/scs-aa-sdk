@@ -47,17 +47,17 @@ import {
 } from "viem/account-abstraction"
 
 import {
-  ENTRY_POINT_ADDRESS,
   ACCOUNT_FACTORY_ADDRESS,
   BOOTSTRAP_ADDRESS,
+  ENTRY_POINT_ADDRESS,
   STARTALE_7702_DELEGATION_ADDRESS
 } from "../constants"
 // Constants
 import { EntrypointAbi } from "../constants/abi"
 import { toEmptyHook } from "../modules/toEmptyHook"
+import type { Module } from "../modules/utils/Types"
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule"
 import type { Validator } from "../modules/validators/toValidator"
-import type { Module } from "../modules/utils/Types"
 import { getFactoryData, getInitData } from "./decorators/getFactoryData"
 import { getStartaleAccountAddress } from "./decorators/getStartaleAccountAddress"
 import {
@@ -80,7 +80,10 @@ import {
 import { toInitData } from "./utils/toInitData"
 import { type EthereumProvider, type Signer, toSigner } from "./utils/toSigner"
 
-import { getCode, signAuthorization as signAuthorizationAction } from "viem/actions"
+import {
+  getCode,
+  signAuthorization as signAuthorizationAction
+} from "viem/actions"
 import { verifyAuthorization } from "viem/utils"
 import { addressToEmptyAccount } from "./utils/addressToEmptyAccount"
 /**
@@ -217,7 +220,7 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<
 
     // Review: We could add a method called superChargeEOA that accepts the delegation address (defaults to account implementation)
     // This could be executor = self and just making the upgrade
-    // Or it only returns signed authorisation 
+    // Or it only returns signed authorisation
 
     /** Execute the transaction to unauthorize the account */
     unDelegate: () => Promise<Hex>
@@ -265,7 +268,7 @@ export const toStartaleSmartAccount = async (
     bootStrapAddress = BOOTSTRAP_ADDRESS,
     accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS,
     eip7702Auth,
-    eip7702Account,
+    eip7702Account
   } = parameters
 
   // Note: we could also accept deliberate optional flag to enable EIP-7702
@@ -276,7 +279,10 @@ export const toStartaleSmartAccount = async (
   // Has to be EOA signer who does sign the authorization.
   // Note: Might as well use signer interchangeably.
   const localAccount = eip7702Account
-    ? await toSigner({ signer: eip7702Account, address: eip7702Account.address })
+    ? await toSigner({
+        signer: eip7702Account,
+        address: eip7702Account.address
+      })
     : undefined
 
   const walletClient = createWalletClient({
@@ -338,7 +344,7 @@ export const toStartaleSmartAccount = async (
    */
   const getInitCode = () => {
     if (isEip7702) {
-      return "0x";
+      return "0x"
     }
     return concatHex([factoryAddress, factoryData])
   }
@@ -604,41 +610,38 @@ export const toStartaleSmartAccount = async (
     const code = await getCode(walletClient, { address: signer.address })
     // check if account has not activated 7702 with implementation address
     if (
-        !code ||
-        code.length === 0 ||
-        !code
-            .toLowerCase()
-            .startsWith(
-                `0xef0100${accountImplementationAddress.slice(2).toLowerCase()}`
-            )
+      !code ||
+      code.length === 0 ||
+      !code
+        .toLowerCase()
+        .startsWith(
+          `0xef0100${accountImplementationAddress.slice(2).toLowerCase()}`
+        )
     ) {
-        if (
-            eip7702Auth &&
-            !isAddressEqual(
-                eip7702Auth.address,
-                accountImplementationAddress
-            )
-        ) {
-            throw new Error(
-                "EIP-7702 authorization delegate address does not match account implementation address"
-            )
-        }
+      if (
+        eip7702Auth &&
+        !isAddressEqual(eip7702Auth.address, accountImplementationAddress)
+      ) {
+        throw new Error(
+          "EIP-7702 authorization delegate address does not match account implementation address"
+        )
+      }
 
-        const auth =
-            eip7702Auth ??
-            (await signAuthorizationAction(walletClient, {
-                account: localAccount as LocalAccount,
-                address: accountImplementationAddress as `0x${string}`,
-                chainId: chain.id
-            }))
-        const verified = await verifyAuthorization({
-            authorization: auth,
-            address: accountAddress_ ?? signer.address as Address
-        })
-        if (!verified) {
-            throw new Error("Authorization verification failed")
-        }
-        return auth
+      const auth =
+        eip7702Auth ??
+        (await signAuthorizationAction(walletClient, {
+          account: localAccount as LocalAccount,
+          address: accountImplementationAddress as `0x${string}`,
+          chainId: chain.id
+        }))
+      const verified = await verifyAuthorization({
+        authorization: auth,
+        address: accountAddress_ ?? (signer.address as Address)
+      })
+      if (!verified) {
+        throw new Error("Authorization verification failed")
+      }
+      return auth
     }
     return undefined
   }
@@ -651,13 +654,13 @@ export const toStartaleSmartAccount = async (
       version: "0.7"
     },
     authorization: isEip7702
-            ? {
-                  account:
-                      (localAccount as PrivateKeyAccount) ??
-                      addressToEmptyAccount(accountAddress_ ?? signer.address), // Review
-                  address: accountImplementationAddress
-              }
-            : undefined,
+      ? {
+          account:
+            (localAccount as PrivateKeyAccount) ??
+            addressToEmptyAccount(accountAddress_ ?? signer.address), // Review
+          address: accountImplementationAddress
+        }
+      : undefined,
     getAddress,
     encodeCalls: (calls: readonly Call[]): Promise<Hex> => {
       return calls.length === 1

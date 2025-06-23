@@ -40,7 +40,10 @@ import {
   createSmartAccountClient
 } from "../clients/createSCSBundlerClient"
 import { TokenWithPermitAbi } from "../constants/abi/TokenWithPermitAbi"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "./toStartaleSmartAccount"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "./toStartaleSmartAccount"
 import {
   addressEquals,
   getAccountDomainStructFields,
@@ -70,7 +73,7 @@ describe("startale.account", async () => {
   let walletClient: WalletClient
 
   beforeAll(async () => {
-    network = await toNetwork('TESTNET_FROM_ENV_VARS')
+    network = await toNetwork("TESTNET_FROM_ENV_VARS")
 
     chain = network.chain
     bundlerUrl = network.bundlerUrl

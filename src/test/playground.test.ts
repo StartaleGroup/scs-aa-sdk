@@ -78,8 +78,7 @@ describe.skipIf(!playgroundTrue())("playground", () => {
           paymaster: createSCSPaymasterClient({
             transport: http(paymasterUrl)
           }),
-          paymasterContext: toSCSSponsoredPaymasterContext
-          ({
+          paymasterContext: toSCSSponsoredPaymasterContext({
             paymasterId: "sudo" // Review
           })
         }
@@ -143,11 +142,13 @@ describe.skipIf(!playgroundTrue())("playground", () => {
     const hash = await startaleClient.sendUserOperation({
       calls: [{ to: recipientAddress, value: 1n }]
     })
-    const { success } = await startaleClient.waitForUserOperationReceipt({ hash })
+    const { success } = await startaleClient.waitForUserOperationReceipt({
+      hash
+    })
     const balanceAfter = await publicClient.getBalance({
       address: recipientAddress
     })
-    expect(success).toBe(true);
+    expect(success).toBe(true)
     expect(balanceAfter - balanceBefore).toBe(1n)
   })
 

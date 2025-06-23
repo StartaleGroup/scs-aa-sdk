@@ -8,11 +8,14 @@ import {
   createPublicClient
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
-import { soneiumMinato, baseSepolia } from "viem/chains"
+import { baseSepolia, soneiumMinato } from "viem/chains"
 import { beforeAll, describe, expect, inject, test } from "vitest"
 import { toNetwork } from "../../test/testSetup"
 import type { NetworkConfig } from "../../test/testUtils"
-import { type StartaleSmartAccount, toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
+import {
+  type StartaleSmartAccount,
+  toStartaleSmartAccount
+} from "../account/toStartaleSmartAccount"
 import { safeMultiplier } from "../account/utils"
 import type { StartaleAccountClient } from "./createSCSBundlerClient"
 import { createSCSBundlerClient } from "./createSCSBundlerClient"

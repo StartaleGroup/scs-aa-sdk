@@ -93,7 +93,10 @@ export const toRemoveOwnerCalls = async (
   parameters: RemoveOwnerParameters<ModularSmartAccount | undefined>
 ): Promise<Call[]> => {
   const action = await getRemoveOwnableValidatorOwnerAction({
-    account: getAccount({ address: account.address, type: "erc7579-implementation" }),
+    account: getAccount({
+      address: account.address,
+      type: "erc7579-implementation"
+    }),
     client: account.client as any,
     owner: parameters.owner
   })

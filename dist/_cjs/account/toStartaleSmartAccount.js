@@ -17,11 +17,14 @@ const actions_1 = require("viem/actions");
 const utils_1 = require("viem/utils");
 const addressToEmptyAccount_1 = require("./utils/addressToEmptyAccount.js");
 const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account, } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await (0, toSigner_1.toSigner)({ signer: _signer });
     const localAccount = eip7702Account
-        ? await (0, toSigner_1.toSigner)({ signer: eip7702Account, address: eip7702Account.address })
+        ? await (0, toSigner_1.toSigner)({
+            signer: eip7702Account,
+            address: eip7702Account.address
+        })
         : undefined;
     const walletClient = (0, viem_1.createWalletClient)({
         account: signer,

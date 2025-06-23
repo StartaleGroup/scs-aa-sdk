@@ -31,7 +31,7 @@ import {
   type InstallModuleParameters,
   installModule,
   toInstallModuleCalls,
-  toInstallWithSafeSenderCalls,
+  toInstallWithSafeSenderCalls
 } from "./installModule.js"
 import {
   type InstallModulesParameters,

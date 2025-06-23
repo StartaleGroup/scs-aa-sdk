@@ -11,13 +11,14 @@ import {
 import {
   type BundlerActions,
   type BundlerClientConfig,
-  createBundlerClient,
-  prepareUserOperation,
   type PrepareUserOperationParameters,
   type SendUserOperationParameters,
-  sendUserOperation,
-  type SmartAccount
+  type SmartAccount,
+  createBundlerClient,
+  prepareUserOperation,
+  sendUserOperation
 } from "viem/account-abstraction"
+import type { StartaleSmartAccountImplementation } from "../account"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
 import { type SCSActions, scsBundlerActions } from "./decorators/bundler"
 import { getGasFeeValues } from "./decorators/bundler/getGasFeeValues"
@@ -26,7 +27,6 @@ import {
   type SmartAccountActions,
   smartAccountActions
 } from "./decorators/smartAccount"
-import { type StartaleSmartAccountImplementation } from "../account"
 
 /**
  * Startale Account Client type
@@ -113,9 +113,7 @@ type SCSBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
  *
  * const bundlerClient = createSCSBundlerClient({ chain: mainnet });
  */
-export const createSCSBundlerClient = (
-  parameters: SCSBundlerClientConfig
-) => {
+export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
   const {
     mock = false,
     transport,
@@ -142,9 +140,7 @@ export const createSCSBundlerClient = (
           `https://soneium-minato.bundler.scs.startale.com?apikey=${apiKey ?? "admin"}`
         )
 
-  const defaultedPaymasterContext = paymaster
-    ? (paymasterContext)
-    : undefined
+  const defaultedPaymasterContext = paymaster ? paymasterContext : undefined
 
   const defaultedUserOperation = userOperation ?? {
     estimateFeesPerGas: async () => {
@@ -160,41 +156,37 @@ export const createSCSBundlerClient = (
   })
     .extend((client: AnyData) => ({ ...client, mock }))
     .extend((client: AnyData) => ({
-      prepareUserOperation: async (
-          args: PrepareUserOperationParameters
-      ) => {
-          let _args = args
-          if (client.account?.authorization) {
-              const authorization =
-                  args.authorization ||
-                  (await (
-                      client.account as SmartAccount<StartaleSmartAccountImplementation>
-                  )?.eip7702Authorization?.())
-              _args = {
-                  ...args,
-                  authorization
-              }
+      prepareUserOperation: async (args: PrepareUserOperationParameters) => {
+        let _args = args
+        if (client.account?.authorization) {
+          const authorization =
+            args.authorization ||
+            (await (
+              client.account as SmartAccount<StartaleSmartAccountImplementation>
+            )?.eip7702Authorization?.())
+          _args = {
+            ...args,
+            authorization
           }
-          return await prepareUserOperation(client, _args)
+        }
+        return await prepareUserOperation(client, _args)
       }
     }))
     .extend((client: AnyData) => ({
-      sendUserOperation: async (
-          args: SendUserOperationParameters
-      ) => {
-          let _args = args
-          if (client.account?.authorization) {
-              const authorization =
-                  args.authorization ||
-                  (await (
-                      client.account as SmartAccount<StartaleSmartAccountImplementation>
-                  )?.eip7702Authorization?.())
-              _args = {
-                  ...args,
-                  authorization
-              }
+      sendUserOperation: async (args: SendUserOperationParameters) => {
+        let _args = args
+        if (client.account?.authorization) {
+          const authorization =
+            args.authorization ||
+            (await (
+              client.account as SmartAccount<StartaleSmartAccountImplementation>
+            )?.eip7702Authorization?.())
+          _args = {
+            ...args,
+            authorization
           }
-          return await sendUserOperation(client, _args)
+        }
+        return await sendUserOperation(client, _args)
       }
     }))
     .extend(scsBundlerActions())

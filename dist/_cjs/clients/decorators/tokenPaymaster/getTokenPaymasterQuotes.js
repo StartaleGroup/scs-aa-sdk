@@ -26,7 +26,7 @@ const getTokenPaymasterQuotes = async (client, parameters) => {
             chainId,
             {
                 calculateGasLimits: true
-            },
+            }
         ]
     });
     return quote;

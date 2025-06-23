@@ -4,8 +4,8 @@ import type {
   WaitForUserOperationReceiptReturnType
 } from "viem/account-abstraction"
 import {
-  type UserOperationGasPriceWithBigIntAsHex,
   type GetGasFeeValuesReturnType,
+  type UserOperationGasPriceWithBigIntAsHex,
   getGasFeeValues
 } from "./getGasFeeValues"
 import {

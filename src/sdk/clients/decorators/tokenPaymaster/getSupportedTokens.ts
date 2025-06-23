@@ -28,7 +28,7 @@ export const getSupportedTokens = async (
     ]
   })
   const paymaster = client.paymaster as SCSPaymasterClient
-  if (!client?.chain?.id) throw new Error('Chain ID is required')
+  if (!client?.chain?.id) throw new Error("Chain ID is required")
   const quote = await paymaster.getTokenPaymasterQuotes({
     userOp,
     chainId: toHex(client.chain.id)

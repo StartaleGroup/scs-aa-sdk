@@ -45,7 +45,10 @@ export async function removeOwner(client, parameters) {
 }
 export const toRemoveOwnerCalls = async (account, parameters) => {
     const action = await getRemoveOwnableValidatorOwnerAction({
-        account: getAccount({ address: account.address, type: "erc7579-implementation" }),
+        account: getAccount({
+            address: account.address,
+            type: "erc7579-implementation"
+        }),
         client: account.client,
         owner: parameters.owner
     });

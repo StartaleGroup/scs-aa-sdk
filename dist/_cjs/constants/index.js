@@ -42,7 +42,7 @@ Object.defineProperty(exports, "getUsageLimitPolicy", { enumerable: true, get: f
 Object.defineProperty(exports, "getValueLimitPolicy", { enumerable: true, get: function () { return module_sdk_2.getValueLimitPolicy; } });
 Object.defineProperty(exports, "getOwnableValidator", { enumerable: true, get: function () { return module_sdk_2.getOwnableValidator; } });
 Object.defineProperty(exports, "getUniversalActionPolicy", { enumerable: true, get: function () { return module_sdk_2.getUniversalActionPolicy; } });
-exports.UNIVERSAL_ACTION_POLICY_ADDRESS = '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F';
+exports.UNIVERSAL_ACTION_POLICY_ADDRESS = "0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F";
 exports.SUDO_POLICY_ADDRESS = (0, module_sdk_1.getSudoPolicy)().address;
 exports.TIME_FRAME_POLICY_ADDRESS = (0, module_sdk_1.getTimeFramePolicy)({
     validUntil: 0,

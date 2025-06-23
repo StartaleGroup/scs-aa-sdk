@@ -4,7 +4,12 @@ import type { AnyData } from "../../../modules";
 export type TokenPaymasterRpcSchema = [
     {
         Method: "pm_getFeeQuotes";
-        Parameters: [TokenPaymasterUserOpParams, Address, Hex, TokenPaymasterConfigParams];
+        Parameters: [
+            TokenPaymasterUserOpParams,
+            Address,
+            Hex,
+            TokenPaymasterConfigParams
+        ];
         ReturnType: TokenPaymasterQuotesResponse;
     }
 ];

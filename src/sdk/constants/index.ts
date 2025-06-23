@@ -1,4 +1,10 @@
-import { getSpendingLimitsPolicy, getSudoPolicy, getTimeFramePolicy, getUsageLimitPolicy, getValueLimitPolicy } from "@rhinestone/module-sdk"
+import {
+  getSpendingLimitsPolicy,
+  getSudoPolicy,
+  getTimeFramePolicy,
+  getUsageLimitPolicy,
+  getValueLimitPolicy
+} from "@rhinestone/module-sdk"
 import type { Address, Hex } from "viem"
 
 export * from "./abi"
@@ -60,9 +66,9 @@ export {
 } from "@rhinestone/module-sdk"
 
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
-  '0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F'
+  "0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F"
 
-export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address;
+export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address
 
 export const TIME_FRAME_POLICY_ADDRESS: Hex = getTimeFramePolicy({
   validUntil: 0,
