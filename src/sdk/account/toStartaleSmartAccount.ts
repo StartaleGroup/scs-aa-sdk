@@ -215,12 +215,9 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<
       | (() => Promise<SignAuthorizationReturnType | undefined>)
       | undefined
 
-    /**
-     * @description Delegate the account to the code of the given address
-     * @param delegationAddress - The address to delegate the account to
-     * @returns The authorization data
-     */  
-    eip7702DelegateTo: (delegationAddress: Address) => Promise<SignAuthorizationReturnType>
+    // Review: We could add a method called superChargeEOA that accepts the delegation address (defaults to account implementation)
+    // This could be executor = self and just making the upgrade
+    // Or it only returns signed authorisation 
 
     /** Execute the transaction to unauthorize the account */
     unDelegate: () => Promise<Hex>
@@ -495,10 +492,10 @@ export const toStartaleSmartAccount = async (
 
   /**
    * @description Get authorization data to unauthorize the account
-   * @returns Hex of the transaction hash
+   * @returns Hex of the transaction hash. You can wait for the receipt on this hash.
    *
    * @example
-   * const eip7702Auth = await nexusAccount.unDelegate()
+   * const undelegateTxHash = await startaleSmartAccount.unDelegate()
    */
   async function unDelegate(): Promise<Hex> {
     const deAuthorization = await walletClient.signAuthorization({
@@ -511,24 +508,6 @@ export const toStartaleSmartAccount = async (
       type: "eip7702",
       authorizationList: [deAuthorization]
     })
-  }
-
-  /**
-   * @description Get authorization data for the EOA to Nexus Account
-   * @param forMee - Whether to return the authorization data formatted for MEE. Defaults to false.
-   * @param delegatedContract - The contract address to delegate the authorization to. Defaults to the implementation address.
-   *
-   * @example
-   * const eip7702Auth = await nexusAccount.toDelegation() // Returns MeeAuthorization
-   */
-  async function eip7702DelegateTo(
-    delegatedContract?: Address
-  ): Promise<SignAuthorizationReturnType> {
-    const contractAddress = delegatedContract || accountImplementationAddress
-    const authorization = await walletClient.signAuthorization({
-      contractAddress
-    })
-    return authorization
   }
 
   /**
@@ -732,7 +711,6 @@ export const toStartaleSmartAccount = async (
     extend: {
       unDelegate,
       isDelegated,
-      eip7702DelegateTo,
       entryPointAddress: entryPoint07Address,
       getAddress,
       getInitCode,

@@ -157,13 +157,6 @@ const toStartaleSmartAccount = async (parameters) => {
             authorizationList: [deAuthorization]
         });
     }
-    async function eip7702DelegateTo(delegatedContract) {
-        const contractAddress = delegatedContract || accountImplementationAddress;
-        const authorization = await walletClient.signAuthorization({
-            contractAddress
-        });
-        return authorization;
-    }
     async function signTypedData(parameters) {
         const { message, primaryType, types: _types, domain } = parameters;
         if (!domain)
@@ -292,7 +285,6 @@ const toStartaleSmartAccount = async (parameters) => {
         extend: {
             unDelegate,
             isDelegated,
-            eip7702DelegateTo,
             entryPointAddress: account_abstraction_1.entryPoint07Address,
             getAddress,
             getInitCode,

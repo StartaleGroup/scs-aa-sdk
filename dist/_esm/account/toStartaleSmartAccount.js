@@ -210,10 +210,10 @@ export const toStartaleSmartAccount = async (parameters) => {
     }
     /**
      * @description Get authorization data to unauthorize the account
-     * @returns Hex of the transaction hash
+     * @returns Hex of the transaction hash. You can wait for the receipt on this hash.
      *
      * @example
-     * const eip7702Auth = await nexusAccount.unDelegate()
+     * const undelegateTxHash = await startaleSmartAccount.unDelegate()
      */
     async function unDelegate() {
         const deAuthorization = await walletClient.signAuthorization({
@@ -226,21 +226,6 @@ export const toStartaleSmartAccount = async (parameters) => {
             type: "eip7702",
             authorizationList: [deAuthorization]
         });
-    }
-    /**
-     * @description Get authorization data for the EOA to Nexus Account
-     * @param forMee - Whether to return the authorization data formatted for MEE. Defaults to false.
-     * @param delegatedContract - The contract address to delegate the authorization to. Defaults to the implementation address.
-     *
-     * @example
-     * const eip7702Auth = await nexusAccount.toDelegation() // Returns MeeAuthorization
-     */
-    async function eip7702DelegateTo(delegatedContract) {
-        const contractAddress = delegatedContract || accountImplementationAddress;
-        const authorization = await walletClient.signAuthorization({
-            contractAddress
-        });
-        return authorization;
     }
     /**
      * @description Signs typed data
@@ -392,7 +377,6 @@ export const toStartaleSmartAccount = async (parameters) => {
         extend: {
             unDelegate,
             isDelegated,
-            eip7702DelegateTo,
             entryPointAddress: entryPoint07Address,
             getAddress,
             getInitCode,
