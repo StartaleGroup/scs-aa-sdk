@@ -2,12 +2,16 @@ import { http, type Address, type OneOf, type Transport } from "viem"
 import {
   type PaymasterClient,
   type PaymasterClientConfig,
-  createPaymasterClient
+  type SmartAccount,
+  createPaymasterClient,
 } from "viem/account-abstraction"
 import {
   type TokenPaymasterActions,
   scsTokenPaymasterActions
 } from "./decorators/tokenPaymaster"
+import { getTokenPaymasterQuotes, type GetTokenPaymasterQuotesParameters } from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
+import { type StartaleSmartAccountImplementation } from "../account"
+import type { AnyData } from "../modules/utils/Types"
 
 export type SCSPaymasterClient = Omit<PaymasterClient, "getPaymasterStubData"> &
   TokenPaymasterActions
@@ -127,7 +131,23 @@ export const createSCSPaymasterClient = (
   const { getPaymasterStubData, ...paymasterClient } = createPaymasterClient({
     ...parameters,
     transport: defaultedTransport
-  }).extend(scsTokenPaymasterActions())
+  })
+  .extend((client: AnyData) => ({
+    getTokenPaymasterQuotes: async (args: GetTokenPaymasterQuotesParameters) => {
+      let _args = args
+      // Review
+      if (args.userOp?.authorization) {
+        const authorization =
+          args.userOp.authorization ||
+          (await (
+            client.account as SmartAccount<StartaleSmartAccountImplementation>
+          )?.eip7702Authorization?.())
+        args.userOp.authorization = authorization
+      }
+      return await getTokenPaymasterQuotes(client, _args)
+    }
+  }))
+  .extend(scsTokenPaymasterActions())
 
   return paymasterClient
 }

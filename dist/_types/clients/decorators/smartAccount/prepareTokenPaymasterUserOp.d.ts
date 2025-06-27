@@ -1,4 +1,4 @@
-import { type Address, type Chain, type Client, type Transport } from "viem";
+import { type Address, type Chain, type Client, type SignedAuthorization, type Transport } from "viem";
 import type { SmartAccount, UserOperation } from "viem/account-abstraction";
 export type Transaction = {
     to: Address;
@@ -15,6 +15,7 @@ export type PrepareTokenPaymasterUserOpParameters = {
     feeTokenAddress: Address;
     /** Optional custom approval amount for the token paymaster. If not provided, max uint256 will be used */
     customApprovalAmount?: bigint;
+    authorization?: SignedAuthorization<number> | undefined;
 };
 /**
  * Prepares a user operation with token paymaster configuration, including ERC20 token approval

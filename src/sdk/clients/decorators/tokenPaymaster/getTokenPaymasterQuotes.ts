@@ -71,6 +71,84 @@ export type GetTokenPaymasterQuotesParameters = {
 }
 
 /**
+ * Normalizes the authorization object to ensure yParity, chainId, and nonce are properly converted to hex.
+ * This is important for EIP-7702 authorization compatibility.
+ */
+const normalizeAuthorization = (authorization: any) => {
+  if (!authorization || typeof authorization !== 'object') {
+    return authorization
+  }
+
+  // Create a copy to avoid mutating the original
+  const normalizedAuth = { ...authorization }
+
+  // Normalize yParity
+  if ('yParity' in normalizedAuth && normalizedAuth.yParity !== undefined) {
+    const yParity = normalizedAuth.yParity
+    
+    // Convert to number if it's a string or hex
+    let yParityNumber: number
+    if (typeof yParity === 'string') {
+      // If it's a hex string, convert to number
+      if (yParity.startsWith('0x')) {
+        yParityNumber = parseInt(yParity, 16)
+      } else {
+        yParityNumber = parseInt(yParity, 10)
+      }
+    } else {
+      yParityNumber = yParity
+    }
+
+    // Ensure yParity is even (0) or odd (1) and convert to hex
+    // If the number is odd, keep it as 1, if even, make it 0
+    const normalizedYParity = yParityNumber % 2 === 1 ? 1 : 0
+    normalizedAuth.yParity = toHex(normalizedYParity)
+  }
+
+  // Normalize chainId
+  if ('chainId' in normalizedAuth && normalizedAuth.chainId !== undefined) {
+    const chainId = normalizedAuth.chainId
+    
+    // Convert to number if it's a string or hex
+    let chainIdNumber: number
+    if (typeof chainId === 'string') {
+      // If it's a hex string, convert to number
+      if (chainId.startsWith('0x')) {
+        chainIdNumber = parseInt(chainId, 16)
+      } else {
+        chainIdNumber = parseInt(chainId, 10)
+      }
+    } else {
+      chainIdNumber = chainId
+    }
+
+    normalizedAuth.chainId = toHex(chainIdNumber)
+  }
+
+  // Normalize nonce
+  if ('nonce' in normalizedAuth && normalizedAuth.nonce !== undefined) {
+    const nonce = normalizedAuth.nonce
+    
+    // Convert to number if it's a string or hex
+    let nonceNumber: number
+    if (typeof nonce === 'string') {
+      // If it's a hex string, convert to number
+      if (nonce.startsWith('0x')) {
+        nonceNumber = parseInt(nonce, 16)
+      } else {
+        nonceNumber = parseInt(nonce, 10)
+      }
+    } else {
+      nonceNumber = nonce
+    }
+
+    normalizedAuth.nonce = toHex(nonceNumber)
+  }
+
+  return normalizedAuth
+}
+
+/**
  * Fetches paymaster quotes for ERC20 token payment options for a given UserOperation.
  *
  * @param userOp - The UserOperation to get paymaster quotes for
@@ -118,7 +196,13 @@ export const getTokenPaymasterQuotes = async (
   parameters: GetTokenPaymasterQuotesParameters
 ): Promise<TokenPaymasterQuotesResponse> => {
   const { userOp, chainId } = parameters
-  // Review: types rtransformation and requirements in pm service endpoint
+  
+  // Normalize the authorization chainId, nonce, and yParity if it exists
+  const normalizedAuthorization = userOp.authorization 
+    ? normalizeAuthorization(userOp.authorization)
+    : undefined
+
+  // Review: types transformation and requirements in pm service endpoint
   const quote = await client.request({
     method: "pm_getFeeQuotes",
     params: [
@@ -138,7 +222,8 @@ export const getTokenPaymasterQuotes = async (
         ),
         paymasterVerificationGasLimit: toHex(
           Number(userOp.paymasterVerificationGasLimit ?? 0x0)
-        )
+        ),
+        eip7702Auth: normalizedAuthorization
       },
       ENTRY_POINT_ADDRESS,
       chainId,
