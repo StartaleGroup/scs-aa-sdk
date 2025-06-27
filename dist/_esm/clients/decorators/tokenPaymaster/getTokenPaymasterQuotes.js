@@ -27,48 +27,21 @@ const normalizeAuthorization = (authorization) => {
         else {
             yParityNumber = yParity;
         }
-        // Ensure yParity is even (0) or odd (1) and convert to hex
+        // Ensure yParity is even (0) or odd (1) and convert to hex with proper padding
         // If the number is odd, keep it as 1, if even, make it 0
+        // Using size: 1 ensures even character count (0x00 or 0x01)
         const normalizedYParity = yParityNumber % 2 === 1 ? 1 : 0;
-        normalizedAuth.yParity = toHex(normalizedYParity);
+        normalizedAuth.yParity = toHex(normalizedYParity, { size: 1 });
     }
-    // Normalize chainId
+    // Convert chainId to hex
     if ('chainId' in normalizedAuth && normalizedAuth.chainId !== undefined) {
         const chainId = normalizedAuth.chainId;
-        // Convert to number if it's a string or hex
-        let chainIdNumber;
-        if (typeof chainId === 'string') {
-            // If it's a hex string, convert to number
-            if (chainId.startsWith('0x')) {
-                chainIdNumber = parseInt(chainId, 16);
-            }
-            else {
-                chainIdNumber = parseInt(chainId, 10);
-            }
-        }
-        else {
-            chainIdNumber = chainId;
-        }
-        normalizedAuth.chainId = toHex(chainIdNumber);
+        normalizedAuth.chainId = toHex(chainId);
     }
-    // Normalize nonce
+    // Convert nonce to hex
     if ('nonce' in normalizedAuth && normalizedAuth.nonce !== undefined) {
         const nonce = normalizedAuth.nonce;
-        // Convert to number if it's a string or hex
-        let nonceNumber;
-        if (typeof nonce === 'string') {
-            // If it's a hex string, convert to number
-            if (nonce.startsWith('0x')) {
-                nonceNumber = parseInt(nonce, 16);
-            }
-            else {
-                nonceNumber = parseInt(nonce, 10);
-            }
-        }
-        else {
-            nonceNumber = nonce;
-        }
-        normalizedAuth.nonce = toHex(nonceNumber);
+        normalizedAuth.nonce = toHex(nonce);
     }
     return normalizedAuth;
 };
@@ -112,7 +85,7 @@ const normalizeAuthorization = (authorization) => {
  */
 export const getTokenPaymasterQuotes = async (client, parameters) => {
     const { userOp, chainId } = parameters;
-    // Normalize the authorization chainId, nonce, and yParity if it exists
+    // Normalize the authorization yParity and convert chainId/nonce to hex if they exist
     const normalizedAuthorization = userOp.authorization
         ? normalizeAuthorization(userOp.authorization)
         : undefined;

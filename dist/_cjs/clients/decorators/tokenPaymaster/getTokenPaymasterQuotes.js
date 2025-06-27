@@ -23,39 +23,15 @@ const normalizeAuthorization = (authorization) => {
             yParityNumber = yParity;
         }
         const normalizedYParity = yParityNumber % 2 === 1 ? 1 : 0;
-        normalizedAuth.yParity = (0, viem_1.toHex)(normalizedYParity);
+        normalizedAuth.yParity = (0, viem_1.toHex)(normalizedYParity, { size: 1 });
     }
     if ('chainId' in normalizedAuth && normalizedAuth.chainId !== undefined) {
         const chainId = normalizedAuth.chainId;
-        let chainIdNumber;
-        if (typeof chainId === 'string') {
-            if (chainId.startsWith('0x')) {
-                chainIdNumber = parseInt(chainId, 16);
-            }
-            else {
-                chainIdNumber = parseInt(chainId, 10);
-            }
-        }
-        else {
-            chainIdNumber = chainId;
-        }
-        normalizedAuth.chainId = (0, viem_1.toHex)(chainIdNumber);
+        normalizedAuth.chainId = (0, viem_1.toHex)(chainId);
     }
     if ('nonce' in normalizedAuth && normalizedAuth.nonce !== undefined) {
         const nonce = normalizedAuth.nonce;
-        let nonceNumber;
-        if (typeof nonce === 'string') {
-            if (nonce.startsWith('0x')) {
-                nonceNumber = parseInt(nonce, 16);
-            }
-            else {
-                nonceNumber = parseInt(nonce, 10);
-            }
-        }
-        else {
-            nonceNumber = nonce;
-        }
-        normalizedAuth.nonce = (0, viem_1.toHex)(nonceNumber);
+        normalizedAuth.nonce = (0, viem_1.toHex)(nonce);
     }
     return normalizedAuth;
 };
