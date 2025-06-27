@@ -2,6 +2,7 @@ import {
   type Address,
   type Chain,
   type Client,
+  type SignedAuthorization,
   type Transport,
   erc20Abi,
   maxUint256
@@ -28,6 +29,7 @@ export type PrepareTokenPaymasterUserOpParameters = {
   feeTokenAddress: Address
   /** Optional custom approval amount for the token paymaster. If not provided, max uint256 will be used */
   customApprovalAmount?: bigint
+  authorization?: SignedAuthorization<number> | undefined
 }
 
 /**

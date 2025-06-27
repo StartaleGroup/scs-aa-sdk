@@ -27,6 +27,7 @@ import {
   type SmartAccountActions,
   smartAccountActions
 } from "./decorators/smartAccount"
+import { prepareTokenPaymasterUserOp, type PrepareTokenPaymasterUserOpParameters } from "./decorators/smartAccount/prepareTokenPaymasterUserOp"
 
 /**
  * Startale Account Client type
@@ -187,6 +188,23 @@ export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
           }
         }
         return await sendUserOperation(client, _args)
+      }
+    }))
+    .extend((client: AnyData) => ({
+      prepareTokenPaymasterUserOp: async (args: PrepareTokenPaymasterUserOpParameters) => {
+        let _args = args
+        if (client.account?.authorization) {
+          const authorization =
+            args.authorization ||
+            (await (
+              client.account as SmartAccount<StartaleSmartAccountImplementation>
+            )?.eip7702Authorization?.())
+          _args = {
+            ...args,
+            authorization
+          }
+        }
+        return await prepareTokenPaymasterUserOp(client, _args)
       }
     }))
     .extend(scsBundlerActions())
