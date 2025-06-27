@@ -116,7 +116,7 @@ export const getTokenPaymasterQuotes = async (client, parameters) => {
     const normalizedAuthorization = userOp.authorization
         ? normalizeAuthorization(userOp.authorization)
         : undefined;
-    // Review: types transformation and requirements in pm service endpoint
+    // Transform UserOperation parameters into the format required by the pm_getFeeQuotes service endpoint.
     const quote = await client.request({
         method: "pm_getFeeQuotes",
         params: [
