@@ -8,13 +8,12 @@ A powerful toolkit for building decentralized applications (dApps) with **ERC433
 
 ## 📚 Table of Contents
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Features](#features)
-- [Documentation](#documentation)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Features](#-features)
+- [Documentation](#-documentation)
+- [Examples](#-examples)
+- [License](#-license)
 
 ## 🚀 Installation
 
@@ -53,15 +52,11 @@ const smartAccountClient = createSmartAccountClient({
 
 ## 📖 Documentation
 
-For detailed documentation, please visit our [documentation site](https://docs.startale.com/scs-aa-sdk).
+For detailed documentation, please visit our [documentation site](https://docs.startale.com/docs/account-abstraction).
 
 ## 🎯 Examples
 
-Check out our [examples directory](./examples) for complete implementation examples.
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
+Check out our [quickstart](https://github.com/StartaleLabs/scs-aa-quickstart) for nodejs CLI examples.
 
 ## 📄 License
 
@@ -69,6 +64,6 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-Built with ❤️ by [Startale Labs](https://startale.com)
+Built with ❤️ by [Startale Group](https://startale.com)
 
 
