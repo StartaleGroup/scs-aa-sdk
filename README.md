@@ -8,12 +8,12 @@ A powerful toolkit for building decentralized applications (dApps) with **ERC433
 
 ## 📚 Table of Contents
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Features](#features)
-- [Documentation](#documentation)
-- [Examples](#examples)
-- [License](#license)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Features](#-features)
+- [Documentation](#-documentation)
+- [Examples](#-examples)
+- [License](#-license)
 
 ## 🚀 Installation
 
