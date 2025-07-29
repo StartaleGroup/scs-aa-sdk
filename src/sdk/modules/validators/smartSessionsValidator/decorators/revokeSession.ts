@@ -43,7 +43,7 @@ export type RevokeSessionParameters<
  * @returns A promise that resolves to an object containing the user operation hash.
  *
  * @throws {AccountNotFoundError} If the account is not found.
- * @throws {Error} If there's an error getting the enable sessions action.
+ * @throws {Error} If there's an error getting the remove session action.
  *
  * @example
  * ```typescript
