@@ -2,17 +2,18 @@ import type { Chain, Client, Hash, Transport } from "viem"
 import type { ModularSmartAccount, Module } from "../../../utils/Types"
 import type {
   GrantPermissionResponse,
-  PreparePermissionResponse
+  PreparePermissionResponse,
+  RevokeSessionResponse
 } from "../Types"
 import type { SmartSessionModule } from "../toSmartSessionsValidator"
-// import {
-//   type GrantDeferredPermissionParameters,
-//   grantDeferredPermission
-// } from "./grantDeferredPermission"
 import {
   type GrantPermissionParameters,
   grantPermission
 } from "./grantPermission"
+import {
+  type RevokeSessionParameters,
+  revokeSession
+} from "./revokeSession"
 import {
   type PreparePermissionParameters,
   preparePermission
@@ -35,9 +36,6 @@ export type SmartSessionCreateActions<
    * @param args - Parameters for creating sessions.
    * @returns A promise that resolves to the creation response.
    */
-  /*grantDeferredPermission: (
-    args: GrantDeferredPermissionParameters<TModularSmartAccount>
-  ) => Promise<PreparePermissionResponse>*/
   /**
    * Creates multiple sessions for a modular smart account. This differs from grantDeferredPermission in that it
    * grants the permission on chain immediately. It is also known as "USE_MODE", and it means that the permission
@@ -58,6 +56,15 @@ export type SmartSessionCreateActions<
   preparePermission: (
     args: PreparePermissionParameters<TModularSmartAccount>
   ) => Promise<PreparePermissionResponse>
+  /**
+   * Revokes a session by permissionId.
+   *
+   * @param args - Parameters for revoking a session.
+   * @returns A promise that resolves to the transaction hash.
+   */
+  revokeSession: (
+    args: RevokeSessionParameters<TModularSmartAccount>
+  ) => Promise<RevokeSessionResponse>
 }
 
 /**
@@ -90,9 +97,9 @@ export function smartSessionCreateActions(_: Module) {
     client: Client<Transport, Chain | undefined, TModularSmartAccount>
   ): SmartSessionCreateActions<TModularSmartAccount> => {
     return {
-      // grantDeferredPermission: (args) => grantDeferredPermission(client, args),
       grantPermission: (args) => grantPermission(client, args),
-      preparePermission: (args) => preparePermission(client, args)
+      preparePermission: (args) => preparePermission(client, args),
+      revokeSession: (args) => revokeSession(client, args)
     }
   }
 }
@@ -117,5 +124,5 @@ export function smartSessionUseActions(
 }
 
 export * from "./usePermission"
-// export * from "./grantDeferredPermission"
 export * from "./grantPermission"
+export * from "./revokeSession"
