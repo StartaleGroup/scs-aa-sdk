@@ -82,8 +82,7 @@ export async function revokeSession<
   const account = parseAccount(account_) as ModularSmartAccount
   if (!account || !account.address) {
     throw new AccountNotFoundError({
-      docsPath: "/startale-client/methods#parseaccount",
-      message: "Account object is invalid or missing an address"
+      docsPath: "/startale-client/methods#parseaccount"
     })
   }
 
