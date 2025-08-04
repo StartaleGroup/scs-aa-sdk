@@ -57,7 +57,7 @@ export {
 } from "@rhinestone/module-sdk"
 
 // Temporary address for smart sessions validator
-export const SMART_SESSIONS_ADDRESS: Address = "0x2358e7436B2bC3F8a82B4F128236a7AF1b32f23c"
+export const SMART_SESSIONS_ADDRESS: Address = "0x00000000008bDABA73cD9815d79069c247Eb4bDA"
 
 export const OWNABLE_VALIDATOR_ADDRESS: Address = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9"
 

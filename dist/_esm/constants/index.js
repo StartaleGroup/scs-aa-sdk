@@ -11,7 +11,7 @@ export const STARTALE_7702_DELEGATION_ADDRESS = "0x000000b8f5f723A680d3D7EE624Fe
 // Rhinestone constants
 export { OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
 // Temporary address for smart sessions validator
-export const SMART_SESSIONS_ADDRESS = "0x2358e7436B2bC3F8a82B4F128236a7AF1b32f23c";
+export const SMART_SESSIONS_ADDRESS = "0x00000000008bDABA73cD9815d79069c247Eb4bDA";
 export const OWNABLE_VALIDATOR_ADDRESS = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9";
 // updated module and policy addresses as per latest V1. https://docs.rhinestone.dev/home/resources/address-book
 export const UNIVERSAL_ACTION_POLICY_ADDRESS = "0x0000000000714Cf48FcF88A0bFBa70d313415032";

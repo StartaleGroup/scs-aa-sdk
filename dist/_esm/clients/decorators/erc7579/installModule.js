@@ -81,7 +81,7 @@ export const toInstallModuleCalls = async (account, { address, initData, type })
     ];
     // These changes are done to ensure trustAttesters is a batch action.
     // EDIT: Not needed anymore with new smart session address
-    // SMART_SESSIONS_ADDRESS = 0x2358e7436B2bC3F8a82B4F128236a7AF1b32f23c // New
+    // SMART_SESSIONS_ADDRESS = 0x00000000008bDABA73cD9815d79069c247Eb4bDA // New
     // SMART_SESSIONS_ADDRESS = 0x00000000002B0eCfbD0496EE71e01257dA0E37DE // Old
     // Review: check casing
     /*if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
