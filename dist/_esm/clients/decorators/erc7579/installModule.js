@@ -2,8 +2,6 @@ import { encodeFunctionData, getAddress } from "viem";
 import { sendUserOperation } from "viem/account-abstraction";
 import { getAction, parseAccount } from "viem/utils";
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound.js";
-import { addressEquals } from "../../../account/utils/Utils.js";
-import { RHINESTONE_ATTESTER_ADDRESS, SMART_SESSIONS_ADDRESS, findTrustedAttesters, getTrustAttestersAction } from "../../../constants/index.js";
 import { parseModuleTypeId } from "./supportsModule.js";
 /**
  * Installs a module on a given smart account.
@@ -82,25 +80,34 @@ export const toInstallModuleCalls = async (account, { address, initData, type })
         }
     ];
     // These changes are done to ensure trustAttesters is a batch action.
-    if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
-        const publicClient = account?.client;
-        const trustedAttesters = await findTrustedAttesters({
-            client: publicClient,
-            accountAddress: account.address
-        });
-        const needToAddTrustAttesters = trustedAttesters.length === 0;
-        if (needToAddTrustAttesters) {
-            const trustAttestersAction = getTrustAttestersAction({
-                attesters: [RHINESTONE_ATTESTER_ADDRESS],
-                threshold: 1
-            });
-            calls.push({
-                to: trustAttestersAction.target,
-                value: trustAttestersAction.value.valueOf(),
-                data: trustAttestersAction.callData
-            });
-        }
-    }
+    // EDIT: Not needed anymore with new smart session address
+    // SMART_SESSIONS_ADDRESS = 0x2358e7436B2bC3F8a82B4F128236a7AF1b32f23c // New
+    // SMART_SESSIONS_ADDRESS = 0x00000000002B0eCfbD0496EE71e01257dA0E37DE // Old
+    // Review: check casing
+    /*if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
+      console.log("ever here attesters?")
+      const publicClient = account?.client as PublicClient
+  
+      const trustedAttesters = await findTrustedAttesters({
+        client: publicClient as any,
+        accountAddress: account.address
+      })
+  
+      const needToAddTrustAttesters = trustedAttesters.length === 0
+  
+      if (needToAddTrustAttesters) {
+        const trustAttestersAction = getTrustAttestersAction({
+          attesters: [RHINESTONE_ATTESTER_ADDRESS],
+          threshold: 1
+        })
+  
+        calls.push({
+          to: trustAttestersAction.target,
+          value: trustAttestersAction.value.valueOf(),
+          data: trustAttestersAction.callData
+        })
+      }
+    }*/
     return calls;
 };
 export const toInstallWithSafeSenderCalls = async (account, { address, initData, type }) => [
