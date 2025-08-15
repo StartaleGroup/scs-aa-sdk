@@ -138,7 +138,6 @@ export const toInstallModuleCalls = async (
   // SMART_SESSIONS_ADDRESS = 0x00000000002B0eCfbD0496EE71e01257dA0E37DE // Old
   // Review: check casing
   /*if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
-    console.log("ever here attesters?")
     const publicClient = account?.client as PublicClient
 
     const trustedAttesters = await findTrustedAttesters({

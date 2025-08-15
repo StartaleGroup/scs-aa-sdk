@@ -1,3 +1,10 @@
+import {
+  getSpendingLimitsPolicy,
+  getSudoPolicy,
+  getTimeFramePolicy,
+  getUsageLimitPolicy,
+  getValueLimitPolicy
+} from "@rhinestone/module-sdk"
 import type { Address, Hex } from "viem"
 
 export * from "./abi"
@@ -56,23 +63,37 @@ export {
   getUniversalActionPolicy
 } from "@rhinestone/module-sdk"
 
-// Temporary address for smart sessions validator
+// Maintained here rather than from 0.3.0 module-sdk as it is not exported properly.
 export const SMART_SESSIONS_ADDRESS: Address = "0x00000000008bDABA73cD9815d79069c247Eb4bDA"
 
+// Todo: Review if needs an update
 export const OWNABLE_VALIDATOR_ADDRESS: Address = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9"
 
 // updated module and policy addresses as per latest V1. https://docs.rhinestone.dev/home/resources/address-book
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
   "0x0000000000714Cf48FcF88A0bFBa70d313415032"
 
-export const SUDO_POLICY_ADDRESS: Address = "0x0000000000feec8d74e3143fbabbca515358d869"
+export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address
 
-export const TIME_FRAME_POLICY_ADDRESS: Address = "0x0000000000D30f611fA3bf652ac6879428586930"
-export const VALUE_LIMIT_POLICY_ADDRESS: Address = "0x000000000021dc45451291bcdfc9f0b46d6f0278"
+export const TIME_FRAME_POLICY_ADDRESS: Hex = getTimeFramePolicy({
+  validUntil: 0,
+  validAfter: 0
+}).address
 
-export const USAGE_LIMIT_POLICY_ADDRESS: Address = "0x00000000001d4479fa2a947026204d0283cede4b"
+export const VALUE_LIMIT_POLICY_ADDRESS: Hex = getValueLimitPolicy({
+  limit: 0n
+}).address
 
-export const SPENDING_LIMITS_POLICY_ADDRESS: Address = "0x000000000033212e272655d8a22402db819477a6"
+export const USAGE_LIMIT_POLICY_ADDRESS: Hex = getUsageLimitPolicy({
+  limit: 0n
+}).address
+
+export const SPENDING_LIMITS_POLICY_ADDRESS: Hex = getSpendingLimitsPolicy([
+  {
+    token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    limit: 0n
+  }
+]).address
 
 export const PERMIT_TYPEHASH =
   "0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9"

@@ -11,10 +11,10 @@ export { OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS
 export declare const SMART_SESSIONS_ADDRESS: Address;
 export declare const OWNABLE_VALIDATOR_ADDRESS: Address;
 export declare const UNIVERSAL_ACTION_POLICY_ADDRESS: Address;
-export declare const SUDO_POLICY_ADDRESS: Address;
-export declare const TIME_FRAME_POLICY_ADDRESS: Address;
-export declare const VALUE_LIMIT_POLICY_ADDRESS: Address;
-export declare const USAGE_LIMIT_POLICY_ADDRESS: Address;
-export declare const SPENDING_LIMITS_POLICY_ADDRESS: Address;
+export declare const SUDO_POLICY_ADDRESS: Hex;
+export declare const TIME_FRAME_POLICY_ADDRESS: Hex;
+export declare const VALUE_LIMIT_POLICY_ADDRESS: Hex;
+export declare const USAGE_LIMIT_POLICY_ADDRESS: Hex;
+export declare const SPENDING_LIMITS_POLICY_ADDRESS: Hex;
 export declare const PERMIT_TYPEHASH = "0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9";
 //# sourceMappingURL=index.d.ts.map
