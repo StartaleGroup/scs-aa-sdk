@@ -6,8 +6,6 @@ const viem_1 = require("viem");
 const account_abstraction_1 = require("viem/account-abstraction");
 const utils_1 = require("viem/utils");
 const AccountNotFound_1 = require("../../../account/utils/AccountNotFound.js");
-const Utils_1 = require("../../../account/utils/Utils.js");
-const constants_1 = require("../../../constants/index.js");
 const supportsModule_1 = require("./supportsModule.js");
 async function installModule(client, parameters) {
     const { account: account_ = client.account, maxFeePerGas, maxPriorityFeePerGas, nonce, module, module: { address, initData, type }, ...rest } = parameters;
@@ -65,25 +63,6 @@ const toInstallModuleCalls = async (account, { address, initData, type }) => {
             })
         }
     ];
-    if ((0, Utils_1.addressEquals)(address, constants_1.SMART_SESSIONS_ADDRESS)) {
-        const publicClient = account?.client;
-        const trustedAttesters = await (0, constants_1.findTrustedAttesters)({
-            client: publicClient,
-            accountAddress: account.address
-        });
-        const needToAddTrustAttesters = trustedAttesters.length === 0;
-        if (needToAddTrustAttesters) {
-            const trustAttestersAction = (0, constants_1.getTrustAttestersAction)({
-                attesters: [constants_1.RHINESTONE_ATTESTER_ADDRESS],
-                threshold: 1
-            });
-            calls.push({
-                to: trustAttestersAction.target,
-                value: trustAttestersAction.value.valueOf(),
-                data: trustAttestersAction.callData
-            });
-        }
-    }
     return calls;
 };
 exports.toInstallModuleCalls = toInstallModuleCalls;

@@ -115,6 +115,7 @@ export async function grantPermission<
   )({
     calls: [
       {
+        // If smart session address gets updated, review to get this right
         to: preparedPermission.action.target,
         data: preparedPermission.action.callData
       },

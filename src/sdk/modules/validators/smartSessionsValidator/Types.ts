@@ -48,6 +48,14 @@ export type GrantPermissionResponse = {
 } & PreparePermissionResponse
 
 /**
+ * Represents the response for revoking a session.
+ */
+export type RevokeSessionResponse = {
+  /** The hash of the user operation. */
+  userOpHash: Hex
+}
+
+/**
  * Represents the possible modes for a smart session.
  */
 export type SmartSessionModeType =

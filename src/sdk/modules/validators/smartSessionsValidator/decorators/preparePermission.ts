@@ -1,20 +1,26 @@
-import { getUniversalActionPolicy } from "@rhinestone/module-sdk"
+import { getTimeFramePolicy, getUniversalActionPolicy } from "@rhinestone/module-sdk"
 import { getPermissionId } from "@rhinestone/module-sdk"
 import type { Chain, Client, Hex, PublicClient, Transport } from "viem"
-import { encodeFunctionData, parseAccount } from "viem/utils"
+import { encodeFunctionData, encodePacked, parseAccount } from "viem/utils"
 import { ERROR_MESSAGES } from "../../../../account"
 import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound"
 import {
   type ActionData,
-  OWNABLE_VALIDATOR_ADDRESS,
   type PolicyData,
-  SMART_SESSIONS_ADDRESS,
   type Session,
   encodeValidationData,
   getSpendingLimitsPolicy,
   getSudoPolicy,
   getUsageLimitPolicy,
-  getValueLimitPolicy
+  getValueLimitPolicy,
+  TIME_FRAME_POLICY_ADDRESS,
+  VALUE_LIMIT_POLICY_ADDRESS,
+  USAGE_LIMIT_POLICY_ADDRESS,
+  SPENDING_LIMITS_POLICY_ADDRESS,
+  SUDO_POLICY_ADDRESS,
+  SMART_SESSIONS_ADDRESS,
+  OWNABLE_VALIDATOR_ADDRESS,
+  UNIVERSAL_ACTION_POLICY_ADDRESS
 } from "../../../../constants"
 import { SmartSessionAbi } from "../../../../constants/abi/SmartSessionAbi"
 import type { AnyData, ModularSmartAccount } from "../../../utils/Types"
@@ -33,7 +39,8 @@ import type {
   ResolvedActionPolicyInfo
 } from "../Types"
 
-export const ONE_YEAR_FROM_NOW_IN_SECONDS = Date.now() + 60 * 60 * 24 * 365
+// Date.now() returns milliseconds, so we need to convert it to seconds // 60 * 60 * 24 * 365 is in seconds
+export const ONE_YEAR_FROM_NOW_IN_SECONDS = Math.floor(new Date().getTime()/1000.0) + 60 * 60 * 24 * 365
 
 /**
  * Parameters for creating sessions in a modular smart account.
@@ -81,34 +88,43 @@ export const getPermissionAction = async ({
   ) => {
     const policyData: PolicyData[] = []
 
-    // create time frame policy here..
-    // const timeFramePolicy = getTimeFramePolicy({
-    //   validUntil: actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
-    //   validAfter: actionPolicyInfo.validAfter ?? 0
-    // })
-    // Todo: Get TimeFramePolicy audited and deploy on Soneium
-    // Note: currently this throws UnsupportedPolicy
-    // policyData.push(timeFramePolicy)
+    // creating time frame policy here..
+    // Note: can do packing fix and address update in upstream also
+    const timeFramePolicy = getTimeFramePolicy({
+        validUntil: actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
+        validAfter: actionPolicyInfo.validAfter ?? 0
+    })
+    timeFramePolicy.address = TIME_FRAME_POLICY_ADDRESS
+    timeFramePolicy.policy = TIME_FRAME_POLICY_ADDRESS
+    timeFramePolicy.initData = encodePacked(
+      ['uint48', 'uint48'],
+      [actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS, actionPolicyInfo.validAfter ?? 0],
+    )
+    policyData.push(timeFramePolicy)
 
     const hasValidRules =
       actionPolicyInfo?.rules && actionPolicyInfo?.rules?.length > 0
 
-    if (hasValidRules) {
-      const actionConfig = createActionConfig(
-        actionPolicyInfo.rules ?? [],
-        actionPolicyInfo.valueLimit
-      )
+     if (hasValidRules) {
+       const actionConfig = createActionConfig(
+         actionPolicyInfo.rules ?? [],
+         actionPolicyInfo.valueLimit
+       )
 
       // create uni action policy here..
       const uniActionPolicyInfo = getUniversalActionPolicy(
-        toActionConfig(actionConfig)
+       toActionConfig(actionConfig)
       )
+      uniActionPolicyInfo.address = UNIVERSAL_ACTION_POLICY_ADDRESS
+      uniActionPolicyInfo.policy = UNIVERSAL_ACTION_POLICY_ADDRESS
       policyData.push(uniActionPolicyInfo)
     }
 
     // create sudo policy here..
     if (actionPolicyInfo.sudo || !hasValidRules) {
       const sudoPolicy = getSudoPolicy()
+      sudoPolicy.address = SUDO_POLICY_ADDRESS
+      sudoPolicy.policy = SUDO_POLICY_ADDRESS
       policyData.push(sudoPolicy)
     }
 
@@ -117,6 +133,8 @@ export const getPermissionAction = async ({
       const valueLimitPolicy = getValueLimitPolicy({
         limit: actionPolicyInfo.valueLimit
       })
+      valueLimitPolicy.address = VALUE_LIMIT_POLICY_ADDRESS
+      valueLimitPolicy.policy = VALUE_LIMIT_POLICY_ADDRESS
       policyData.push(valueLimitPolicy)
     }
 
@@ -125,6 +143,8 @@ export const getPermissionAction = async ({
       const usageLimitPolicy = getUsageLimitPolicy({
         limit: actionPolicyInfo.usageLimit
       })
+      usageLimitPolicy.address = USAGE_LIMIT_POLICY_ADDRESS
+      usageLimitPolicy.policy = USAGE_LIMIT_POLICY_ADDRESS
       policyData.push(usageLimitPolicy)
     }
 
@@ -133,6 +153,8 @@ export const getPermissionAction = async ({
       const spendingLimitPolicy = getSpendingLimitsPolicy(
         actionPolicyInfo.tokenLimits
       )
+      spendingLimitPolicy.address = SPENDING_LIMITS_POLICY_ADDRESS
+      spendingLimitPolicy.policy = SPENDING_LIMITS_POLICY_ADDRESS
       policyData.push(spendingLimitPolicy)
     }
 
@@ -164,7 +186,21 @@ export const getPermissionAction = async ({
       }
     }
 
-    const userOpPolicies = withPaymaster ? [getSudoPolicy()] : []
+    const timeFramePolicy = getTimeFramePolicy({
+      validUntil: sessionInfo.sessionValidUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
+      validAfter: sessionInfo.sessionValidAfter ?? 0
+    })
+    timeFramePolicy.address = TIME_FRAME_POLICY_ADDRESS
+    timeFramePolicy.policy = TIME_FRAME_POLICY_ADDRESS
+    timeFramePolicy.initData = encodePacked(
+      ['uint48', 'uint48'],
+      [sessionInfo.sessionValidUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS, sessionInfo.sessionValidAfter ?? 0],
+    )
+    // Review
+    const userOpPolicies = withPaymaster ? [timeFramePolicy] : [timeFramePolicy]
+
+    // Maybe if there is no validUntil and validAfter, then we can use sudo policy here
+    // const userOpPolicies = withPaymaster ? [getSudoPolicy()] : []
 
     const session: Session = {
       chainId: BigInt(chainId),

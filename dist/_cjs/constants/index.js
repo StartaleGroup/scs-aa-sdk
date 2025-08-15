@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PERMIT_TYPEHASH = exports.SPENDING_LIMITS_POLICY_ADDRESS = exports.USAGE_LIMIT_POLICY_ADDRESS = exports.VALUE_LIMIT_POLICY_ADDRESS = exports.TIME_FRAME_POLICY_ADDRESS = exports.SUDO_POLICY_ADDRESS = exports.UNIVERSAL_ACTION_POLICY_ADDRESS = exports.getUniversalActionPolicy = exports.getOwnableValidator = exports.getValueLimitPolicy = exports.getUsageLimitPolicy = exports.getSpendingLimitsPolicy = exports.getSudoPolicy = exports.getSmartSessionsValidator = exports.getEnableSessionDetails = exports.encodeValidationData = exports.decodeSmartSessionSignature = exports.getSetOwnableValidatorThresholdAction = exports.getRemoveOwnableValidatorOwnerAction = exports.getOwnableValidatorOwners = exports.getAddOwnableValidatorOwnerAction = exports.getOwnableValidatorSignature = exports.getTrustAttestersAction = exports.findTrustedAttesters = exports.isRhinestoneModuleInstalled = exports.getOwnableValidatorThreshold = exports.getOwnableValidatorMockSignature = exports.getAccount = exports.getExecuteOnOwnedAccountAction = exports.getAddOwnableExecutorOwnerAction = exports.encodeSmartSessionSignature = exports.SmartSessionMode = exports.REGISTRY_ADDRESS = exports.RHINESTONE_ATTESTER_ADDRESS = exports.OWNABLE_EXECUTOR_ADDRESS = exports.OWNABLE_VALIDATOR_ADDRESS = exports.SMART_SESSIONS_ADDRESS = exports.STARTALE_7702_DELEGATION_ADDRESS = exports.COUNTER_CONTRACT_ADDRESS_MINATO = exports.ACCOUNT_IMPLEMENTATION_ADDRESS = exports.ACCOUNT_FACTORY_ADDRESS = exports.BOOTSTRAP_ADDRESS = exports.ENTRYPOINT_SIMULATIONS_ADDRESS = exports.ENTRY_POINT_ADDRESS = void 0;
+exports.PERMIT_TYPEHASH = exports.SPENDING_LIMITS_POLICY_ADDRESS = exports.USAGE_LIMIT_POLICY_ADDRESS = exports.VALUE_LIMIT_POLICY_ADDRESS = exports.TIME_FRAME_POLICY_ADDRESS = exports.SUDO_POLICY_ADDRESS = exports.UNIVERSAL_ACTION_POLICY_ADDRESS = exports.OWNABLE_VALIDATOR_ADDRESS = exports.SMART_SESSIONS_ADDRESS = exports.getUniversalActionPolicy = exports.getOwnableValidator = exports.getValueLimitPolicy = exports.getUsageLimitPolicy = exports.getSpendingLimitsPolicy = exports.getSudoPolicy = exports.getSmartSessionsValidator = exports.getEnableSessionDetails = exports.encodeValidationData = exports.decodeSmartSessionSignature = exports.getSetOwnableValidatorThresholdAction = exports.getRemoveOwnableValidatorOwnerAction = exports.getOwnableValidatorOwners = exports.getAddOwnableValidatorOwnerAction = exports.getOwnableValidatorSignature = exports.getTrustAttestersAction = exports.findTrustedAttesters = exports.isRhinestoneModuleInstalled = exports.getOwnableValidatorThreshold = exports.getOwnableValidatorMockSignature = exports.getAccount = exports.getExecuteOnOwnedAccountAction = exports.getAddOwnableExecutorOwnerAction = exports.encodeSmartSessionSignature = exports.SmartSessionMode = exports.REGISTRY_ADDRESS = exports.RHINESTONE_ATTESTER_ADDRESS = exports.OWNABLE_EXECUTOR_ADDRESS = exports.STARTALE_7702_DELEGATION_ADDRESS = exports.COUNTER_CONTRACT_ADDRESS_MINATO = exports.ACCOUNT_IMPLEMENTATION_ADDRESS = exports.ACCOUNT_FACTORY_ADDRESS = exports.BOOTSTRAP_ADDRESS = exports.ENTRYPOINT_SIMULATIONS_ADDRESS = exports.ENTRY_POINT_ADDRESS = void 0;
 const tslib_1 = require("tslib");
 const module_sdk_1 = require("@rhinestone/module-sdk");
 tslib_1.__exportStar(require("./abi/index.js"), exports);
@@ -12,8 +12,6 @@ exports.ACCOUNT_IMPLEMENTATION_ADDRESS = "0x000000b8f5f723A680d3D7EE624Fe0bC84a6
 exports.COUNTER_CONTRACT_ADDRESS_MINATO = "0x865562898F022904d6ea510931a7776e9a804849";
 exports.STARTALE_7702_DELEGATION_ADDRESS = "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A";
 var module_sdk_2 = require("@rhinestone/module-sdk");
-Object.defineProperty(exports, "SMART_SESSIONS_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.SMART_SESSIONS_ADDRESS; } });
-Object.defineProperty(exports, "OWNABLE_VALIDATOR_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.OWNABLE_VALIDATOR_ADDRESS; } });
 Object.defineProperty(exports, "OWNABLE_EXECUTOR_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.OWNABLE_EXECUTOR_ADDRESS; } });
 Object.defineProperty(exports, "RHINESTONE_ATTESTER_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.RHINESTONE_ATTESTER_ADDRESS; } });
 Object.defineProperty(exports, "REGISTRY_ADDRESS", { enumerable: true, get: function () { return module_sdk_2.REGISTRY_ADDRESS; } });
@@ -42,7 +40,9 @@ Object.defineProperty(exports, "getUsageLimitPolicy", { enumerable: true, get: f
 Object.defineProperty(exports, "getValueLimitPolicy", { enumerable: true, get: function () { return module_sdk_2.getValueLimitPolicy; } });
 Object.defineProperty(exports, "getOwnableValidator", { enumerable: true, get: function () { return module_sdk_2.getOwnableValidator; } });
 Object.defineProperty(exports, "getUniversalActionPolicy", { enumerable: true, get: function () { return module_sdk_2.getUniversalActionPolicy; } });
-exports.UNIVERSAL_ACTION_POLICY_ADDRESS = "0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F";
+exports.SMART_SESSIONS_ADDRESS = "0x00000000008bDABA73cD9815d79069c247Eb4bDA";
+exports.OWNABLE_VALIDATOR_ADDRESS = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9";
+exports.UNIVERSAL_ACTION_POLICY_ADDRESS = "0x0000000000714Cf48FcF88A0bFBa70d313415032";
 exports.SUDO_POLICY_ADDRESS = (0, module_sdk_1.getSudoPolicy)().address;
 exports.TIME_FRAME_POLICY_ADDRESS = (0, module_sdk_1.getTimeFramePolicy)({
     validUntil: 0,

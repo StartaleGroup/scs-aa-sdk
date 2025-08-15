@@ -1,8 +1,8 @@
 # Startale's scs-aa-sdk 🚀
 
 [![License MIT](https://img.shields.io/badge/License-MIT-blue?&style=flat)](./LICENSE)
-[![npm version](https://img.shields.io/npm/v/@startale/scs-aa-sdk.svg)](https://www.npmjs.com/package/@startale/scs-aa-sdk)
-[![npm downloads](https://img.shields.io/npm/dm/@startale/scs-aa-sdk.svg)](https://www.npmjs.com/package/@startale/scs-aa-sdk)
+[![npm version](https://img.shields.io/npm/v/@startale-scs/aa-sdk.svg)](https://www.npmjs.com/package/@startale-scs/aa-sdk)
+[![npm downloads](https://img.shields.io/npm/dm/@startale-scs/aa-sdk.svg)](https://www.npmjs.com/package/@startale-scs/aa-sdk)
 
 A powerful toolkit for building decentralized applications (dApps) with **ERC4337 Account Abstraction** and **Smart Accounts**. This SDK is based on Biconomy's abstractjs sdk and enhanced for Startale's ecosystem.
 
@@ -18,9 +18,9 @@ A powerful toolkit for building decentralized applications (dApps) with **ERC433
 ## 🚀 Installation
 
 ```bash
-npm install @startale/scs-aa-sdk
+npm install @startale-scs/aa-sdk
 # or
-yarn add @startale/scs-aa-sdk
+yarn add @startale-scs/aa-sdk
 ```
 
 ## ⚡ Quick Start

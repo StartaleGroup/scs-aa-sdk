@@ -2,7 +2,6 @@ import {
   type Chain,
   type Client,
   type Hex,
-  type PublicClient,
   type Transport,
   encodeFunctionData,
   getAddress
@@ -15,13 +14,6 @@ import {
 import { getAction, parseAccount } from "viem/utils"
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
 import type { Call } from "../../../account/utils/Types"
-import { addressEquals } from "../../../account/utils/Utils"
-import {
-  RHINESTONE_ATTESTER_ADDRESS,
-  SMART_SESSIONS_ADDRESS,
-  findTrustedAttesters,
-  getTrustAttestersAction
-} from "../../../constants"
 import type {
   ModularSmartAccount,
   ModuleMeta
@@ -141,8 +133,11 @@ export const toInstallModuleCalls = async (
   ]
 
   // These changes are done to ensure trustAttesters is a batch action.
-
-  if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
+  // EDIT: Not needed anymore with new smart session address
+  // SMART_SESSIONS_ADDRESS = 0x00000000008bDABA73cD9815d79069c247Eb4bDA // New
+  // SMART_SESSIONS_ADDRESS = 0x00000000002B0eCfbD0496EE71e01257dA0E37DE // Old
+  // Review: check casing
+  /*if (addressEquals(address, SMART_SESSIONS_ADDRESS)) {
     const publicClient = account?.client as PublicClient
 
     const trustedAttesters = await findTrustedAttesters({
@@ -164,7 +159,7 @@ export const toInstallModuleCalls = async (
         data: trustAttestersAction.callData
       })
     }
-  }
+  }*/
 
   return calls
 }

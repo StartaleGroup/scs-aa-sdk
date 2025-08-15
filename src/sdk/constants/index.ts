@@ -29,8 +29,6 @@ export const STARTALE_7702_DELEGATION_ADDRESS: Hex =
 
 // Rhinestone constants
 export {
-  SMART_SESSIONS_ADDRESS,
-  OWNABLE_VALIDATOR_ADDRESS,
   OWNABLE_EXECUTOR_ADDRESS,
   RHINESTONE_ATTESTER_ADDRESS,
   REGISTRY_ADDRESS,
@@ -65,8 +63,15 @@ export {
   getUniversalActionPolicy
 } from "@rhinestone/module-sdk"
 
+// Maintained here rather than from 0.3.0 module-sdk as it is not exported properly.
+export const SMART_SESSIONS_ADDRESS: Address = "0x00000000008bDABA73cD9815d79069c247Eb4bDA"
+
+// Todo: Review if needs an update
+export const OWNABLE_VALIDATOR_ADDRESS: Address = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9"
+
+// updated module and policy addresses as per latest V1. https://docs.rhinestone.dev/home/resources/address-book
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
-  "0x0000006DDA6c463511C4e9B05CFc34C1247fCF1F"
+  "0x0000000000714Cf48FcF88A0bFBa70d313415032"
 
 export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address
 
