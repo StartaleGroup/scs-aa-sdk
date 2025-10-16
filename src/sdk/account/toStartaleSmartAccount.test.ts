@@ -109,8 +109,7 @@ describe("startale.account", async () => {
     await killNetwork([network?.rpcPort, network?.bundlerPort])
   })
 
-  // TODO: Review and fix
-  test.skip("should check isValidSignature using EIP-6492", async () => {
+  test("should check isValidSignature using EIP-6492", async () => {
     const undeployedAccount = await toStartaleSmartAccount({
       chain,
       signer: eoaAccount,

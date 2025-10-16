@@ -71,7 +71,7 @@ export const MOCK_MULTI_MODULE_ADDRESS = "0x9C992f91E7Cd4697B81E137007f446E826b8
 export const MODULE_TYPE_MULTI = 0;
 // Todo: Update when final prod contracts are deployed
 export const ACCOUNT_DOMAIN_NAME = "Startale";
-export const ACCOUNT_DOMAIN_VERSION = "0.0.1";
+export const ACCOUNT_DOMAIN_VERSION = "1.0.0";
 export const ACCOUNT_DOMAIN_TYPEHASH = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
 export const PARENT_TYPEHASH = "TypedDataSign(Contents contents,string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)Contents(bytes32 stuff)";
 export const eip1271MagicValue = "0x1626ba7e";
