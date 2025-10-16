@@ -22,7 +22,8 @@ import {
   parseAbiParameters,
   parseEther,
   toBytes,
-  toHex
+  toHex,
+  verifyTypedData
 } from "viem"
 import type { UserOperation } from "viem/account-abstraction"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
@@ -47,7 +48,8 @@ import {
 import {
   addressEquals,
   getAccountDomainStructFields,
-  getAccountMeta
+  getAccountMeta,
+  eip712WrapHash
 } from "./utils"
 import {
   ACCOUNT_DOMAIN_NAME,
@@ -57,6 +59,8 @@ import {
   eip1271MagicValue
 } from "./utils/Constants"
 import type { BytesLike } from "./utils/Types"
+import { TOKEN_WITH_PERMIT } from "../constants"
+import type { SmartAccount } from "viem/account-abstraction"
 
 describe("startale.account", async () => {
   let network: NetworkConfig
@@ -398,107 +402,115 @@ describe("startale.account", async () => {
     expect(contractResponse).toBe(eip1271MagicValue)
   })
 
-  // test.skip("should sign using signTypedData SDK method", async () => {
-  //   const appDomain = {
-  //     chainId: chain.id,
-  //     name: "TokenWithPermit",
-  //     verifyingContract: TOKEN_WITH_PERMIT as Address,
-  //     version: "1"
-  //   }
-  //   const primaryType = "Contents"
-  //   const types = {
-  //     Contents: [
-  //       {
-  //         name: "stuff",
-  //         type: "bytes32"
-  //       }
-  //     ]
-  //   }
+  test("should sign using signTypedData SDK method", async () => {
+    const appDomain = {
+      chainId: chain.id,
+      name: "TokenWithPermit",
+      verifyingContract: TOKEN_WITH_PERMIT as Address,
+      version: "1"
+    }
+    const primaryType = "Contents"
+    const types = {
+      Contents: [
+        {
+          name: "stuff",
+          type: "bytes32"
+        }
+      ]
+    }
 
-  //   const permitTypehash = keccak256(
-  //     toBytes(
-  //       "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-  //     )
-  //   )
-  //   const nonce = (await testClient.readContract({
-  //     address: TOKEN_WITH_PERMIT as Address,
-  //     abi: TokenWithPermitAbi,
-  //     functionName: "nonces",
-  //     args: [startaleAccountAddress]
-  //   })) as bigint
+    const permitTypehash = keccak256(
+      toBytes(
+        "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
+      )
+    )
+    // const nonce = (await testClient.readContract({
+    //   address: TOKEN_WITH_PERMIT as Address,
+    //   abi: TokenWithPermitAbi,
+    //   functionName: "nonces",
+    //   args: [startaleAccountAddress]
+    // })) as bigint
+    const nonce = 12345n;
 
-  //   const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600) // 1 hour from now
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600) // 1 hour from now
 
-  //   const message = {
-  //     stuff: keccak256(
-  //       encodeAbiParameters(
-  //         parseAbiParameters(
-  //           "bytes32, address, address, uint256, uint256, uint256"
-  //         ),
-  //         [
-  //           permitTypehash,
-  //           startaleAccountAddress,
-  //           startaleAccountAddress,
-  //           parseEther("2"),
-  //           nonce,
-  //           deadline
-  //         ]
-  //       )
-  //     )
-  //   }
+    const message = {
+      stuff: keccak256(
+        encodeAbiParameters(
+          parseAbiParameters(
+            "bytes32, address, address, uint256, uint256, uint256"
+          ),
+          [
+            permitTypehash,
+            startaleAccountAddress,
+            startaleAccountAddress,
+            parseEther("2"),
+            nonce,
+            deadline
+          ]
+        )
+      )
+    }
 
-  //   const appDomainSeparator = domainSeparator({ domain: appDomain })
+    const appDomainSeparator = domainSeparator({ domain: appDomain })
 
-  //   const contentsHash = keccak256(
-  //     concat(["0x1901", appDomainSeparator, message.stuff])
-  //   )
+    const contentsHash = keccak256(
+      concat(["0x1901", appDomainSeparator, message.stuff])
+    )
 
-  //   const finalSignature = await startaleAccountClient.signTypedData({
-  //     domain: appDomain,
-  //     primaryType,
-  //     types,
-  //     message,
-  //     account: startaleAccount
-  //   })
+    const finalSignature = await startaleAccountClient.signTypedData({
+      domain: appDomain,
+      primaryType,
+      types,
+      message,
+      account: startaleAccount
+    })
+    console.log("finalSignature", finalSignature)
 
-  //   const accountResponse = await testClient.readContract({
-  //     address: startaleAccountAddress,
-  //     abi: parseAbi([
-  //       "function isValidSignature(bytes32,bytes) external view returns (bytes4)"
-  //     ]),
-  //     functionName: "isValidSignature",
-  //     args: [contentsHash, finalSignature]
-  //   })
 
-  //   const permitTokenResponse = await startaleAccountClient.writeContract({
-  //     address: TOKEN_WITH_PERMIT as Address,
-  //     abi: TokenWithPermitAbi,
-  //     functionName: "permitWith1271",
-  //     chain: network.chain,
-  //     account: startaleAccount,
-  //     args: [
-  //       startaleAccountAddress,
-  //       startaleAccountAddress,
-  //       parseEther("2"),
-  //       deadline,
-  //       finalSignature
-  //     ]
-  //   })
+    // Note:
+    // verifyTypedData expects a raw ECDSA signature, but smart account signatures are designed to be validated through 
+    // the smart account's isValidSignature function
 
-  //   await startaleAccountClient.waitForTransactionReceipt({
-  //     hash: permitTokenResponse
-  //   })
+    const accountResponse = await testClient.readContract({
+      address: startaleAccountAddress,
+      abi: parseAbi([
+        "function isValidSignature(bytes32,bytes) external view returns (bytes4)"
+      ]),
+      functionName: "isValidSignature",
+      args: [contentsHash, finalSignature]
+    })
+    console.log("accountResponse", accountResponse);
 
-  //   const allowance = await testClient.readContract({
-  //     address: TOKEN_WITH_PERMIT as Address,
-  //     abi: TokenWithPermitAbi,
-  //     functionName: "allowance",
-  //     args: [startaleAccountAddress, startaleAccountAddress]
-  //   })
+    // const permitTokenResponse = await startaleAccountClient.writeContract({
+    //   address: TOKEN_WITH_PERMIT as Address,
+    //   abi: TokenWithPermitAbi,
+    //   functionName: "permitWith1271",
+    //   chain: network.chain,
+    //   account: startaleAccount,
+    //   args: [
+    //     startaleAccountAddress,
+    //     startaleAccountAddress,
+    //     parseEther("2"),
+    //     deadline,
+    //     finalSignature
+    //   ]
+    // })
 
-  //   expect(allowance).toEqual(parseEther("2"))
-  //   expect(accountResponse).toEqual("0x1626ba7e")
-  // })
+    // await startaleAccountClient.waitForTransactionReceipt({
+    //   hash: permitTokenResponse
+    // })
+
+    // const allowance = await testClient.readContract({
+    //   address: TOKEN_WITH_PERMIT as Address,
+    //   abi: TokenWithPermitAbi,
+    //   functionName: "allowance",
+    //   args: [startaleAccountAddress, startaleAccountAddress]
+    // })
+
+    // expect(allowance).toEqual(parseEther("2"))
+    expect(accountResponse).toEqual("0x1626ba7e")
+  })
 
   test("check that ethers makeNonceKey creates the same key as the SDK", async () => {
     function makeNonceKey(

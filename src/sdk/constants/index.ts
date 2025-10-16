@@ -73,6 +73,8 @@ export const OWNABLE_VALIDATOR_ADDRESS: Address = "0x0000000000e9e6e96bcaa3c1131
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
   "0x0000000000714Cf48FcF88A0bFBa70d313415032"
 
+export const TOKEN_WITH_PERMIT: Address = "0x51fdb803fD49f0f5bd03de0400a8F17dA2Aa6999"
+
 export const SUDO_POLICY_ADDRESS: Hex = getSudoPolicy().address
 
 export const TIME_FRAME_POLICY_ADDRESS: Hex = getTimeFramePolicy({
