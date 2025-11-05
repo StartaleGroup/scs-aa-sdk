@@ -47,7 +47,7 @@
   "peerDependencies": {
   "@rhinestone/module-sdk": "^0.2.8 || ^0.3.0",
   "typescript": "^5.8.2",
-  "viem": "^2.30.6"
+  "viem": ">=2.30.6"
   },
   "exports": {
     ".": {
