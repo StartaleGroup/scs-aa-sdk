@@ -21,5 +21,25 @@ export type GetInitDataParams = {
     registryAddress: Address;
     bootStrapAddress: Address;
 };
+export type GetInitDataRhinestoneCompatibleParams = {
+    /** The signer/owner address — used as default validator init data */
+    ownerAddress: Address;
+    /** Bootstrap address (defaults to BOOTSTRAP_ADDRESS constant) */
+    bootStrapAddress?: Address;
+    /** Whether to include the smart session emissary as an additional validator */
+    sessionsEnabled?: boolean;
+    /** Override intent executor address */
+    intentExecutorAddress?: Address;
+    /** Override smart session emissary address */
+    smartSessionEmissaryAddress?: Address;
+};
+/**
+ * Builds initData for a rhinestone-compatible account using
+ * `initWithDefaultValidatorAndOtherModules`. Installs:
+ *  - default validator (init data = ownerAddress)
+ *  - intent executor (always)
+ *  - smart session emissary in validators (only when sessionsEnabled)
+ */
+export declare const getInitDataRhinestoneCompatible: (params: GetInitDataRhinestoneCompatibleParams) => Hex;
 export declare const getInitData: (params: GetInitDataParams) => Hex;
 //# sourceMappingURL=getFactoryData.d.ts.map

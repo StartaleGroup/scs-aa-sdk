@@ -17,7 +17,7 @@ const actions_1 = require("viem/actions");
 const utils_1 = require("viem/utils");
 const addressToEmptyAccount_1 = require("./utils/addressToEmptyAccount.js");
 const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account, rhinestoneCompatible } = parameters;
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await (0, toSigner_1.toSigner)({ signer: _signer });
     const localAccount = eip7702Account
@@ -49,16 +49,28 @@ const toStartaleSmartAccount = async (parameters) => {
     const hook = customHook || (0, toEmptyHook_1.toEmptyHook)();
     const fallbacks = customFallbacks || [];
     const prevalidationHooks = customPrevalidationHooks || [];
-    const initData = (0, getFactoryData_1.getInitData)({
-        defaultValidator: (0, toInitData_1.toInitData)(defaultValidator),
-        validators: validators.map(toInitData_1.toInitData),
-        executors: executors.map(toInitData_1.toInitData),
-        hook: (0, toInitData_1.toInitData)(hook),
-        fallbacks: fallbacks.map(toInitData_1.toInitData),
-        registryAddress,
-        bootStrapAddress,
-        prevalidationHooks
-    });
+    const initData = rhinestoneCompatible && !isEip7702
+        ? (0, getFactoryData_1.getInitDataRhinestoneCompatible)({
+            ownerAddress: signer.address,
+            bootStrapAddress,
+            sessionsEnabled: typeof rhinestoneCompatible === "object"
+                ? rhinestoneCompatible.sessionsEnabled
+                : false,
+            ...(typeof rhinestoneCompatible === "object" && {
+                intentExecutorAddress: rhinestoneCompatible.intentExecutorAddress,
+                smartSessionEmissaryAddress: rhinestoneCompatible.smartSessionEmissaryAddress
+            })
+        })
+        : (0, getFactoryData_1.getInitData)({
+            defaultValidator: (0, toInitData_1.toInitData)(defaultValidator),
+            validators: validators.map(toInitData_1.toInitData),
+            executors: executors.map(toInitData_1.toInitData),
+            hook: (0, toInitData_1.toInitData)(hook),
+            fallbacks: fallbacks.map(toInitData_1.toInitData),
+            registryAddress,
+            bootStrapAddress,
+            prevalidationHooks
+        });
     const factoryData = (0, getFactoryData_1.getFactoryData)({ initData, index });
     const getInitCode = () => {
         if (isEip7702) {
@@ -303,7 +315,8 @@ const toStartaleSmartAccount = async (parameters) => {
             publicClient,
             chain,
             setModule,
-            getModule: () => module
+            getModule: () => module,
+            getRhinestoneInitData: () => ({ factory: factoryAddress, factoryData })
         }
     });
 };

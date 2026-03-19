@@ -56,6 +56,16 @@ export type ToStartaleSmartAccountParameters = {
     eip7702Auth?: SignAuthorizationReturnType | undefined;
     /** Optional EIP-7702 Account */
     eip7702Account?: Signer;
+    /**
+     * When set, generates rhinestone-compatible factory data using the default validator
+     * (signer address as init data), intent executor, and optionally the smart session emissary.
+     * Pass `true` for defaults, or an object to customise addresses / enable sessions.
+     */
+    rhinestoneCompatible?: boolean | {
+        sessionsEnabled?: boolean;
+        intentExecutorAddress?: Address;
+        smartSessionEmissaryAddress?: Address;
+    };
 } & Prettify<Pick<ClientConfig<Transport, Chain, Account, RpcSchema>, "account" | "cacheTime" | "chain" | "key" | "name" | "pollingInterval" | "rpcSchema">>;
 /**
  * Startale Smart Account type
@@ -98,6 +108,11 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<type
     unDelegate: () => Promise<Hex>;
     /** Check if the account is delegated to the implementation address */
     isDelegated: () => Promise<boolean>;
+    /** Returns the factory and factoryData used for rhinestone SDK integration */
+    getRhinestoneInitData: () => {
+        factory: Address;
+        factoryData: Hex;
+    };
 }>;
 /**
  * @description Create a Startale Smart Account.

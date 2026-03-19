@@ -58,7 +58,11 @@ import { toEmptyHook } from "../modules/toEmptyHook"
 import type { Module } from "../modules/utils/Types"
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule"
 import type { Validator } from "../modules/validators/toValidator"
-import { getFactoryData, getInitData } from "./decorators/getFactoryData"
+import {
+  getFactoryData,
+  getInitData,
+  getInitDataRhinestoneCompatible
+} from "./decorators/getFactoryData"
 import { getStartaleAccountAddress } from "./decorators/getStartaleAccountAddress"
 import {
   EXECUTE_BATCH,
@@ -145,6 +149,18 @@ export type ToStartaleSmartAccountParameters = {
   eip7702Auth?: SignAuthorizationReturnType | undefined
   /** Optional EIP-7702 Account */
   eip7702Account?: Signer
+  /**
+   * When set, generates rhinestone-compatible factory data using the default validator
+   * (signer address as init data), intent executor, and optionally the smart session emissary.
+   * Pass `true` for defaults, or an object to customise addresses / enable sessions.
+   */
+  rhinestoneCompatible?:
+    | boolean
+    | {
+        sessionsEnabled?: boolean
+        intentExecutorAddress?: Address
+        smartSessionEmissaryAddress?: Address
+      }
 } & Prettify<
   Pick<
     ClientConfig<Transport, Chain, Account, RpcSchema>,
@@ -227,6 +243,9 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<
 
     /** Check if the account is delegated to the implementation address */
     isDelegated: () => Promise<boolean>
+
+    /** Returns the factory and factoryData used for rhinestone SDK integration */
+    getRhinestoneInitData: () => { factory: Address; factoryData: Hex }
   }
 >
 
@@ -268,7 +287,8 @@ export const toStartaleSmartAccount = async (
     bootStrapAddress = BOOTSTRAP_ADDRESS,
     accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS,
     eip7702Auth,
-    eip7702Account
+    eip7702Account,
+    rhinestoneCompatible
   } = parameters
 
   // Note: we could also accept deliberate optional flag to enable EIP-7702
@@ -324,16 +344,31 @@ export const toStartaleSmartAccount = async (
   // Generate the initialization data for the account using the init function
   const prevalidationHooks = customPrevalidationHooks || []
 
-  const initData = getInitData({
-    defaultValidator: toInitData(defaultValidator),
-    validators: validators.map(toInitData),
-    executors: executors.map(toInitData),
-    hook: toInitData(hook),
-    fallbacks: fallbacks.map(toInitData),
-    registryAddress,
-    bootStrapAddress,
-    prevalidationHooks
-  })
+  const initData =
+    rhinestoneCompatible && !isEip7702
+      ? getInitDataRhinestoneCompatible({
+          ownerAddress: signer.address,
+          bootStrapAddress,
+          sessionsEnabled:
+            typeof rhinestoneCompatible === "object"
+              ? rhinestoneCompatible.sessionsEnabled
+              : false,
+          ...(typeof rhinestoneCompatible === "object" && {
+            intentExecutorAddress: rhinestoneCompatible.intentExecutorAddress,
+            smartSessionEmissaryAddress:
+              rhinestoneCompatible.smartSessionEmissaryAddress
+          })
+        })
+      : getInitData({
+          defaultValidator: toInitData(defaultValidator),
+          validators: validators.map(toInitData),
+          executors: executors.map(toInitData),
+          hook: toInitData(hook),
+          fallbacks: fallbacks.map(toInitData),
+          registryAddress,
+          bootStrapAddress,
+          prevalidationHooks
+        })
 
   // Generate the factory data with the bootstrap address and init data
   const factoryData = getFactoryData({ initData, index })
@@ -730,7 +765,8 @@ export const toStartaleSmartAccount = async (
       publicClient,
       chain,
       setModule,
-      getModule: () => module
+      getModule: () => module,
+      getRhinestoneInitData: () => ({ factory: factoryAddress, factoryData })
     }
   })
 }

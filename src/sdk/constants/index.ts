@@ -69,6 +69,12 @@ export const SMART_SESSIONS_ADDRESS: Address = "0x00000000008bDABA73cD9815d79069
 // Todo: Review if needs an update
 export const OWNABLE_VALIDATOR_ADDRESS: Address = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9"
 
+// Rhinestone-specific module addresses
+export const RHINESTONE_INTENT_EXECUTOR_ADDRESS: Address =
+  "0x00000000005aD9ce1f5035FD62CA96CEf16AdAAF"
+export const RHINESTONE_SMART_SESSION_EMISSARY_ADDRESS: Address =
+  "0xad568b3f825a8d5ffc06dd3253526b64d810ae89"
+
 // updated module and policy addresses as per latest V1. https://docs.rhinestone.dev/home/resources/address-book
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
   "0x0000000000714Cf48FcF88A0bFBa70d313415032"

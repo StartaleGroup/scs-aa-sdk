@@ -5,9 +5,16 @@ import {
   encodeFunctionData,
   pad,
   parseAbi,
-  toHex
+  toHex,
+  zeroAddress,
+  zeroHash
 } from "viem"
 import { BootstrapAbi } from "../../constants/abi/BootstrapAbi"
+import {
+  BOOTSTRAP_ADDRESS,
+  RHINESTONE_INTENT_EXECUTOR_ADDRESS,
+  RHINESTONE_SMART_SESSION_EMISSARY_ADDRESS
+} from "../../constants"
 import type {
   GenericModuleConfig,
   PrevalidationHookModuleConfig
@@ -49,6 +56,57 @@ export type GetInitDataParams = {
   fallbacks: GenericModuleConfig[]
   registryAddress: Address
   bootStrapAddress: Address
+}
+
+export type GetInitDataRhinestoneCompatibleParams = {
+  /** The signer/owner address — used as default validator init data */
+  ownerAddress: Address
+  /** Bootstrap address (defaults to BOOTSTRAP_ADDRESS constant) */
+  bootStrapAddress?: Address
+  /** Whether to include the smart session emissary as an additional validator */
+  sessionsEnabled?: boolean
+  /** Override intent executor address */
+  intentExecutorAddress?: Address
+  /** Override smart session emissary address */
+  smartSessionEmissaryAddress?: Address
+}
+
+/**
+ * Builds initData for a rhinestone-compatible account using
+ * `initWithDefaultValidatorAndOtherModules`. Installs:
+ *  - default validator (init data = ownerAddress)
+ *  - intent executor (always)
+ *  - smart session emissary in validators (only when sessionsEnabled)
+ */
+export const getInitDataRhinestoneCompatible = (
+  params: GetInitDataRhinestoneCompatibleParams
+): Hex => {
+  const {
+    ownerAddress,
+    bootStrapAddress = BOOTSTRAP_ADDRESS,
+    sessionsEnabled = false,
+    intentExecutorAddress = RHINESTONE_INTENT_EXECUTOR_ADDRESS,
+    smartSessionEmissaryAddress = RHINESTONE_SMART_SESSION_EMISSARY_ADDRESS
+  } = params
+
+  const validators: GenericModuleConfig[] = sessionsEnabled
+    ? [{ module: smartSessionEmissaryAddress, data: "0x" }]
+    : []
+
+  const executors: GenericModuleConfig[] = [
+    { module: intentExecutorAddress, data: "0x" }
+  ]
+
+  return getInitData({
+    defaultValidator: { module: zeroAddress, data: ownerAddress },
+    validators,
+    executors,
+    hook: { module: zeroAddress, data: zeroHash },
+    fallbacks: [],
+    registryAddress: zeroAddress,
+    bootStrapAddress,
+    prevalidationHooks: []
+  })
 }
 
 export const getInitData = (params: GetInitDataParams): Hex =>
