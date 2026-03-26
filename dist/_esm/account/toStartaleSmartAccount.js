@@ -5,7 +5,7 @@ import { ACCOUNT_FACTORY_ADDRESS, BOOTSTRAP_ADDRESS, ENTRY_POINT_ADDRESS, STARTA
 import { EntrypointAbi } from "../constants/abi/index.js";
 import { toEmptyHook } from "../modules/toEmptyHook.js";
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule.js";
-import { getFactoryData, getInitData } from "./decorators/getFactoryData.js";
+import { getFactoryData, getInitData, getInitDataRhinestoneCompatible } from "./decorators/getFactoryData.js";
 import { getStartaleAccountAddress } from "./decorators/getStartaleAccountAddress.js";
 import { EXECUTE_BATCH, EXECUTE_SINGLE, PARENT_TYPEHASH } from "./utils/Constants.js";
 import { addressEquals, eip712WrapHash, getAccountDomainStructFields, getTypesForEIP712Domain, isNullOrUndefined, typeToString } from "./utils/Utils.js";
@@ -32,7 +32,7 @@ import { addressToEmptyAccount } from "./utils/addressToEmptyAccount.js";
  * })
  */
 export const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account, rhinestoneCompatible } = parameters;
     // Note: we could also accept deliberate optional flag to enable EIP-7702
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await toSigner({ signer: _signer });
@@ -75,16 +75,28 @@ export const toStartaleSmartAccount = async (parameters) => {
     const fallbacks = customFallbacks || [];
     // Generate the initialization data for the account using the init function
     const prevalidationHooks = customPrevalidationHooks || [];
-    const initData = getInitData({
-        defaultValidator: toInitData(defaultValidator),
-        validators: validators.map(toInitData),
-        executors: executors.map(toInitData),
-        hook: toInitData(hook),
-        fallbacks: fallbacks.map(toInitData),
-        registryAddress,
-        bootStrapAddress,
-        prevalidationHooks
-    });
+    const initData = rhinestoneCompatible && !isEip7702
+        ? getInitDataRhinestoneCompatible({
+            ownerAddress: signer.address,
+            bootStrapAddress,
+            sessionsEnabled: typeof rhinestoneCompatible === "object"
+                ? rhinestoneCompatible.sessionsEnabled
+                : false,
+            ...(typeof rhinestoneCompatible === "object" && {
+                intentExecutorAddress: rhinestoneCompatible.intentExecutorAddress,
+                smartSessionEmissaryAddress: rhinestoneCompatible.smartSessionEmissaryAddress
+            })
+        })
+        : getInitData({
+            defaultValidator: toInitData(defaultValidator),
+            validators: validators.map(toInitData),
+            executors: executors.map(toInitData),
+            hook: toInitData(hook),
+            fallbacks: fallbacks.map(toInitData),
+            registryAddress,
+            bootStrapAddress,
+            prevalidationHooks
+        });
     // Generate the factory data with the bootstrap address and init data
     const factoryData = getFactoryData({ initData, index });
     /**
@@ -396,7 +408,8 @@ export const toStartaleSmartAccount = async (parameters) => {
             publicClient,
             chain,
             setModule,
-            getModule: () => module
+            getModule: () => module,
+            getRhinestoneInitData: () => ({ factory: factoryAddress, factoryData })
         }
     });
 };

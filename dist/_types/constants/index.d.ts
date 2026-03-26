@@ -10,6 +10,8 @@ export declare const STARTALE_7702_DELEGATION_ADDRESS: Hex;
 export { OWNABLE_EXECUTOR_ADDRESS, RHINESTONE_ATTESTER_ADDRESS, REGISTRY_ADDRESS, type EnableSessionData, type ActionData, type PolicyData, type Session, SmartSessionMode, encodeSmartSessionSignature, getAddOwnableExecutorOwnerAction, getExecuteOnOwnedAccountAction, getAccount, getOwnableValidatorMockSignature, getOwnableValidatorThreshold, isModuleInstalled as isRhinestoneModuleInstalled, findTrustedAttesters, getTrustAttestersAction, getOwnableValidatorSignature, getAddOwnableValidatorOwnerAction, getOwnableValidatorOwners, getRemoveOwnableValidatorOwnerAction, getSetOwnableValidatorThresholdAction, decodeSmartSessionSignature, encodeValidationData, getEnableSessionDetails, getSmartSessionsValidator, getSudoPolicy, getSpendingLimitsPolicy, getUsageLimitPolicy, getValueLimitPolicy, getOwnableValidator, getUniversalActionPolicy } from "@rhinestone/module-sdk";
 export declare const SMART_SESSIONS_ADDRESS: Address;
 export declare const OWNABLE_VALIDATOR_ADDRESS: Address;
+export declare const RHINESTONE_INTENT_EXECUTOR_ADDRESS: Address;
+export declare const RHINESTONE_SMART_SESSION_EMISSARY_ADDRESS: Address;
 export declare const UNIVERSAL_ACTION_POLICY_ADDRESS: Address;
 export declare const SUDO_POLICY_ADDRESS: Hex;
 export declare const TIME_FRAME_POLICY_ADDRESS: Hex;
