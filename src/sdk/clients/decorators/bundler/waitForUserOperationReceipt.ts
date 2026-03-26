@@ -6,7 +6,6 @@ import {
 } from "viem/account-abstraction"
 import { getAction } from "viem/utils"
 import type { MiscRpcSchema } from "."
-import { waitForConfirmedUserOperationReceipt } from "./waitForConfirmedUserOperationReceipt"
 
 export async function waitForUserOperationReceipt(
   client: Client<
@@ -23,10 +22,5 @@ export async function waitForUserOperationReceipt(
       waitForUserOperationReceipt_,
       "waitForUserOperationReceipt"
     )(parameters),
-    getAction(
-      client,
-      waitForConfirmedUserOperationReceipt,
-      "waitForConfirmedUserOperationReceipt"
-    )(parameters)
   ])
 }
