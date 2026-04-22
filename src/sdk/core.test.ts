@@ -81,7 +81,7 @@ describe("core", async () => {
     const smartAccountBalance = await testClient.getBalance({
       address: startaleAccountAddress
     })
-    if (smartAccountBalance == 0n) {
+    if (smartAccountBalance === 0n) {
       const hash = await walletClient.sendTransaction({
         chain,
         account: eoaAccount,

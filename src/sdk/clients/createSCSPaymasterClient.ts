@@ -1,20 +1,29 @@
 import { http, type Address, type OneOf, type Transport } from "viem"
 import {
+  type GetPaymasterStubDataParameters,
+  type GetPaymasterStubDataReturnType,
   type PaymasterClient,
   type PaymasterClientConfig,
   type SmartAccount,
-  createPaymasterClient,
+  createPaymasterClient
 } from "viem/account-abstraction"
+import type { StartaleSmartAccountImplementation } from "../account"
+import type { AnyData } from "../modules/utils/Types"
 import {
   type TokenPaymasterActions,
   scsTokenPaymasterActions
 } from "./decorators/tokenPaymaster"
-import { getTokenPaymasterQuotes, type GetTokenPaymasterQuotesParameters } from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
-import { type StartaleSmartAccountImplementation } from "../account"
-import type { AnyData } from "../modules/utils/Types"
+import {
+  type GetTokenPaymasterQuotesParameters,
+  getTokenPaymasterQuotes
+} from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
 
 export type SCSPaymasterClient = Omit<PaymasterClient, "getPaymasterStubData"> &
-  TokenPaymasterActions
+  TokenPaymasterActions & {
+    getPaymasterStubData: (
+      parameters: GetPaymasterStubDataParameters
+    ) => Promise<GetPaymasterStubDataReturnType>
+  }
 
 /**
  * Configuration options for creating a SCS Paymaster Client.
@@ -125,29 +134,57 @@ export const createSCSPaymasterClient = (
           `https://paymaster.scs.startale.com/v1?apikey=${parameters.apiKey}`
         )
 
-  // Todo: Update default to https://dev.paymaster.scs.startale.com/v1?apikey=scsadmin-paymaster (or prod)
+  // The SCS paymaster server does not implement pm_getPaymasterStubData, so we strip viem's
+  // built-in getPaymasterStubData and provide a custom one that supports both modes:
+  //
+  // calculateGasLimits: true  — delegate to getPaymasterData directly; server computes gas and
+  //   returns all fields in one shot, so viem skips bundler estimation naturally.
+  //
+  // calculateGasLimits: false — two-phase flow:
+  //   1. Stub: call pm_getPaymasterData with calculateGasLimits:true (server accepts zero-gas
+  //      stubs under this mode), then return isFinal:false so viem proceeds to bundler estimation.
+  //   2. Final: viem calls pm_getPaymasterData with real gas values + calculateGasLimits:false.
+  const { getPaymasterStubData: _serverStub, ...baseClient } =
+    createPaymasterClient({
+      ...parameters,
+      transport: defaultedTransport
+    })
+      .extend((client: AnyData) => ({
+        getTokenPaymasterQuotes: async (
+          args: GetTokenPaymasterQuotesParameters
+        ) => {
+          const _args = args
+          // Review
+          if (args.userOp?.authorization) {
+            const authorization =
+              args.userOp.authorization ||
+              (await (
+                client.account as SmartAccount<StartaleSmartAccountImplementation>
+              )?.eip7702Authorization?.())
+            args.userOp.authorization = authorization
+          }
+          return await getTokenPaymasterQuotes(client, _args)
+        }
+      }))
+      .extend(scsTokenPaymasterActions())
 
-  // Remove getPaymasterStubData from the client.
-  const { getPaymasterStubData, ...paymasterClient } = createPaymasterClient({
-    ...parameters,
-    transport: defaultedTransport
-  })
-  .extend((client: AnyData) => ({
-    getTokenPaymasterQuotes: async (args: GetTokenPaymasterQuotesParameters) => {
-      let _args = args
-      // Review
-      if (args.userOp?.authorization) {
-        const authorization =
-          args.userOp.authorization ||
-          (await (
-            client.account as SmartAccount<StartaleSmartAccountImplementation>
-          )?.eip7702Authorization?.())
-        args.userOp.authorization = authorization
-      }
-      return await getTokenPaymasterQuotes(client, _args)
+  const getPaymasterStubData = async (
+    params: GetPaymasterStubDataParameters
+  ): Promise<GetPaymasterStubDataReturnType> => {
+    const context = params.context as SCSPaymasterContext | undefined
+    if (context?.calculateGasLimits === false) {
+      const stubData = await baseClient.getPaymasterData({
+        ...params,
+        context: { ...context, calculateGasLimits: true }
+      })
+      // paymasterPostOpGasLimit is always present when calculateGasLimits:true, cast is safe
+      return { ...stubData, isFinal: false } as GetPaymasterStubDataReturnType
     }
-  }))
-  .extend(scsTokenPaymasterActions())
+    // calculateGasLimits: true — single-phase, gas populated by paymaster
+    return baseClient.getPaymasterData(
+      params
+    ) as unknown as GetPaymasterStubDataReturnType
+  }
 
-  return paymasterClient
+  return { ...baseClient, getPaymasterStubData }
 }
