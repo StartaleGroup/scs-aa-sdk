@@ -1,7 +1,5 @@
 import { http, type Address, type OneOf, type Transport } from "viem"
 import {
-  type GetPaymasterStubDataParameters,
-  type GetPaymasterStubDataReturnType,
   type PaymasterClient,
   type PaymasterClientConfig,
   type SmartAccount,
@@ -18,12 +16,7 @@ import {
   getTokenPaymasterQuotes
 } from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
 
-export type SCSPaymasterClient = Omit<PaymasterClient, "getPaymasterStubData"> &
-  TokenPaymasterActions & {
-    getPaymasterStubData: (
-      parameters: GetPaymasterStubDataParameters
-    ) => Promise<GetPaymasterStubDataReturnType>
-  }
+export type SCSPaymasterClient = PaymasterClient & TokenPaymasterActions
 
 /**
  * Configuration options for creating a SCS Paymaster Client.
@@ -75,7 +68,7 @@ export const toSCSSponsoredPaymasterContext = (
   params?: Partial<SCSPaymasterContext>
 ): SCSPaymasterContext => {
   return {
-    calculateGasLimits: true,
+    calculateGasLimits: false,
     ...params
   }
 }
@@ -86,7 +79,7 @@ export const toSCSTokenPaymasterContext = (
   const { calculateGasLimits } = params
   return {
     token: params.token,
-    calculateGasLimits: calculateGasLimits ?? true
+    calculateGasLimits: calculateGasLimits ?? false
   }
 }
 
@@ -134,17 +127,7 @@ export const createSCSPaymasterClient = (
           `https://paymaster.scs.startale.com/v1?apikey=${parameters.apiKey}`
         )
 
-  // The SCS paymaster server does not implement pm_getPaymasterStubData, so we strip viem's
-  // built-in getPaymasterStubData and provide a custom one that supports both modes:
-  //
-  // calculateGasLimits: true  — delegate to getPaymasterData directly; server computes gas and
-  //   returns all fields in one shot, so viem skips bundler estimation naturally.
-  //
-  // calculateGasLimits: false — two-phase flow:
-  //   1. Stub: call pm_getPaymasterData with calculateGasLimits:true (server accepts zero-gas
-  //      stubs under this mode), then return isFinal:false so viem proceeds to bundler estimation.
-  //   2. Final: viem calls pm_getPaymasterData with real gas values + calculateGasLimits:false.
-  const { getPaymasterStubData: _serverStub, ...baseClient } =
+  const { getPaymasterStubData: nativeGetPaymasterStubData, ...baseClient } =
     createPaymasterClient({
       ...parameters,
       transport: defaultedTransport
@@ -154,7 +137,6 @@ export const createSCSPaymasterClient = (
           args: GetTokenPaymasterQuotesParameters
         ) => {
           const _args = args
-          // Review
           if (args.userOp?.authorization) {
             const authorization =
               args.userOp.authorization ||
@@ -168,22 +150,19 @@ export const createSCSPaymasterClient = (
       }))
       .extend(scsTokenPaymasterActions())
 
-  const getPaymasterStubData = async (
-    params: GetPaymasterStubDataParameters
-  ): Promise<GetPaymasterStubDataReturnType> => {
+  const getPaymasterStubData: typeof nativeGetPaymasterStubData = async (
+    params
+  ) => {
     const context = params.context as SCSPaymasterContext | undefined
-    if (context?.calculateGasLimits === false) {
-      const stubData = await baseClient.getPaymasterData({
-        ...params,
-        context: { ...context, calculateGasLimits: true }
-      })
-      // paymasterPostOpGasLimit is always present when calculateGasLimits:true, cast is safe
-      return { ...stubData, isFinal: false } as GetPaymasterStubDataReturnType
+    if (context?.calculateGasLimits === true) {
+      // Single-phase: paymaster estimates gas internally, bundler estimation skipped
+      return baseClient.getPaymasterData(params) as ReturnType<
+        typeof nativeGetPaymasterStubData
+      >
     }
-    // calculateGasLimits: true — single-phase, gas populated by paymaster
-    return baseClient.getPaymasterData(
-      params
-    ) as unknown as GetPaymasterStubDataReturnType
+    // Two-phase (default): pm_getPaymasterStubData returns stub + gas limits,
+    // bundler estimates gas, pm_getPaymasterData signs only
+    return nativeGetPaymasterStubData(params)
   }
 
   return { ...baseClient, getPaymasterStubData }
