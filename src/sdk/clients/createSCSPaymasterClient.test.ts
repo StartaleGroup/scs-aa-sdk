@@ -2,15 +2,25 @@ import {
   http,
   type Address,
   type Chain,
+  type Hex,
   type PrivateKeyAccount,
   type PublicClient,
   type WalletClient,
   createPublicClient,
   createWalletClient,
+  custom,
   parseUnits,
   toHex
 } from "viem"
-import { afterAll, beforeAll, describe, expect, test } from "vitest"
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi
+} from "vitest"
 import { paymasterTruthy, toNetwork } from "../../test/testSetup"
 import {
   getBalance,
@@ -116,8 +126,9 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
     expect(paymaster).toHaveProperty("getPaymasterData")
     expect(paymaster.getPaymasterData).toBeInstanceOf(Function)
 
-    // SCS Paymaster has no getPaymasterStubData method, to ensure latency is kept low.
-    expect(paymaster).not.toHaveProperty("getPaymasterStubData")
+    // SCS Paymaster exposes getPaymasterStubData to support the two-phase flow (calculateGasLimits: false)
+    expect(paymaster).toHaveProperty("getPaymasterStubData")
+    expect(paymaster.getPaymasterStubData).toBeInstanceOf(Function)
   })
 
   test.skip("should send a sponsored transaction", async () => {
@@ -375,5 +386,149 @@ describe.skipIf(!paymasterTruthy())("scs.paymaster", async () => {
       (token) => token.tokenAddress
     )
     expect(supportedTokenAddresses).toContain(soneiumMinatoASTRAddress)
+  })
+})
+
+// ─── Unit tests (no network required) ────────────────────────────────────────
+
+const MOCK_PAYMASTER_ADDRESS =
+  "0x0000007d3cd3002cb096568ba3cc1319c03f2a55" as Address
+const MOCK_STUB_RESPONSE = {
+  paymaster: MOCK_PAYMASTER_ADDRESS,
+  paymasterData: "0xdeadbeef" as Hex,
+  paymasterVerificationGasLimit: "0x30d40", // 200000
+  paymasterPostOpGasLimit: "0x186a0" // 100000
+}
+const MOCK_DATA_RESPONSE = {
+  paymaster: MOCK_PAYMASTER_ADDRESS,
+  paymasterData: "0xfinaldata" as Hex
+}
+const MINIMAL_STUB_PARAMS = {
+  chainId: 1946,
+  entryPointAddress: "0x0000000071727De22E5E9d8BAf0edAc6f37da032" as Address,
+  sender: "0x0000000000000000000000000000000000000001" as Address,
+  callData: "0x" as Hex,
+  nonce: 0n,
+  maxFeePerGas: 1n,
+  maxPriorityFeePerGas: 1n,
+  callGasLimit: 0n,
+  verificationGasLimit: 0n,
+  preVerificationGas: 0n
+}
+
+describe("toSCSSponsoredPaymasterContext", () => {
+  test("defaults calculateGasLimits to false", () => {
+    const ctx = toSCSSponsoredPaymasterContext()
+    expect(ctx.calculateGasLimits).toBe(false)
+  })
+
+  test("allows overriding calculateGasLimits to true", () => {
+    const ctx = toSCSSponsoredPaymasterContext({ calculateGasLimits: true })
+    expect(ctx.calculateGasLimits).toBe(true)
+  })
+
+  test("preserves paymasterId alongside default calculateGasLimits", () => {
+    const ctx = toSCSSponsoredPaymasterContext({ paymasterId: "pm_test" })
+    expect(ctx.calculateGasLimits).toBe(false)
+    expect(ctx.paymasterId).toBe("pm_test")
+  })
+})
+
+describe("toSCSTokenPaymasterContext", () => {
+  const tokenAddress = "0x26e6f7c7047252DdE3dcBF26AA492e6a264Db655" as Address
+
+  test("defaults calculateGasLimits to false", () => {
+    const ctx = toSCSTokenPaymasterContext({ token: tokenAddress })
+    expect(ctx.calculateGasLimits).toBe(false)
+  })
+
+  test("allows overriding calculateGasLimits to true", () => {
+    const ctx = toSCSTokenPaymasterContext({
+      token: tokenAddress,
+      calculateGasLimits: true
+    })
+    expect(ctx.calculateGasLimits).toBe(true)
+  })
+
+  test("sets token address", () => {
+    const ctx = toSCSTokenPaymasterContext({ token: tokenAddress })
+    expect(ctx.token).toBe(tokenAddress)
+  })
+})
+
+describe("createSCSPaymasterClient - getPaymasterStubData routing", () => {
+  let mockRequest: ReturnType<typeof vi.fn>
+
+  beforeEach(() => {
+    mockRequest = vi.fn(async ({ method }: { method: string }) => {
+      if (method === "pm_getPaymasterStubData") return MOCK_STUB_RESPONSE
+      if (method === "pm_getPaymasterData") return MOCK_DATA_RESPONSE
+      return null
+    })
+  })
+
+  test("calls pm_getPaymasterStubData when calculateGasLimits is false", async () => {
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    await client.getPaymasterStubData({
+      ...MINIMAL_STUB_PARAMS,
+      context: { calculateGasLimits: false, paymasterId: "pm_test" }
+    })
+
+    const methods = mockRequest.mock.calls.map(
+      (call: [{ method: string }]) => call[0].method
+    )
+    expect(methods).toContain("pm_getPaymasterStubData")
+    expect(methods).not.toContain("pm_getPaymasterData")
+  })
+
+  test("calls pm_getPaymasterData when calculateGasLimits is true (single-phase)", async () => {
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    await client.getPaymasterStubData({
+      ...MINIMAL_STUB_PARAMS,
+      context: { calculateGasLimits: true, paymasterId: "pm_test" }
+    })
+
+    const methods = mockRequest.mock.calls.map(
+      (call: [{ method: string }]) => call[0].method
+    )
+    expect(methods).toContain("pm_getPaymasterData")
+    expect(methods).not.toContain("pm_getPaymasterStubData")
+  })
+
+  test("calls pm_getPaymasterStubData when context is undefined (default is false)", async () => {
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    await client.getPaymasterStubData({
+      ...MINIMAL_STUB_PARAMS,
+      context: undefined
+    })
+
+    const methods = mockRequest.mock.calls.map(
+      (call: [{ method: string }]) => call[0].method
+    )
+    expect(methods).toContain("pm_getPaymasterStubData")
+    expect(methods).not.toContain("pm_getPaymasterData")
+  })
+
+  test("stub response includes paymasterVerificationGasLimit and paymasterPostOpGasLimit", async () => {
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    const result = await client.getPaymasterStubData({
+      ...MINIMAL_STUB_PARAMS,
+      context: { calculateGasLimits: false, paymasterId: "pm_test" }
+    })
+
+    expect(result.paymasterVerificationGasLimit).toBeDefined()
+    expect(result.paymasterPostOpGasLimit).toBeDefined()
   })
 })
