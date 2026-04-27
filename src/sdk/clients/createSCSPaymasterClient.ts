@@ -3,18 +3,20 @@ import {
   type PaymasterClient,
   type PaymasterClientConfig,
   type SmartAccount,
-  createPaymasterClient,
+  createPaymasterClient
 } from "viem/account-abstraction"
+import type { StartaleSmartAccountImplementation } from "../account"
+import type { AnyData } from "../modules/utils/Types"
 import {
   type TokenPaymasterActions,
   scsTokenPaymasterActions
 } from "./decorators/tokenPaymaster"
-import { getTokenPaymasterQuotes, type GetTokenPaymasterQuotesParameters } from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
-import { type StartaleSmartAccountImplementation } from "../account"
-import type { AnyData } from "../modules/utils/Types"
+import {
+  type GetTokenPaymasterQuotesParameters,
+  getTokenPaymasterQuotes
+} from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
 
-export type SCSPaymasterClient = Omit<PaymasterClient, "getPaymasterStubData"> &
-  TokenPaymasterActions
+export type SCSPaymasterClient = PaymasterClient & TokenPaymasterActions
 
 /**
  * Configuration options for creating a SCS Paymaster Client.
@@ -66,7 +68,7 @@ export const toSCSSponsoredPaymasterContext = (
   params?: Partial<SCSPaymasterContext>
 ): SCSPaymasterContext => {
   return {
-    calculateGasLimits: true,
+    calculateGasLimits: false,
     ...params
   }
 }
@@ -77,7 +79,7 @@ export const toSCSTokenPaymasterContext = (
   const { calculateGasLimits } = params
   return {
     token: params.token,
-    calculateGasLimits: calculateGasLimits ?? true
+    calculateGasLimits: calculateGasLimits ?? false
   }
 }
 
@@ -125,29 +127,43 @@ export const createSCSPaymasterClient = (
           `https://paymaster.scs.startale.com/v1?apikey=${parameters.apiKey}`
         )
 
-  // Todo: Update default to https://dev.paymaster.scs.startale.com/v1?apikey=scsadmin-paymaster (or prod)
+  const { getPaymasterStubData: nativeGetPaymasterStubData, ...baseClient } =
+    createPaymasterClient({
+      ...parameters,
+      transport: defaultedTransport
+    })
+      .extend((client: AnyData) => ({
+        getTokenPaymasterQuotes: async (
+          args: GetTokenPaymasterQuotesParameters
+        ) => {
+          const _args = args
+          if (args.userOp?.authorization) {
+            const authorization =
+              args.userOp.authorization ||
+              (await (
+                client.account as SmartAccount<StartaleSmartAccountImplementation>
+              )?.eip7702Authorization?.())
+            args.userOp.authorization = authorization
+          }
+          return await getTokenPaymasterQuotes(client, _args)
+        }
+      }))
+      .extend(scsTokenPaymasterActions())
 
-  // Remove getPaymasterStubData from the client.
-  const { getPaymasterStubData, ...paymasterClient } = createPaymasterClient({
-    ...parameters,
-    transport: defaultedTransport
-  })
-  .extend((client: AnyData) => ({
-    getTokenPaymasterQuotes: async (args: GetTokenPaymasterQuotesParameters) => {
-      let _args = args
-      // Review
-      if (args.userOp?.authorization) {
-        const authorization =
-          args.userOp.authorization ||
-          (await (
-            client.account as SmartAccount<StartaleSmartAccountImplementation>
-          )?.eip7702Authorization?.())
-        args.userOp.authorization = authorization
-      }
-      return await getTokenPaymasterQuotes(client, _args)
+  const getPaymasterStubData: typeof nativeGetPaymasterStubData = async (
+    params
+  ) => {
+    const context = params.context as SCSPaymasterContext | undefined
+    if (context?.calculateGasLimits === true) {
+      // Single-phase: paymaster estimates gas internally, bundler estimation skipped
+      return baseClient.getPaymasterData(params) as ReturnType<
+        typeof nativeGetPaymasterStubData
+      >
     }
-  }))
-  .extend(scsTokenPaymasterActions())
+    // Two-phase (default): pm_getPaymasterStubData returns stub + gas limits,
+    // bundler estimates gas, pm_getPaymasterData signs only
+    return nativeGetPaymasterStubData(params)
+  }
 
-  return paymasterClient
+  return { ...baseClient, getPaymasterStubData }
 }
