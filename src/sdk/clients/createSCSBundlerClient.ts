@@ -21,7 +21,10 @@ import {
 import type { StartaleSmartAccountImplementation } from "../account"
 import type { AnyData, ModularSmartAccount } from "../modules/utils/Types"
 import { type SCSActions, scsBundlerActions } from "./decorators/bundler"
-import { getGasFeeValues } from "./decorators/bundler/getGasFeeValues"
+import {
+  type GasPriceMultipliers,
+  getGasFeeValues
+} from "./decorators/bundler/getGasFeeValues"
 import { type Erc7579Actions, erc7579Actions } from "./decorators/erc7579"
 import {
   type SmartAccountActions,
@@ -90,6 +93,16 @@ type SCSBundlerClientConfig = Omit<BundlerClientConfig, "transport"> & {
    * Whether to use the test bundler. Conditionally used by the `getGasFeeValues` decorator.
    */
   mock?: boolean
+  /**
+   * Multipliers applied to the raw bundler fee estimates.
+   * Use this to add a safety buffer so a rising base fee between estimation and
+   * submission does not cause the bundler to reject with "maxFeePerGas must be at least X".
+   *
+   * @example
+   * // Pay at most 20 % over the estimated fee (default is 1.5 / 1.1)
+   * gasPriceMultipliers: { maxFeePerGas: 1.2, maxPriorityFeePerGas: 1.1 }
+   */
+  gasPriceMultipliers?: GasPriceMultipliers
 } & OneOf<
     | {
         transport: Transport
@@ -123,7 +136,8 @@ export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
     paymaster,
     paymasterContext,
     userOperation,
-    chain
+    chain,
+    gasPriceMultipliers
   } = parameters
 
   if (!apiKey && !bundlerUrl && !transport && !chain) {
@@ -145,7 +159,7 @@ export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
 
   const defaultedUserOperation = userOperation ?? {
     estimateFeesPerGas: async () => {
-      return (await getGasFeeValues(bundler_)).fast
+      return (await getGasFeeValues(bundler_, gasPriceMultipliers)).fast
     }
   }
 

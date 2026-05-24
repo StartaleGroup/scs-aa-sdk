@@ -4,10 +4,13 @@ import type {
   WaitForUserOperationReceiptReturnType
 } from "viem/account-abstraction"
 import {
+  type GasPriceMultipliers,
   type GetGasFeeValuesReturnType,
   type UserOperationGasPriceWithBigIntAsHex,
   getGasFeeValues
 } from "./getGasFeeValues"
+
+export type { GasPriceMultipliers }
 import { waitForUserOperationReceipt } from "./waitForUserOperationReceipt"
 
 export type MiscRpcSchema = [
