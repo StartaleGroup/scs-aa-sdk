@@ -97,14 +97,43 @@ export async function toSigner<
 
   if ("request" in signer) {
     if (!address) {
+      // ── Step 1: try eth_accounts first ──────────────────────────────────────
+      // This method is safe on every provider type (wallets, WalletConnect,
+      // Alchemy, Infura …).  Infrastructure providers return [] without error,
+      // and already-connected wallets return the active address immediately,
+      // so this avoids an unnecessary round-trip in the happy path.
       try {
-        ;[address] = await (signer as EthereumProvider).request({
-          method: "eth_requestAccounts"
-        })
-      } catch {
         ;[address] = await (signer as EthereumProvider).request({
           method: "eth_accounts"
         })
+      } catch {
+        // Provider doesn't support eth_accounts at all — keep address undefined
+        // and fall through to the eth_requestAccounts path below.
+      }
+
+      // ── Step 2: escalate to eth_requestAccounts only for injected wallets ───
+      // eth_requestAccounts triggers a user-approval popup and is NOT supported
+      // by infrastructure providers (Alchemy, Infura, etc.).  Calling it on
+      // those endpoints floods logs with 4xx errors.  We restrict it to the
+      // browser-injected provider (window.ethereum, e.g. MetaMask) where it is
+      // the correct mechanism to prompt a fresh connection.
+      if (!address) {
+        // globalThis.window is undefined in Node/non-DOM environments; AnyData
+        // cast avoids TS errors when the tsconfig lib doesn't include "dom".
+        const globalWindow = (globalThis as AnyData).window
+        const isInjectedBrowserWallet =
+          globalWindow !== undefined &&
+          signer === globalWindow.ethereum
+        if (isInjectedBrowserWallet) {
+          try {
+            ;[address] = await (signer as EthereumProvider).request({
+              method: "eth_requestAccounts"
+            })
+          } catch {
+            // User rejected the prompt or provider errored — address stays
+            // undefined and will throw the clear error below.
+          }
+        }
       }
     }
 
