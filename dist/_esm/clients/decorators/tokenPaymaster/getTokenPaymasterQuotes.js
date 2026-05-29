@@ -5,23 +5,23 @@ import { ENTRY_POINT_ADDRESS } from "../../../constants/index.js";
  * This is important for EIP-7702 authorization compatibility.
  */
 const normalizeAuthorization = (authorization) => {
-    if (!authorization || typeof authorization !== 'object') {
+    if (!authorization || typeof authorization !== "object") {
         return authorization;
     }
     // Create a copy to avoid mutating the original
     const normalizedAuth = { ...authorization };
     // Normalize yParity
-    if ('yParity' in normalizedAuth && normalizedAuth.yParity !== undefined) {
+    if ("yParity" in normalizedAuth && normalizedAuth.yParity !== undefined) {
         const yParity = normalizedAuth.yParity;
         // Convert to number if it's a string or hex
         let yParityNumber;
-        if (typeof yParity === 'string') {
+        if (typeof yParity === "string") {
             // If it's a hex string, convert to number
-            if (yParity.startsWith('0x')) {
-                yParityNumber = parseInt(yParity, 16);
+            if (yParity.startsWith("0x")) {
+                yParityNumber = Number.parseInt(yParity, 16);
             }
             else {
-                yParityNumber = parseInt(yParity, 10);
+                yParityNumber = Number.parseInt(yParity, 10);
             }
         }
         else {
@@ -34,12 +34,12 @@ const normalizeAuthorization = (authorization) => {
         normalizedAuth.yParity = toHex(normalizedYParity, { size: 1 });
     }
     // Convert chainId to hex
-    if ('chainId' in normalizedAuth && normalizedAuth.chainId !== undefined) {
+    if ("chainId" in normalizedAuth && normalizedAuth.chainId !== undefined) {
         const chainId = normalizedAuth.chainId;
         normalizedAuth.chainId = toHex(chainId);
     }
     // Convert nonce to hex
-    if ('nonce' in normalizedAuth && normalizedAuth.nonce !== undefined) {
+    if ("nonce" in normalizedAuth && normalizedAuth.nonce !== undefined) {
         const nonce = normalizedAuth.nonce;
         normalizedAuth.nonce = toHex(nonce);
     }

@@ -64,10 +64,12 @@ export {
 } from "@rhinestone/module-sdk"
 
 // Maintained here rather than from 0.3.0 module-sdk as it is not exported properly.
-export const SMART_SESSIONS_ADDRESS: Address = "0x00000000008bDABA73cD9815d79069c247Eb4bDA"
+export const SMART_SESSIONS_ADDRESS: Address =
+  "0x00000000008bDABA73cD9815d79069c247Eb4bDA"
 
 // Todo: Review if needs an update
-export const OWNABLE_VALIDATOR_ADDRESS: Address = "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9"
+export const OWNABLE_VALIDATOR_ADDRESS: Address =
+  "0x0000000000e9e6e96bcaa3c113187cdb7e38aed9"
 
 // updated module and policy addresses as per latest V1. https://docs.rhinestone.dev/home/resources/address-book
 export const UNIVERSAL_ACTION_POLICY_ADDRESS: Address =
