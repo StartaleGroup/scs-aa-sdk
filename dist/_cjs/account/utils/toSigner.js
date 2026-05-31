@@ -40,14 +40,25 @@ async function toSigner({ signer, address }) {
             try {
                 ;
                 [address] = await signer.request({
-                    method: "eth_requestAccounts"
+                    method: "eth_accounts"
                 });
             }
             catch {
-                ;
-                [address] = await signer.request({
-                    method: "eth_accounts"
-                });
+            }
+            if (!address) {
+                const globalWindow = globalThis.window;
+                const isInjectedBrowserWallet = globalWindow !== undefined &&
+                    signer === globalWindow.ethereum;
+                if (isInjectedBrowserWallet) {
+                    try {
+                        ;
+                        [address] = await signer.request({
+                            method: "eth_requestAccounts"
+                        });
+                    }
+                    catch {
+                    }
+                }
             }
         }
         if (!address) {
