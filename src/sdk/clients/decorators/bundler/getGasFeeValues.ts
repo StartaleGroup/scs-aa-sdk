@@ -42,6 +42,24 @@ export type GetGasFeeValuesReturnType = {
 }
 
 /**
+ * Multipliers applied to the raw bundler fee estimates before submitting a UserOperation.
+ * A buffer above 1.0 guards against base-fee ticks that occur between estimation and submission,
+ * which would otherwise cause the bundler to reject with "maxFeePerGas must be at least X".
+ */
+export type GasPriceMultipliers = {
+  /**
+   * Multiplier applied to `maxFeePerGas` (baseFee + priorityFee).
+   * @default 1.5
+   */
+  maxFeePerGas?: number
+  /**
+   * Multiplier applied to `maxPriorityFeePerGas`.
+   * @default 1.1
+   */
+  maxPriorityFeePerGas?: number
+}
+
+/**
  * Returns the live gas prices that you can use to send a user operation.
  *
  * @param client that you created using viem's createClient whose transport url is pointing to the bundler.
@@ -66,7 +84,8 @@ export const getGasFeeValues = async (
     Chain | undefined,
     Account | undefined,
     MiscRpcSchema
-  >
+  >,
+  multipliers?: GasPriceMultipliers
 ): Promise<GetGasFeeValuesReturnType> => {
   const accountClient = client as StartaleAccountClient
   // const publicClient = accountClient.client as PublicClient
@@ -78,19 +97,6 @@ export const getGasFeeValues = async (
     chain: accountClient.chain,
     transport: http(rpcUrl)
   })
-  // TODO: refactor and error handling can be added
-
-  //  if(publicClient === null || publicClient === undefined) {
-  //   throw new Error("client must be passed during initialing smart account client")
-  //  }
-
-  // const feeData = await publicClient.estimateFeesPerGas()
-  // console.log("feeData", feeData)
-  // const maxFeePerGas =  safeMultiplier(feeData.maxFeePerGas, 1.6);
-  // const maxPriorityFeePerGas = safeMultiplier(
-  //     feeData.maxPriorityFeePerGas,
-  //     1.6
-  // );
 
   const priorityFeeDataFromSCS = await client.request({
     method: "rundler_maxPriorityFeePerGas",
@@ -109,15 +115,19 @@ export const getGasFeeValues = async (
       return BigInt(block.baseFeePerGas)
     })
 
-  //maxFee = base fee + feeDataFromSCS
+  const maxFeeMultiplier = multipliers?.maxFeePerGas ?? 1.5
+  const priorityFeeMultiplier = multipliers?.maxPriorityFeePerGas ?? 1.1
+
+  //maxFee = (baseFee + priorityFee) * multiplier — the buffer guards against base-fee
+  //ticks between estimation and submission that would cause the bundler to reject.
   const maxFeePerGas = safeMultiplier(
     baseFeePerGas + BigInt(priorityFeeDataFromSCS),
-    1.3
+    maxFeeMultiplier
   )
 
   const maxPriorityFeePerGasFromSCS = safeMultiplier(
     BigInt(priorityFeeDataFromSCS),
-    1
+    priorityFeeMultiplier
   )
 
   return {

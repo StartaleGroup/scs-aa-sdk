@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGasFeeValues = void 0;
 const viem_1 = require("viem");
 const account_1 = require("../../../account/index.js");
-const getGasFeeValues = async (client) => {
+const getGasFeeValues = async (client, multipliers) => {
     const accountClient = client;
     const rpcUrl = accountClient.chain?.rpcUrls.default.http[0];
     if (!rpcUrl) {
@@ -28,8 +28,10 @@ const getGasFeeValues = async (client) => {
         }
         return BigInt(block.baseFeePerGas);
     });
-    const maxFeePerGas = (0, account_1.safeMultiplier)(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.3);
-    const maxPriorityFeePerGasFromSCS = (0, account_1.safeMultiplier)(BigInt(priorityFeeDataFromSCS), 1);
+    const maxFeeMultiplier = multipliers?.maxFeePerGas ?? 1.5;
+    const priorityFeeMultiplier = multipliers?.maxPriorityFeePerGas ?? 1.1;
+    const maxFeePerGas = (0, account_1.safeMultiplier)(baseFeePerGas + BigInt(priorityFeeDataFromSCS), maxFeeMultiplier);
+    const maxPriorityFeePerGasFromSCS = (0, account_1.safeMultiplier)(BigInt(priorityFeeDataFromSCS), priorityFeeMultiplier);
     return {
         slow: {
             maxFeePerGas: BigInt(maxFeePerGas),

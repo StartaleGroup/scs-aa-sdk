@@ -4,10 +4,13 @@ import type {
   WaitForUserOperationReceiptReturnType
 } from "viem/account-abstraction"
 import {
+  type GasPriceMultipliers,
   type GetGasFeeValuesReturnType,
   type UserOperationGasPriceWithBigIntAsHex,
   getGasFeeValues
 } from "./getGasFeeValues"
+
+export type { GasPriceMultipliers }
 import { waitForUserOperationReceipt } from "./waitForUserOperationReceipt"
 
 export type MiscRpcSchema = [
@@ -20,7 +23,7 @@ export type MiscRpcSchema = [
     Method: "rundler_maxPriorityFeePerGas"
     Parameters: []
     ReturnType: any // todo: add type
-  },
+  }
 ]
 
 export type SCSActions = {

@@ -21,6 +21,6 @@ export async function waitForUserOperationReceipt(
       client,
       waitForUserOperationReceipt_,
       "waitForUserOperationReceipt"
-    )(parameters),
+    )(parameters)
   ])
 }

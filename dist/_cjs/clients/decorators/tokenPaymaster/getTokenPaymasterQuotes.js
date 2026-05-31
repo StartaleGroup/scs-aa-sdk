@@ -4,19 +4,19 @@ exports.getTokenPaymasterQuotes = void 0;
 const viem_1 = require("viem");
 const constants_1 = require("../../../constants/index.js");
 const normalizeAuthorization = (authorization) => {
-    if (!authorization || typeof authorization !== 'object') {
+    if (!authorization || typeof authorization !== "object") {
         return authorization;
     }
     const normalizedAuth = { ...authorization };
-    if ('yParity' in normalizedAuth && normalizedAuth.yParity !== undefined) {
+    if ("yParity" in normalizedAuth && normalizedAuth.yParity !== undefined) {
         const yParity = normalizedAuth.yParity;
         let yParityNumber;
-        if (typeof yParity === 'string') {
-            if (yParity.startsWith('0x')) {
-                yParityNumber = parseInt(yParity, 16);
+        if (typeof yParity === "string") {
+            if (yParity.startsWith("0x")) {
+                yParityNumber = Number.parseInt(yParity, 16);
             }
             else {
-                yParityNumber = parseInt(yParity, 10);
+                yParityNumber = Number.parseInt(yParity, 10);
             }
         }
         else {
@@ -25,11 +25,11 @@ const normalizeAuthorization = (authorization) => {
         const normalizedYParity = yParityNumber % 2 === 1 ? 1 : 0;
         normalizedAuth.yParity = (0, viem_1.toHex)(normalizedYParity, { size: 1 });
     }
-    if ('chainId' in normalizedAuth && normalizedAuth.chainId !== undefined) {
+    if ("chainId" in normalizedAuth && normalizedAuth.chainId !== undefined) {
         const chainId = normalizedAuth.chainId;
         normalizedAuth.chainId = (0, viem_1.toHex)(chainId);
     }
-    if ('nonce' in normalizedAuth && normalizedAuth.nonce !== undefined) {
+    if ("nonce" in normalizedAuth && normalizedAuth.nonce !== undefined) {
         const nonce = normalizedAuth.nonce;
         normalizedAuth.nonce = (0, viem_1.toHex)(nonce);
     }

@@ -1,4 +1,7 @@
-import { getTimeFramePolicy, getUniversalActionPolicy } from "@rhinestone/module-sdk"
+import {
+  getTimeFramePolicy,
+  getUniversalActionPolicy
+} from "@rhinestone/module-sdk"
 import { getPermissionId } from "@rhinestone/module-sdk"
 import type { Chain, Client, Hex, PublicClient, Transport } from "viem"
 import { encodeFunctionData, encodePacked, parseAccount } from "viem/utils"
@@ -6,21 +9,21 @@ import { ERROR_MESSAGES } from "../../../../account"
 import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound"
 import {
   type ActionData,
+  OWNABLE_VALIDATOR_ADDRESS,
   type PolicyData,
+  SMART_SESSIONS_ADDRESS,
+  SPENDING_LIMITS_POLICY_ADDRESS,
+  SUDO_POLICY_ADDRESS,
   type Session,
+  TIME_FRAME_POLICY_ADDRESS,
+  UNIVERSAL_ACTION_POLICY_ADDRESS,
+  USAGE_LIMIT_POLICY_ADDRESS,
+  VALUE_LIMIT_POLICY_ADDRESS,
   encodeValidationData,
   getSpendingLimitsPolicy,
   getSudoPolicy,
   getUsageLimitPolicy,
-  getValueLimitPolicy,
-  TIME_FRAME_POLICY_ADDRESS,
-  VALUE_LIMIT_POLICY_ADDRESS,
-  USAGE_LIMIT_POLICY_ADDRESS,
-  SPENDING_LIMITS_POLICY_ADDRESS,
-  SUDO_POLICY_ADDRESS,
-  SMART_SESSIONS_ADDRESS,
-  OWNABLE_VALIDATOR_ADDRESS,
-  UNIVERSAL_ACTION_POLICY_ADDRESS
+  getValueLimitPolicy
 } from "../../../../constants"
 import { SmartSessionAbi } from "../../../../constants/abi/SmartSessionAbi"
 import type { AnyData, ModularSmartAccount } from "../../../utils/Types"
@@ -40,7 +43,8 @@ import type {
 } from "../Types"
 
 // Date.now() returns milliseconds, so we need to convert it to seconds // 60 * 60 * 24 * 365 is in seconds
-export const ONE_YEAR_FROM_NOW_IN_SECONDS = Math.floor(new Date().getTime()/1000.0) + 60 * 60 * 24 * 365
+export const ONE_YEAR_FROM_NOW_IN_SECONDS =
+  Math.floor(new Date().getTime() / 1000.0) + 60 * 60 * 24 * 365
 
 /**
  * Parameters for creating sessions in a modular smart account.
@@ -91,29 +95,32 @@ export const getPermissionAction = async ({
     // creating time frame policy here..
     // Note: can do packing fix and address update in upstream also
     const timeFramePolicy = getTimeFramePolicy({
-        validUntil: actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
-        validAfter: actionPolicyInfo.validAfter ?? 0
+      validUntil: actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
+      validAfter: actionPolicyInfo.validAfter ?? 0
     })
     timeFramePolicy.address = TIME_FRAME_POLICY_ADDRESS
     timeFramePolicy.policy = TIME_FRAME_POLICY_ADDRESS
     timeFramePolicy.initData = encodePacked(
-      ['uint48', 'uint48'],
-      [actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS, actionPolicyInfo.validAfter ?? 0],
+      ["uint48", "uint48"],
+      [
+        actionPolicyInfo.validUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
+        actionPolicyInfo.validAfter ?? 0
+      ]
     )
     policyData.push(timeFramePolicy)
 
     const hasValidRules =
       actionPolicyInfo?.rules && actionPolicyInfo?.rules?.length > 0
 
-     if (hasValidRules) {
-       const actionConfig = createActionConfig(
-         actionPolicyInfo.rules ?? [],
-         actionPolicyInfo.valueLimit
-       )
+    if (hasValidRules) {
+      const actionConfig = createActionConfig(
+        actionPolicyInfo.rules ?? [],
+        actionPolicyInfo.valueLimit
+      )
 
       // create uni action policy here..
       const uniActionPolicyInfo = getUniversalActionPolicy(
-       toActionConfig(actionConfig)
+        toActionConfig(actionConfig)
       )
       uniActionPolicyInfo.address = UNIVERSAL_ACTION_POLICY_ADDRESS
       uniActionPolicyInfo.policy = UNIVERSAL_ACTION_POLICY_ADDRESS
@@ -193,8 +200,11 @@ export const getPermissionAction = async ({
     timeFramePolicy.address = TIME_FRAME_POLICY_ADDRESS
     timeFramePolicy.policy = TIME_FRAME_POLICY_ADDRESS
     timeFramePolicy.initData = encodePacked(
-      ['uint48', 'uint48'],
-      [sessionInfo.sessionValidUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS, sessionInfo.sessionValidAfter ?? 0],
+      ["uint48", "uint48"],
+      [
+        sessionInfo.sessionValidUntil ?? ONE_YEAR_FROM_NOW_IN_SECONDS,
+        sessionInfo.sessionValidAfter ?? 0
+      ]
     )
     // Review
     const userOpPolicies = withPaymaster ? [timeFramePolicy] : [timeFramePolicy]

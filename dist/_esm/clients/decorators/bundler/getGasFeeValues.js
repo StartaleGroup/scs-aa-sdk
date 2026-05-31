@@ -19,7 +19,7 @@ import { safeMultiplier } from "../../../account/index.js";
  * await getGasFeeValues(bundlerClient)
  *
  */
-export const getGasFeeValues = async (client) => {
+export const getGasFeeValues = async (client, multipliers) => {
     const accountClient = client;
     // const publicClient = accountClient.client as PublicClient
     const rpcUrl = accountClient.chain?.rpcUrls.default.http[0];
@@ -30,17 +30,6 @@ export const getGasFeeValues = async (client) => {
         chain: accountClient.chain,
         transport: http(rpcUrl)
     });
-    // TODO: refactor and error handling can be added
-    //  if(publicClient === null || publicClient === undefined) {
-    //   throw new Error("client must be passed during initialing smart account client")
-    //  }
-    // const feeData = await publicClient.estimateFeesPerGas()
-    // console.log("feeData", feeData)
-    // const maxFeePerGas =  safeMultiplier(feeData.maxFeePerGas, 1.6);
-    // const maxPriorityFeePerGas = safeMultiplier(
-    //     feeData.maxPriorityFeePerGas,
-    //     1.6
-    // );
     const priorityFeeDataFromSCS = await client.request({
         method: "rundler_maxPriorityFeePerGas",
         params: []
@@ -56,9 +45,12 @@ export const getGasFeeValues = async (client) => {
         }
         return BigInt(block.baseFeePerGas);
     });
-    //maxFee = base fee + feeDataFromSCS
-    const maxFeePerGas = safeMultiplier(baseFeePerGas + BigInt(priorityFeeDataFromSCS), 1.3);
-    const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(priorityFeeDataFromSCS), 1);
+    const maxFeeMultiplier = multipliers?.maxFeePerGas ?? 1.5;
+    const priorityFeeMultiplier = multipliers?.maxPriorityFeePerGas ?? 1.1;
+    //maxFee = (baseFee + priorityFee) * multiplier — the buffer guards against base-fee
+    //ticks between estimation and submission that would cause the bundler to reject.
+    const maxFeePerGas = safeMultiplier(baseFeePerGas + BigInt(priorityFeeDataFromSCS), maxFeeMultiplier);
+    const maxPriorityFeePerGasFromSCS = safeMultiplier(BigInt(priorityFeeDataFromSCS), priorityFeeMultiplier);
     return {
         slow: {
             maxFeePerGas: BigInt(maxFeePerGas),
