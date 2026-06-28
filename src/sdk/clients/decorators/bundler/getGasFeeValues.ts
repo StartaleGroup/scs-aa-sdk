@@ -4,11 +4,11 @@ import {
   type Chain,
   type Client,
   type Hex,
+  type PublicClient,
   type Transport,
   createPublicClient
 } from "viem"
 import type { MiscRpcSchema } from "."
-import { safeMultiplier } from "../../../account"
 import type { StartaleAccountClient } from "../../createSCSBundlerClient"
 
 export type UserOperationGasPriceWithBigIntAsHex = {
@@ -41,24 +41,55 @@ export type GetGasFeeValuesReturnType = {
   }
 }
 
+// Bundlers reject user ops when maxPriorityFeePerGas is below their internal threshold.
+// eth_maxPriorityFeePerGas on the RPC can return very low values during low-activity
+// periods (e.g. ~70000 wei on Ethereum mainnet). Only needed for chains where this has
+// been observed — L2s (Soneium, Base, Optimism) accept near-zero priority fees.
+// Extend this map when other chains show "precheck failed" with a low priority fee.
+const PRIORITY_FEE_FLOOR: Record<number, bigint> = {
+  1: 1_000_000_000n // Ethereum mainnet: 1 gwei
+}
+
+const resolveRpcClient = (accountClient: StartaleAccountClient): PublicClient => {
+  const attached = accountClient.client as PublicClient | undefined
+  if (attached) return attached
+  const rpcUrl = accountClient.chain?.rpcUrls.default.http[0]
+  if (!rpcUrl) {
+    throw new Error(
+      "getGasFeeValues: no chain RPC URL available — pass a publicClient via the client option"
+    )
+  }
+  return createPublicClient({ chain: accountClient.chain, transport: http(rpcUrl) })
+}
+
+const applyFloorAndBuild = (
+  baseFee: bigint,
+  rawPriorityFee: bigint,
+  chainId: number
+): GetGasFeeValuesReturnType => {
+  const floor = PRIORITY_FEE_FLOOR[chainId] ?? 0n
+  const priorityFee = rawPriorityFee < floor ? floor : rawPriorityFee
+  const maxFeePerGas = baseFee * 2n + priorityFee
+  return {
+    slow: { maxFeePerGas, maxPriorityFeePerGas: priorityFee },
+    standard: { maxFeePerGas, maxPriorityFeePerGas: priorityFee },
+    fast: { maxFeePerGas, maxPriorityFeePerGas: priorityFee }
+  }
+}
+
 /**
  * Returns the live gas prices that you can use to send a user operation.
  *
- * @param client that you created using viem's createClient whose transport url is pointing to the bundler.
+ * Provider-aware: uses bundler-native fee methods for known providers so the
+ * returned values are guaranteed acceptable to that bundler. Falls back to
+ * standard eth_ methods via the attached public client for all other providers.
+ *
+ * - Pimlico  → pimlico_getUserOperationGasPrice (returns full slow/standard/fast object)
+ * - Alchemy  → rundler_maxPriorityFeePerGas + baseFee from RPC
+ * - Others   → eth_maxPriorityFeePerGas + eth_getBlockByNumber via public client
+ *
+ * @param client - StartaleAccountClient whose transport points at the bundler
  * @returns slow, standard & fast values for maxFeePerGas & maxPriorityFeePerGas
- *
- *
- * @example
- * import { createClient } from "viem"
- * import { getGasFeeValues } from "permissionless/actions/pimlico"
- *
- * const bundlerClient = createClient({
- *      chain: goerli,
- *      transport: http(<bundler-url>),
- * })
- *
- * await getGasFeeValues(bundlerClient)
- *
  */
 export const getGasFeeValues = async (
   client: Client<
@@ -69,69 +100,56 @@ export const getGasFeeValues = async (
   >
 ): Promise<GetGasFeeValuesReturnType> => {
   const accountClient = client as StartaleAccountClient
-  // const publicClient = accountClient.client as PublicClient
-  const rpcUrl = accountClient.chain?.rpcUrls.default.http[0]
-  if (!rpcUrl) {
-    throw new Error("getGasFeeValues: rpcUrl is not available")
-  }
-  const rpcClient = createPublicClient({
-    chain: accountClient.chain,
-    transport: http(rpcUrl)
-  })
-  // TODO: refactor and error handling can be added
+  const chainId = accountClient.chain?.id ?? 0
+  const bundlerUrl = (client.transport as { url?: string }).url ?? ""
 
-  //  if(publicClient === null || publicClient === undefined) {
-  //   throw new Error("client must be passed during initialing smart account client")
-  //  }
-
-  // const feeData = await publicClient.estimateFeesPerGas()
-  // console.log("feeData", feeData)
-  // const maxFeePerGas =  safeMultiplier(feeData.maxFeePerGas, 1.6);
-  // const maxPriorityFeePerGas = safeMultiplier(
-  //     feeData.maxPriorityFeePerGas,
-  //     1.6
-  // );
-
-  const priorityFeeDataFromSCS = await client.request({
-    method: "rundler_maxPriorityFeePerGas",
-    params: []
-  })
-
-  const baseFeePerGas = await rpcClient
-    .request({
-      method: "eth_getBlockByNumber",
-      params: ["latest", false]
-    })
-    .then((block) => {
-      if (!block || !block.baseFeePerGas) {
-        throw new Error("Base fee not available")
+  // Pimlico: pimlico_getUserOperationGasPrice returns a complete slow/standard/fast
+  // fee object from Pimlico's own pricing — no RPC call or floor adjustment needed
+  // since Pimlico guarantees these values pass its own precheck.
+  if (bundlerUrl.includes("pimlico")) {
+    const fees = (await client.request({
+      method: "pimlico_getUserOperationGasPrice",
+      params: []
+    })) as UserOperationGasPriceWithBigIntAsHex
+    return {
+      slow: {
+        maxFeePerGas: BigInt(fees.slow.maxFeePerGas),
+        maxPriorityFeePerGas: BigInt(fees.slow.maxPriorityFeePerGas)
+      },
+      standard: {
+        maxFeePerGas: BigInt(fees.standard.maxFeePerGas),
+        maxPriorityFeePerGas: BigInt(fees.standard.maxPriorityFeePerGas)
+      },
+      fast: {
+        maxFeePerGas: BigInt(fees.fast.maxFeePerGas),
+        maxPriorityFeePerGas: BigInt(fees.fast.maxPriorityFeePerGas)
       }
-      return BigInt(block.baseFeePerGas)
-    })
-
-  //maxFee = base fee + feeDataFromSCS
-  const maxFeePerGas = safeMultiplier(
-    baseFeePerGas + BigInt(priorityFeeDataFromSCS),
-    1.3
-  )
-
-  const maxPriorityFeePerGasFromSCS = safeMultiplier(
-    BigInt(priorityFeeDataFromSCS),
-    1
-  )
-
-  return {
-    slow: {
-      maxFeePerGas: BigInt(maxFeePerGas),
-      maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
-    },
-    standard: {
-      maxFeePerGas: BigInt(maxFeePerGas),
-      maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
-    },
-    fast: {
-      maxFeePerGas: BigInt(maxFeePerGas),
-      maxPriorityFeePerGas: BigInt(maxPriorityFeePerGasFromSCS)
     }
   }
+
+  // Alchemy (Rundler): rundler_maxPriorityFeePerGas reflects what Alchemy's Rundler
+  // needs — more reliable than the mempool estimate from the RPC. Still combine with
+  // baseFeePerGas from the public client and apply the chain floor as a safety net.
+  if (bundlerUrl.includes("alchemy")) {
+    const rpcClient = resolveRpcClient(accountClient)
+    const [priorityFeeHex, block] = await Promise.all([
+      client.request({ method: "rundler_maxPriorityFeePerGas", params: [] }),
+      rpcClient.getBlock({ blockTag: "latest" })
+    ])
+    return applyFloorAndBuild(
+      block.baseFeePerGas ?? 1n,
+      BigInt(priorityFeeHex as Hex),
+      chainId
+    )
+  }
+
+  // All other providers (Startale SCS, custom bundlers): use standard eth_ methods
+  // on the RPC endpoint — never call fee methods on the bundler transport directly
+  // since support varies widely across implementations.
+  const rpcClient = resolveRpcClient(accountClient)
+  const [block, priorityFee] = await Promise.all([
+    rpcClient.getBlock({ blockTag: "latest" }),
+    rpcClient.estimateMaxPriorityFeePerGas()
+  ])
+  return applyFloorAndBuild(block.baseFeePerGas ?? 1n, priorityFee, chainId)
 }

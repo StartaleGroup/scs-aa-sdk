@@ -1,16 +1,21 @@
-import type { Chain, Client, Prettify, Transport } from "viem";
+import type { Chain, Client, Hex, Prettify, Transport } from "viem";
 import type { WaitForUserOperationReceiptParameters, WaitForUserOperationReceiptReturnType } from "viem/account-abstraction";
 import { type GetGasFeeValuesReturnType, type UserOperationGasPriceWithBigIntAsHex } from "./getGasFeeValues";
 export type MiscRpcSchema = [
     {
-        Method: "biconomy_getGasFeeValues" | "pimlico_getUserOperationGasPrice";
+        Method: "biconomy_getGasFeeValues";
+        Parameters: [];
+        ReturnType: UserOperationGasPriceWithBigIntAsHex;
+    },
+    {
+        Method: "pimlico_getUserOperationGasPrice";
         Parameters: [];
         ReturnType: UserOperationGasPriceWithBigIntAsHex;
     },
     {
         Method: "rundler_maxPriorityFeePerGas";
         Parameters: [];
-        ReturnType: any;
+        ReturnType: Hex;
     }
 ];
 export type SCSActions = {

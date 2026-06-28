@@ -1,4 +1,4 @@
-import type { Chain, Client, Prettify, Transport } from "viem"
+import type { Chain, Client, Hex, Prettify, Transport } from "viem"
 import type {
   WaitForUserOperationReceiptParameters,
   WaitForUserOperationReceiptReturnType
@@ -12,14 +12,19 @@ import { waitForUserOperationReceipt } from "./waitForUserOperationReceipt"
 
 export type MiscRpcSchema = [
   {
-    Method: "biconomy_getGasFeeValues" | "pimlico_getUserOperationGasPrice"
+    Method: "biconomy_getGasFeeValues"
+    Parameters: []
+    ReturnType: UserOperationGasPriceWithBigIntAsHex
+  },
+  {
+    Method: "pimlico_getUserOperationGasPrice"
     Parameters: []
     ReturnType: UserOperationGasPriceWithBigIntAsHex
   },
   {
     Method: "rundler_maxPriorityFeePerGas"
     Parameters: []
-    ReturnType: any // todo: add type
+    ReturnType: Hex
   },
 ]
 
