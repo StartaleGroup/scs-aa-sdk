@@ -15,17 +15,54 @@ export const ENTRYPOINT_SIMULATIONS_ADDRESS: Hex =
   "0x74Cb5e4eE81b86e70f9045036a1C5477de69eE87"
 export const BOOTSTRAP_ADDRESS: Hex =
   "0x000000552A5fAe3Db7a8F3917C435448F49BA6a9"
-export const ACCOUNT_FACTORY_ADDRESS: Hex =
+
+// v1.0.0 (legacy) contracts. Kept around so accounts that were counterfactually
+// computed against the v1.0.0 factory (and may still be undeployed on some chains)
+// can still be deployed with the factory/implementation they were originally predicted against.
+export const ACCOUNT_FACTORY_ADDRESS_1_0_0: Hex =
   "0x0000003B3E7b530b4f981aE80d9350392Defef90"
-export const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex =
+export const ACCOUNT_IMPLEMENTATION_ADDRESS_1_0_0: Hex =
   "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A"
-// Todo: Update with multi chain address
+export const STARTALE_7702_DELEGATION_ADDRESS_1_0_0: Hex =
+  "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A"
+
+// v1.0.1 (current default) contracts.
+export const ACCOUNT_FACTORY_ADDRESS: Hex =
+  "0x00000Be75c267EFE9ddD7044d1F236959aF4c15F"
+export const ACCOUNT_IMPLEMENTATION_ADDRESS: Hex =
+  "0x000006B2874cf8a9bbe24fA1C3A32225AE826951"
+
+// Todo: Update with multi chain address for Counter Contract
 // Review: This deployed contract as expected methods
 export const COUNTER_CONTRACT_ADDRESS_MINATO: Hex =
   "0x865562898F022904d6ea510931a7776e9a804849"
 
 export const STARTALE_7702_DELEGATION_ADDRESS: Hex =
-  "0x000000b8f5f723A680d3D7EE624Fe0bC84a6E05A"
+  "0x000006B2874cf8a9bbe24fA1C3A32225AE826951"
+
+/** Supported Startale account/contract versions. Defaults to the latest ("1.0.1"). */
+export type StartaleAccountVersion = "1.0.0" | "1.0.1"
+
+export const DEFAULT_STARTALE_ACCOUNT_VERSION: StartaleAccountVersion = "1.0.1"
+
+/**
+ * Maps each supported account version to its factory and EIP-7702
+ * delegation/implementation address. Used to resolve defaults for
+ * undeployed accounts when an explicit override isn't provided.
+ */
+export const STARTALE_ACCOUNT_ADDRESSES_BY_VERSION: Record<
+  StartaleAccountVersion,
+  { factoryAddress: Hex; implementationAddress: Hex }
+> = {
+  "1.0.0": {
+    factoryAddress: ACCOUNT_FACTORY_ADDRESS_1_0_0,
+    implementationAddress: ACCOUNT_IMPLEMENTATION_ADDRESS_1_0_0
+  },
+  "1.0.1": {
+    factoryAddress: ACCOUNT_FACTORY_ADDRESS,
+    implementationAddress: ACCOUNT_IMPLEMENTATION_ADDRESS
+  }
+}
 
 // Rhinestone constants
 export {
