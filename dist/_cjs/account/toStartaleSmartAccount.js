@@ -17,7 +17,8 @@ const actions_1 = require("viem/actions");
 const utils_1 = require("viem/utils");
 const addressToEmptyAccount_1 = require("./utils/addressToEmptyAccount.js");
 const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = constants_1.ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = viem_1.zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, accountVersion = constants_1.DEFAULT_STARTALE_ACCOUNT_VERSION, factoryAddress = constants_1.STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[accountVersion]
+        .factoryAddress, bootStrapAddress = constants_1.BOOTSTRAP_ADDRESS, accountImplementationAddress = constants_1.STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[accountVersion].implementationAddress, eip7702Auth, eip7702Account } = parameters;
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await (0, toSigner_1.toSigner)({ signer: _signer });
     const localAccount = eip7702Account
@@ -146,7 +147,7 @@ const toStartaleSmartAccount = async (parameters) => {
         return (!!code &&
             code
                 ?.toLowerCase()
-                .includes(constants_1.STARTALE_7702_DELEGATION_ADDRESS.substring(2).toLowerCase()));
+                .includes(accountImplementationAddress.substring(2).toLowerCase()));
     }
     async function unDelegate() {
         const deAuthorization = await walletClient.signAuthorization({

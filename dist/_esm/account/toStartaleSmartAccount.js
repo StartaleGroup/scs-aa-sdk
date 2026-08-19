@@ -1,6 +1,6 @@
 import { concat, concatHex, createPublicClient, createWalletClient, domainSeparator, encodeAbiParameters, encodeFunctionData, encodePacked, getContract, isAddressEqual, keccak256, parseAbi, parseAbiParameters, publicActions, toBytes, toHex, validateTypedData, zeroAddress } from "viem";
 import { entryPoint07Address, getUserOperationHash, toSmartAccount } from "viem/account-abstraction";
-import { ACCOUNT_FACTORY_ADDRESS, BOOTSTRAP_ADDRESS, ENTRY_POINT_ADDRESS, STARTALE_7702_DELEGATION_ADDRESS } from "../constants/index.js";
+import { BOOTSTRAP_ADDRESS, DEFAULT_STARTALE_ACCOUNT_VERSION, ENTRY_POINT_ADDRESS, STARTALE_ACCOUNT_ADDRESSES_BY_VERSION } from "../constants/index.js";
 // Constants
 import { EntrypointAbi } from "../constants/abi/index.js";
 import { toEmptyHook } from "../modules/toEmptyHook.js";
@@ -32,7 +32,8 @@ import { addressToEmptyAccount } from "./utils/addressToEmptyAccount.js";
  * })
  */
 export const toStartaleSmartAccount = async (parameters) => {
-    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, factoryAddress = ACCOUNT_FACTORY_ADDRESS, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_7702_DELEGATION_ADDRESS, eip7702Auth, eip7702Account } = parameters;
+    const { chain, transport, signer: _signer, index = 0n, key = "startale account", name = "Startale Account", registryAddress = zeroAddress, validators: customValidators, executors: customExecutors, hook: customHook, fallbacks: customFallbacks, prevalidationHooks: customPrevalidationHooks, accountAddress: accountAddress_, accountVersion = DEFAULT_STARTALE_ACCOUNT_VERSION, factoryAddress = STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[accountVersion]
+        .factoryAddress, bootStrapAddress = BOOTSTRAP_ADDRESS, accountImplementationAddress = STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[accountVersion].implementationAddress, eip7702Auth, eip7702Account } = parameters;
     // Note: we could also accept deliberate optional flag to enable EIP-7702
     const isEip7702 = !!eip7702Account || !!eip7702Auth;
     const signer = await toSigner({ signer: _signer });
@@ -210,7 +211,7 @@ export const toStartaleSmartAccount = async (parameters) => {
         return (!!code &&
             code
                 ?.toLowerCase()
-                .includes(STARTALE_7702_DELEGATION_ADDRESS.substring(2).toLowerCase()));
+                .includes(accountImplementationAddress.substring(2).toLowerCase()));
     }
     /**
      * @description Get authorization data to unauthorize the account

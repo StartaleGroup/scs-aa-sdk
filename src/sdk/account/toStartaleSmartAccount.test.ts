@@ -39,6 +39,12 @@ import {
   type StartaleAccountClient,
   createSmartAccountClient
 } from "../clients/createSCSBundlerClient"
+import {
+  ACCOUNT_FACTORY_ADDRESS,
+  ACCOUNT_FACTORY_ADDRESS_1_0_0,
+  ACCOUNT_IMPLEMENTATION_ADDRESS,
+  ACCOUNT_IMPLEMENTATION_ADDRESS_1_0_0
+} from "../constants"
 import { TokenWithPermitAbi } from "../constants/abi/TokenWithPermitAbi"
 import {
   type StartaleSmartAccount,
@@ -160,6 +166,65 @@ describe("startale.account", async () => {
     })
 
     expect(viemResponse).toBe(true)
+  })
+
+  test("should resolve factory/implementation addresses from accountVersion, with explicit overrides taking precedence", async () => {
+    const defaultVersionAccount = await toStartaleSmartAccount({
+      chain,
+      signer: eoaAccount,
+      transport: http(),
+      index: 120n // undeployed
+    })
+    expect(defaultVersionAccount.factoryAddress).toBe(ACCOUNT_FACTORY_ADDRESS)
+    expect(defaultVersionAccount.accountImplementationAddress).toBe(
+      ACCOUNT_IMPLEMENTATION_ADDRESS
+    )
+    expect(
+      defaultVersionAccount
+        .getInitCode()
+        .toLowerCase()
+        .startsWith(ACCOUNT_FACTORY_ADDRESS.toLowerCase())
+    ).toBe(true)
+
+    const legacyVersionAccount = await toStartaleSmartAccount({
+      chain,
+      signer: eoaAccount,
+      transport: http(),
+      accountVersion: "1.0.0",
+      index: 121n // undeployed
+    })
+    expect(legacyVersionAccount.factoryAddress).toBe(
+      ACCOUNT_FACTORY_ADDRESS_1_0_0
+    )
+    expect(legacyVersionAccount.accountImplementationAddress).toBe(
+      ACCOUNT_IMPLEMENTATION_ADDRESS_1_0_0
+    )
+    expect(
+      legacyVersionAccount
+        .getInitCode()
+        .toLowerCase()
+        .startsWith(ACCOUNT_FACTORY_ADDRESS_1_0_0.toLowerCase())
+    ).toBe(true)
+
+    // A v1.0.0 counterfactual address must differ from the v1.0.1 one for the same index/owner
+    expect(await legacyVersionAccount.getAddress()).not.toBe(
+      await defaultVersionAccount.getAddress()
+    )
+
+    // Explicit factoryAddress/accountImplementationAddress override accountVersion
+    const overriddenAccount = await toStartaleSmartAccount({
+      chain,
+      signer: eoaAccount,
+      transport: http(),
+      accountVersion: "1.0.0",
+      factoryAddress: ACCOUNT_FACTORY_ADDRESS,
+      accountImplementationAddress: ACCOUNT_IMPLEMENTATION_ADDRESS,
+      index: 122n // undeployed
+    })
+    expect(overriddenAccount.factoryAddress).toBe(ACCOUNT_FACTORY_ADDRESS)
+    expect(overriddenAccount.accountImplementationAddress).toBe(
+      ACCOUNT_IMPLEMENTATION_ADDRESS
+    )
   })
 
   test("should check isValidSignature PersonalSign is valid", async () => {

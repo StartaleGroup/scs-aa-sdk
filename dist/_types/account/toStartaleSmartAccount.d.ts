@@ -1,5 +1,6 @@
 import { type Account, type Address, type Chain, type ClientConfig, type Hex, type LocalAccount, type OneOf, type Prettify, type PublicClient, type RpcSchema, type SignAuthorizationReturnType, type Transport, type WalletClient } from "viem";
 import { type SmartAccount, type SmartAccountImplementation, type UserOperation } from "viem/account-abstraction";
+import { type StartaleAccountVersion } from "../constants";
 import { EntrypointAbi } from "../constants/abi";
 import type { Module } from "../modules/utils/Types";
 import type { Validator } from "../modules/validators/toValidator";
@@ -32,7 +33,17 @@ export type ToStartaleSmartAccountParameters = {
     signer: OneOf<EthereumProvider | WalletClient<Transport, Chain | undefined, Account> | LocalAccount | EthersWallet>;
     /** Optional index for the account */
     index?: bigint | undefined;
-    /** Optional account address override */
+    /**
+     * Optional account address override. `getAddress()` returns this as-is with
+     * no cross-check against the factory. If the account is already deployed at
+     * this address, `accountVersion`/`factoryAddress` are irrelevant (factory
+     * args get dropped once the account has code). If it is NOT yet deployed
+     * here (e.g. deployed on one chain but not another), `accountVersion` /
+     * `factoryAddress` must still match whichever factory originally produced
+     * this exact address, or the deploy-time UserOperation will revert
+     * (CREATE2 address depends on the factory's own address, so a mismatched
+     * factory can't reproduce it).
+     */
     accountAddress?: Address;
     /** Optional validator modules configuration */
     validators?: Array<Validator>;
@@ -46,11 +57,29 @@ export type ToStartaleSmartAccountParameters = {
     fallbacks?: Array<GenericModuleConfig>;
     /** Optional registry address */
     registryAddress?: Address;
-    /** Optional factory address */
+    /**
+     * Optional account/contract version to deploy against. Defaults to the latest
+     * ("1.0.1"). Use "1.0.0" to (re)deploy an account that was counterfactually
+     * computed against the legacy v1.0.0 factory and may still be undeployed on
+     * some chains. Ignored if the account is already deployed, and overridden by
+     * explicit `factoryAddress` / `accountImplementationAddress` if provided.
+     *
+     * Note: this is NOT inferred from `accountAddress`. If you override
+     * `accountAddress` with a legacy address that is still undeployed on this
+     * chain, you must also set `accountVersion: "1.0.0"` (or the matching
+     * `factoryAddress`) here — otherwise the SDK will build init code from the
+     * default factory, which cannot reproduce that address, and the deploy will
+     * revert on-chain.
+     */
+    accountVersion?: StartaleAccountVersion;
+    /** Optional factory address. Overrides the address derived from `accountVersion` */
     factoryAddress?: Address;
     /** Optional bootstrap address */
     bootStrapAddress?: Address;
-    /** Optional account implementation address */
+    /**
+     * Optional account implementation / EIP-7702 delegation address.
+     * Overrides the address derived from `accountVersion`
+     */
     accountImplementationAddress?: Address;
     /** Optional EIP-7702 Authorization */
     eip7702Auth?: SignAuthorizationReturnType | undefined;
