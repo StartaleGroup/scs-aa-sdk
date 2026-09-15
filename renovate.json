@@ -1,0 +1,37 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":timezone(Asia/Tokyo)", "schedule:daily"],
+  "labels": ["dependencies"],
+  "semanticCommits": "enabled",
+  "enabledManagers": ["npm", "github-actions"],
+  "ignorePaths": ["dist/**"],
+  "prConcurrentLimit": 15,
+  "prHourlyLimit": 10,
+  "rangeStrategy": "pin",
+  "packageRules": [
+    {
+      "matchDepTypes": ["peerDependencies"],
+      "enabled": false,
+      "description": "peerDependencies are this package's public compatibility contract — the viem, typescript and @rhinestone/module-sdk ranges decide what consumers may install alongside the SDK. Narrowing or widening them is a semver decision that belongs in a changeset, not an automated bump."
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor"],
+      "groupName": "Minor updates (summary PR)",
+      "groupSlug": "minor-updates",
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "Patch updates (summary PR)",
+      "groupSlug": "patch-updates",
+      "minimumReleaseAge": "3 days"
+    }
+  ]
+}
