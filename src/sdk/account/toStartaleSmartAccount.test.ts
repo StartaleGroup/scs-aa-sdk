@@ -168,7 +168,7 @@ describe("startale.account", async () => {
     expect(viemResponse).toBe(true)
   })
 
-  test("should resolve factory/implementation addresses from accountVersion, with explicit overrides taking precedence", async () => {
+  test("should resolve factory/implementation addresses from factoryVersion, with explicit overrides taking precedence", async () => {
     const defaultVersionAccount = await toStartaleSmartAccount({
       chain,
       signer: eoaAccount,
@@ -179,6 +179,7 @@ describe("startale.account", async () => {
     expect(defaultVersionAccount.accountImplementationAddress).toBe(
       ACCOUNT_IMPLEMENTATION_ADDRESS
     )
+    expect(defaultVersionAccount.factoryVersion).toBe("1.0.1")
     expect(
       defaultVersionAccount
         .getInitCode()
@@ -190,7 +191,7 @@ describe("startale.account", async () => {
       chain,
       signer: eoaAccount,
       transport: http(),
-      accountVersion: "1.0.0",
+      factoryVersion: "1.0.0",
       index: 121n // undeployed
     })
     expect(legacyVersionAccount.factoryAddress).toBe(
@@ -199,6 +200,7 @@ describe("startale.account", async () => {
     expect(legacyVersionAccount.accountImplementationAddress).toBe(
       ACCOUNT_IMPLEMENTATION_ADDRESS_1_0_0
     )
+    expect(legacyVersionAccount.factoryVersion).toBe("1.0.0")
     expect(
       legacyVersionAccount
         .getInitCode()
@@ -211,12 +213,12 @@ describe("startale.account", async () => {
       await defaultVersionAccount.getAddress()
     )
 
-    // Explicit factoryAddress/accountImplementationAddress override accountVersion
+    // Explicit factoryAddress/accountImplementationAddress override factoryVersion
     const overriddenAccount = await toStartaleSmartAccount({
       chain,
       signer: eoaAccount,
       transport: http(),
-      accountVersion: "1.0.0",
+      factoryVersion: "1.0.0",
       factoryAddress: ACCOUNT_FACTORY_ADDRESS,
       accountImplementationAddress: ACCOUNT_IMPLEMENTATION_ADDRESS,
       index: 122n // undeployed

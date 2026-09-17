@@ -50,7 +50,7 @@ import {
   BOOTSTRAP_ADDRESS,
   DEFAULT_STARTALE_ACCOUNT_VERSION,
   ENTRY_POINT_ADDRESS,
-  STARTALE_ACCOUNT_ADDRESSES_BY_VERSION,
+  STARTALE_CONTRACT_ADDRESSES_BY_VERSION,
   type StartaleAccountVersion
 } from "../constants"
 // Constants
@@ -125,9 +125,9 @@ export type ToStartaleSmartAccountParameters = {
   /**
    * Optional account address override. `getAddress()` returns this as-is with
    * no cross-check against the factory. If the account is already deployed at
-   * this address, `accountVersion`/`factoryAddress` are irrelevant (factory
+   * this address, `factoryVersion`/`factoryAddress` are irrelevant (factory
    * args get dropped once the account has code). If it is NOT yet deployed
-   * here (e.g. deployed on one chain but not another), `accountVersion` /
+   * here (e.g. deployed on one chain but not another), `factoryVersion` /
    * `factoryAddress` must still match whichever factory originally produced
    * this exact address, or the deploy-time UserOperation will revert
    * (CREATE2 address depends on the factory's own address, so a mismatched
@@ -155,19 +155,19 @@ export type ToStartaleSmartAccountParameters = {
    *
    * Note: this is NOT inferred from `accountAddress`. If you override
    * `accountAddress` with a legacy address that is still undeployed on this
-   * chain, you must also set `accountVersion: "1.0.0"` (or the matching
+   * chain, you must also set `factoryVersion: "1.0.0"` (or the matching
    * `factoryAddress`) here — otherwise the SDK will build init code from the
    * default factory, which cannot reproduce that address, and the deploy will
    * revert on-chain.
    */
-  accountVersion?: StartaleAccountVersion
-  /** Optional factory address. Overrides the address derived from `accountVersion` */
+  factoryVersion?: StartaleAccountVersion
+  /** Optional factory address. Overrides the address derived from `factoryVersion` */
   factoryAddress?: Address
   /** Optional bootstrap address */
   bootStrapAddress?: Address
   /**
    * Optional account implementation / EIP-7702 delegation address.
-   * Overrides the address derived from `accountVersion`
+   * Overrides the address derived from `factoryVersion`
    */
   accountImplementationAddress?: Address
   /** Optional EIP-7702 Authorization */
@@ -236,6 +236,9 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<
     // /** The account implementation address */
     accountImplementationAddress: Address
 
+    /** The account/contract version the account was created against */
+    factoryVersion: StartaleAccountVersion
+
     /** Get the active module */
     getModule: () => Validator
 
@@ -293,12 +296,12 @@ export const toStartaleSmartAccount = async (
     fallbacks: customFallbacks,
     prevalidationHooks: customPrevalidationHooks,
     accountAddress: accountAddress_,
-    accountVersion = DEFAULT_STARTALE_ACCOUNT_VERSION,
-    factoryAddress = STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[accountVersion]
+    factoryVersion = DEFAULT_STARTALE_ACCOUNT_VERSION,
+    factoryAddress = STARTALE_CONTRACT_ADDRESSES_BY_VERSION[factoryVersion]
       .factoryAddress,
     bootStrapAddress = BOOTSTRAP_ADDRESS,
-    accountImplementationAddress = STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[
-      accountVersion
+    accountImplementationAddress = STARTALE_CONTRACT_ADDRESSES_BY_VERSION[
+      factoryVersion
     ].implementationAddress,
     eip7702Auth,
     eip7702Account
@@ -757,6 +760,7 @@ export const toStartaleSmartAccount = async (
       factoryData,
       factoryAddress,
       accountImplementationAddress,
+      factoryVersion,
       registryAddress,
       signer,
       walletClient,

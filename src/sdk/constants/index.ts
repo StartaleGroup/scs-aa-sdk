@@ -50,7 +50,7 @@ export const DEFAULT_STARTALE_ACCOUNT_VERSION: StartaleAccountVersion = "1.0.1"
  * delegation/implementation address. Used to resolve defaults for
  * undeployed accounts when an explicit override isn't provided.
  */
-export const STARTALE_ACCOUNT_ADDRESSES_BY_VERSION: Record<
+export const STARTALE_CONTRACT_ADDRESSES_BY_VERSION: Record<
   StartaleAccountVersion,
   { factoryAddress: Hex; implementationAddress: Hex }
 > = {
