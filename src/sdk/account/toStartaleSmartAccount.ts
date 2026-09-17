@@ -50,7 +50,7 @@ import {
   BOOTSTRAP_ADDRESS,
   DEFAULT_STARTALE_ACCOUNT_VERSION,
   ENTRY_POINT_ADDRESS,
-  STARTALE_ACCOUNT_ADDRESSES_BY_VERSION,
+  STARTALE_CONTRACT_ADDRESSES_BY_VERSION,
   type StartaleAccountVersion
 } from "../constants"
 // Constants
@@ -297,10 +297,10 @@ export const toStartaleSmartAccount = async (
     prevalidationHooks: customPrevalidationHooks,
     accountAddress: accountAddress_,
     factoryVersion = DEFAULT_STARTALE_ACCOUNT_VERSION,
-    factoryAddress = STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[factoryVersion]
+    factoryAddress = STARTALE_CONTRACT_ADDRESSES_BY_VERSION[factoryVersion]
       .factoryAddress,
     bootStrapAddress = BOOTSTRAP_ADDRESS,
-    accountImplementationAddress = STARTALE_ACCOUNT_ADDRESSES_BY_VERSION[
+    accountImplementationAddress = STARTALE_CONTRACT_ADDRESSES_BY_VERSION[
       factoryVersion
     ].implementationAddress,
     eip7702Auth,
