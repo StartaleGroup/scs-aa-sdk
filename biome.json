@@ -12,7 +12,7 @@
       "_cjs",
       "_esm",
       "_types",
-      "bun.lockb",
+      "pnpm-lock.yaml",
       "docs",
       "dist"
     ]

@@ -29,7 +29,7 @@
 > **Note:** 
 > As testnetTest runs against a public testnet the account related to the privatekey (in your env var) must be funded, and the testnet is not 'ephemeral', meaning state is obviously persisted on the testnet after the test finishes. 
 
-- The playground does not run in CI/CD but can be triggered manually from the GitHub Actions UI or locally via bun run playground.
+- The playground does not run in CI/CD but can be triggered manually from the GitHub Actions UI or locally via pnpm run playground.
 - The playground network is configured with environment variables:
     - PRIVATE_KEY
     - TESTNET_CHAIN_ID

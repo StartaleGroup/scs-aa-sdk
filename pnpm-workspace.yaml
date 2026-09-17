@@ -1,0 +1,6 @@
+# Dependency lifecycle scripts approved for installation.
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
+  protobufjs: true
+  simple-git-hooks: true
