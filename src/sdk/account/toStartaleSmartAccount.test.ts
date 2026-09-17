@@ -179,6 +179,7 @@ describe("startale.account", async () => {
     expect(defaultVersionAccount.accountImplementationAddress).toBe(
       ACCOUNT_IMPLEMENTATION_ADDRESS
     )
+    expect(defaultVersionAccount.accountVersion).toBe("1.0.1")
     expect(
       defaultVersionAccount
         .getInitCode()
@@ -199,6 +200,7 @@ describe("startale.account", async () => {
     expect(legacyVersionAccount.accountImplementationAddress).toBe(
       ACCOUNT_IMPLEMENTATION_ADDRESS_1_0_0
     )
+    expect(legacyVersionAccount.accountVersion).toBe("1.0.0")
     expect(
       legacyVersionAccount
         .getInitCode()

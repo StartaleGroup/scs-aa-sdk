@@ -236,6 +236,9 @@ export type StartaleSmartAccountImplementation = SmartAccountImplementation<
     // /** The account implementation address */
     accountImplementationAddress: Address
 
+    /** The account/contract version the account was created against */
+    accountVersion: StartaleAccountVersion
+
     /** Get the active module */
     getModule: () => Validator
 
@@ -757,6 +760,7 @@ export const toStartaleSmartAccount = async (
       factoryData,
       factoryAddress,
       accountImplementationAddress,
+      accountVersion,
       registryAddress,
       signer,
       walletClient,
