@@ -60,10 +60,10 @@
       "default": "./dist/_cjs/index.js"
     },
     "./smart-sessions": {
-      "types": "./dist/_types/modules/validators/smartSessions/index.d.ts",
-      "import": "./dist/_esm/modules/validators/smartSessions/index.js",
-      "require": "./dist/_cjs/modules/validators/smartSessions/index.js",
-      "default": "./dist/_cjs/modules/validators/smartSessions/index.js"
+      "types": "./dist/_types/modules/validators/smartSessionsValidator/index.d.ts",
+      "import": "./dist/_esm/modules/validators/smartSessionsValidator/index.js",
+      "require": "./dist/_cjs/modules/validators/smartSessionsValidator/index.js",
+      "default": "./dist/_cjs/modules/validators/smartSessionsValidator/index.js"
     }
   },
   "typesVersions": {
@@ -72,7 +72,7 @@
         "./dist/_types/*"
       ],
       "smart-sessions": [
-        "./dist/_types/modules/validators/smartSessions/*"
+        "./dist/_types/modules/validators/smartSessionsValidator/index.d.ts"
       ]
     }
   },
