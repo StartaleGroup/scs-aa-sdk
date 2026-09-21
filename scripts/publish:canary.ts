@@ -49,7 +49,7 @@ async function publishCanary() {
   await fs.writeFile("package.json", JSON.stringify(packageJson, null, 2))
 
   // Run changeset version command
-  execSync("bun run changeset:version", { stdio: "inherit" })
+  execSync("pnpm run changeset:version", { stdio: "inherit" })
 
   console.log(`Canary version bumped to ${newVersion}`)
 }

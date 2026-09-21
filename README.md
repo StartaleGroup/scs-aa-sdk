@@ -13,6 +13,7 @@ A powerful toolkit for building decentralized applications (dApps) with **ERC433
 - [Features](#-features)
 - [Documentation](#-documentation)
 - [Examples](#-examples)
+- [Development](#-development)
 - [License](#-license)
 
 ## 🚀 Installation
@@ -56,7 +57,60 @@ For detailed documentation, please visit our [documentation site](https://docs.s
 
 ## 🎯 Examples
 
-Check out our [quickstart](https://github.com/StartaleLabs/scs-aa-quickstart) for nodejs CLI examples.
+Check out our [quickstart](https://github.com/StartaleGroup/scs-aa-quickstart) for Node.js CLI examples.
+
+## 🔧 Development
+
+Use Node.js 24.x and the pnpm version pinned in `package.json`.
+
+### Build and test
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build       # CommonJS, ESM and TypeScript declarations in dist/
+pnpm test        # run the suite once
+pnpm lint
+```
+
+Use `pnpm dev` for build watch mode, `pnpm test:watch` for test watch mode, and `pnpm coverage` for coverage. Re-run `pnpm build` to refresh declarations after watch-mode changes.
+
+Integration tests need `.env` configuration: `PRIVATE_KEY`, `PRIVATE_KEY_TWO`, `TESTNET_CHAIN_ID` and `BUNDLER_URL`; paymaster tests also need `PAYMASTER_URL`. The HTTP client test setup requires `MAINNET_CHAIN_ID`. See the [network setup](./src/test/testUtils.ts) for details. Tests can submit transactions and need test funds or sponsorship; local Anvil provisioning is currently disabled. `pnpm playground` enables the live-testnet playground.
+
+### Test the local SDK with quickstart
+
+Pack the SDK, then install it in a [scs-aa-quickstart](https://github.com/StartaleGroup/scs-aa-quickstart) checkout using the same shell. Before running the example, configure the quickstart's `.env` with `MINATO_BUNDLER_URL`, `PAYMASTER_SERVICE_URL`, `OWNER_PRIVATE_KEY`, `COUNTER_CONTRACT_ADDRESS` and `PAYMASTER_ID`. Use a test signer, a deployed Minato counter and an applicable sponsorship policy.
+
+```bash
+# SDK repository: prepack builds dist/ automatically.
+pnpm pack
+SDK_TARBALL="$PWD/startale-scs-aa-sdk-$(node -p 'require("./package.json").version').tgz"
+
+# Replace this path with your quickstart checkout.
+cd /absolute/path/to/scs-aa-quickstart
+npm install --no-save "$SDK_TARBALL"
+npm exec -- ts-node src/startale-minato/demo_basic_userop.ts
+```
+
+Confirm the printed receipt has `success: true`; the example also exits with code zero after caught errors.
+
+### Release
+
+With npm publish access, prepare an unused version (`patch`, `minor` or `major` as appropriate):
+
+```bash
+npm version patch --no-git-tag-version
+pnpm install --lockfile-only
+```
+
+Review the version changes, run the checks above, and pack and test that version in quickstart. Publish the exact tested tarball:
+
+```bash
+npm publish "$SDK_TARBALL" --access public --tag latest --dry-run
+# After checking the dry-run output:
+npm publish "$SDK_TARBALL" --access public --tag latest
+```
+
+Changesets is not configured in this repository. Avoid `changeset:release:canary`: its cleanup includes destructive Git reset, clean and tag-deletion commands.
 
 ## Dependencies
 
@@ -69,5 +123,3 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ---
 
 Built with ❤️ by [Startale Group](https://startale.com)
-
-
