@@ -1,0 +1,6 @@
+nodeVersion: 24.21.0
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
+  protobufjs: true
+  simple-git-hooks: true

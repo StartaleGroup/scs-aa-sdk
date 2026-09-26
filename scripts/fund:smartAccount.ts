@@ -38,7 +38,7 @@ async function main() {
     console.error(
       "Please provide at least one chain ID as a command line argument"
     )
-    console.error("Example: bun run fund:smartAccount 10 420 84531")
+    console.error("Example: pnpm run fund:smartAccount 10 420 84531")
     process.exit(1)
   }
 
