@@ -61,7 +61,7 @@ Check out our [quickstart](https://github.com/StartaleGroup/scs-aa-quickstart) f
 
 ## 🔧 Development
 
-Use Node.js 24.x and the pnpm version pinned in `package.json`.
+[Install pnpm](https://pnpm.io/installation) — it runs on the pnpm version pinned in `package.json` and the Node.js version pinned in `pnpm-workspace.yaml`.
 
 ### Build and test
 
