@@ -515,7 +515,7 @@ export const toStartaleSmartAccount = async (
         BigInt(key)
       ])
     } catch (e) {
-      return 0n
+      throw e
     }
   }
 
