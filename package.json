@@ -113,7 +113,7 @@
     "docs": "typedoc --tsconfig ./tsconfig/tsconfig.esm.json",
     "docs:deploy": "pnpm run docs && gh-pages -d docs",
     "changeset": "changeset",
-    "changeset:release": "changeset publish",
+    "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "changeset:release:canary": "original_name=$(tsx scripts/publish:canary.ts | grep ORIGINAL_NAME | cut -d'=' -f2) && npm publish && git checkout package.json && git tag -l '*-canary.*' | xargs git tag -d && git fetch --tags && git reset --hard && git clean -fd && echo \"Published canary version of $original_name as latest\"",
     "esm:watch": "tsc --project ./tsconfig/tsconfig.esm.json --watch",
