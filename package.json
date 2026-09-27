@@ -45,7 +45,7 @@
     "typescript": "^5.8.2",
     "viem": "^2.32.0",
     "vitest": "^3.0.7",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "peerDependencies": {
   "@rhinestone/module-sdk": "^0.2.8 || ^0.3.0 || ^0.4.0",
