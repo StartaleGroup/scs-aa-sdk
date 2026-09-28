@@ -24,7 +24,7 @@
     "@size-limit/preset-small-lib": "^11.2.0",
     "@types/node": "^24.13.4",
     "@types/yargs": "^17.0.33",
-    "@vitest/coverage-istanbul": "^3.0.7",
+    "@vitest/coverage-istanbul": "^5.0.0",
     "buffer": "^6.0.3",
     "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
@@ -44,7 +44,7 @@
     "typedoc": "^0.27.9",
     "typescript": "^5.8.2",
     "viem": "^2.32.0",
-    "vitest": "^3.0.7",
+    "vitest": "^5.0.0",
     "yargs": "^17.7.2"
   },
   "peerDependencies": {
