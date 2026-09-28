@@ -12,106 +12,106 @@ importers:
         specifier: 1.9.4
         version: 1.9.4
       '@changesets/cli':
-        specifier: ^2.28.1
+        specifier: 2.29.2
         version: 2.29.2
       '@commitlint/cli':
-        specifier: ^19.7.1
+        specifier: 19.8.0
         version: 19.8.0(@types/node@24.13.4)(typescript@5.8.3)
       '@commitlint/config-conventional':
-        specifier: ^19.7.1
+        specifier: 19.8.0
         version: 19.8.0
       '@ethersproject/abi':
-        specifier: ^5.8.0
+        specifier: 5.8.0
         version: 5.8.0
       '@ethersproject/providers':
-        specifier: ^5.8.0
+        specifier: 5.8.0
         version: 5.8.0
       '@ethersproject/wallet':
-        specifier: ^5.8.0
+        specifier: 5.8.0
         version: 5.8.0
       '@pimlico/alto':
-        specifier: ^0.0.4
+        specifier: 0.0.4
         version: 0.0.4(supports-color@8.1.1)(typescript@5.8.3)
       '@rhinestone/module-sdk':
-        specifier: ^0.4.0
+        specifier: 0.4.0
         version: 0.4.0(viem@2.38.6(typescript@5.8.3)(zod@3.24.3))
       '@size-limit/esbuild-why':
-        specifier: ^11.2.0
+        specifier: 11.2.0
         version: 11.2.0(size-limit@11.2.0)
       '@size-limit/preset-small-lib':
-        specifier: ^11.2.0
+        specifier: 11.2.0
         version: 11.2.0(size-limit@11.2.0)
       '@types/node':
-        specifier: ^24.13.4
+        specifier: 24.13.4
         version: 24.13.4
       '@types/yargs':
-        specifier: ^17.0.33
+        specifier: 17.0.33
         version: 17.0.33
       '@vitest/coverage-istanbul':
-        specifier: ^3.0.7
+        specifier: 3.1.2
         version: 3.1.2(supports-color@8.1.1)(vitest@3.1.2(@types/node@24.13.4)(jiti@2.4.2)(supports-color@8.1.1)(tsx@4.23.13)(yaml@2.7.1))
       buffer:
-        specifier: ^6.0.3
+        specifier: 6.0.3
         version: 6.0.3
       concurrently:
-        specifier: ^9.1.2
+        specifier: 9.1.2
         version: 9.1.2
       dotenv:
-        specifier: ^16.4.7
+        specifier: 16.5.0
         version: 16.5.0
       ethers:
-        specifier: ^6.13.5
+        specifier: 6.13.7
         version: 6.13.7
       execa:
-        specifier: ^9.5.2
+        specifier: 9.5.2
         version: 9.5.2
       get-port:
-        specifier: ^7.1.0
+        specifier: 7.1.0
         version: 7.1.0
       gh-pages:
-        specifier: ^6.3.0
+        specifier: 6.3.0
         version: 6.3.0
       prool:
-        specifier: ^0.0.23
+        specifier: 0.0.23
         version: 0.0.23(@pimlico/alto@0.0.4(supports-color@8.1.1)(typescript@5.8.3))(debug@4.4.0(supports-color@8.1.1))
       rimraf:
-        specifier: ^6.0.1
+        specifier: 6.0.1
         version: 6.0.1
       semver:
-        specifier: ^7.7.2
+        specifier: 7.8.5
         version: 7.8.5
       simple-git-hooks:
-        specifier: ^2.11.1
+        specifier: 2.13.0
         version: 2.13.0
       size-limit:
-        specifier: ^11.2.0
+        specifier: 11.2.0
         version: 11.2.0
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@types/node@24.13.4)(typescript@5.8.3)
       tsc-alias:
-        specifier: ^1.8.11
+        specifier: 1.8.15
         version: 1.8.15
       tslib:
-        specifier: ^2.8.1
+        specifier: 2.8.1
         version: 2.8.1
       tsx:
-        specifier: ^4.20.6
+        specifier: 4.23.13
         version: 4.23.13
       typedoc:
-        specifier: ^0.27.9
+        specifier: 0.27.9
         version: 0.27.9(typescript@5.8.3)
       typescript:
-        specifier: ^5.8.2
+        specifier: 5.8.3
         version: 5.8.3
       viem:
-        specifier: ^2.32.0
+        specifier: 2.38.6
         version: 2.38.6(typescript@5.8.3)(zod@3.24.3)
       vitest:
-        specifier: ^3.0.7
+        specifier: 3.1.2
         version: 3.1.2(@types/node@24.13.4)(jiti@2.4.2)(supports-color@8.1.1)(tsx@4.23.13)(yaml@2.7.1)
       yargs:
-        specifier: ^17.7.2
+        specifier: 17.7.2
         version: 17.7.2
 
 packages:
