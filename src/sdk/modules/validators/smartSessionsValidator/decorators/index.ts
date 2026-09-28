@@ -11,13 +11,10 @@ import {
   grantPermission
 } from "./grantPermission"
 import {
-  type RevokeSessionParameters,
-  revokeSession
-} from "./revokeSession"
-import {
   type PreparePermissionParameters,
   preparePermission
 } from "./preparePermission"
+import { type RevokeSessionParameters, revokeSession } from "./revokeSession"
 import { type UsePermissionParameters, usePermission } from "./usePermission"
 /**
  * Defines the shape of actions available for creating smart sessions.

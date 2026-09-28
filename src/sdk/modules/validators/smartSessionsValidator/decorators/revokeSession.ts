@@ -1,3 +1,4 @@
+import { getRemoveSessionAction } from "@rhinestone/module-sdk"
 import type { Chain, Client, Hex, PublicClient, Transport } from "viem"
 import { sendUserOperation } from "viem/account-abstraction"
 import { getAction, parseAccount } from "viem/utils"
@@ -5,7 +6,6 @@ import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound"
 import type { Call } from "../../../../account/utils/Types"
 import type { ModularSmartAccount } from "../../../utils/Types"
 import type { RevokeSessionResponse } from "../Types"
-import { getRemoveSessionAction } from "@rhinestone/module-sdk"
 
 /**
  * Parameters for revoking a session by permissionId in a modular smart account.
@@ -88,7 +88,7 @@ export async function revokeSession<
 
   const action = getRemoveSessionAction({
     permissionId: parameters.permissionId
-  });
+  })
 
   const userOpHash = await getAction(
     client,
@@ -110,6 +110,6 @@ export async function revokeSession<
   })
 
   return {
-    userOpHash,
+    userOpHash
   }
 }
