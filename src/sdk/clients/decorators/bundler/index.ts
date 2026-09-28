@@ -20,7 +20,7 @@ export type MiscRpcSchema = [
     Method: "rundler_maxPriorityFeePerGas"
     Parameters: []
     ReturnType: any // todo: add type
-  },
+  }
 ]
 
 export type SCSActions = {

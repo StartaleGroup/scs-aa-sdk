@@ -122,8 +122,7 @@ export async function toSigner<
         // cast avoids TS errors when the tsconfig lib doesn't include "dom".
         const globalWindow = (globalThis as AnyData).window
         const isInjectedBrowserWallet =
-          globalWindow !== undefined &&
-          signer === globalWindow.ethereum
+          globalWindow !== undefined && signer === globalWindow.ethereum
         if (isInjectedBrowserWallet) {
           try {
             ;[address] = await (signer as EthereumProvider).request({
