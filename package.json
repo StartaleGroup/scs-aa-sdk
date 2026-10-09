@@ -9,7 +9,7 @@
   "main": "./dist/_cjs/index.js",
   "module": "./dist/_esm/index.js",
   "access": "public",
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.7.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/cli": "^2.28.1",
