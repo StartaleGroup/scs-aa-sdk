@@ -58,7 +58,7 @@ export async function getRemoveOwnerTx<
       deployedOnChains: [],
       type: "erc7579-implementation"
     },
-    client: publicClient as any,
+    client: publicClient as AnyData,
     owner
   })
 
