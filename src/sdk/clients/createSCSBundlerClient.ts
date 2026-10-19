@@ -15,7 +15,6 @@ import {
   type SendUserOperationParameters,
   type SmartAccount,
   createBundlerClient,
-  prepareUserOperation,
   sendUserOperation
 } from "viem/account-abstraction"
 import type { StartaleSmartAccountImplementation } from "../account"
@@ -31,6 +30,7 @@ import {
   type PrepareTokenPaymasterUserOpParameters,
   prepareTokenPaymasterUserOp
 } from "./decorators/smartAccount/prepareTokenPaymasterUserOp"
+import { prepareCheckedUserOperation } from "./userOperationIntegrity"
 
 /**
  * Startale Account Client type
@@ -173,7 +173,7 @@ export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
             authorization
           }
         }
-        return await prepareUserOperation(client, _args)
+        return await prepareCheckedUserOperation(client, _args)
       }
     }))
     .extend((client: AnyData) => ({
