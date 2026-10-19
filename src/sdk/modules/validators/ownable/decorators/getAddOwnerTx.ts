@@ -63,7 +63,7 @@ export async function getAddOwnerTx<
 
   const action = await getAddOwnableValidatorOwnerAction({
     account: startaleAccount,
-    client: publicClient as any,
+    client: publicClient as AnyData,
     owner
   })
 

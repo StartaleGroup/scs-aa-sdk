@@ -730,8 +730,18 @@ export const toStartaleSmartAccount = async (
         chainId?: number | undefined
       }
     ): Promise<Hex> => {
-      const { chainId = publicClient.chain.id, ...userOpWithoutSender } =
-        parameters
+      const { chainId: requestedChainId, ...userOpWithoutSender } = parameters
+      // Always sign for the account's own chain: a `chainId` merged in from
+      // elsewhere (e.g. a paymaster response) must not redirect the signature.
+      const chainId = publicClient.chain.id
+      if (
+        requestedChainId !== undefined &&
+        Number(requestedChainId) !== chainId
+      ) {
+        throw new Error(
+          `signUserOperation: chainId ${requestedChainId} does not match the account's chain ${chainId}`
+        )
+      }
       const address = await getAddress()
 
       const userOperation = {
