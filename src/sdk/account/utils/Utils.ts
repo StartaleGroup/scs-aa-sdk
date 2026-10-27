@@ -402,14 +402,24 @@ export const getTenderlyDetails = (): TenderlyDetails | null => {
 }
 
 /**
- * Safely multiplies a bigint by a number, rounding appropriately.
+ * Safely multiplies a bigint by a number, rounding half up.
  *
- * @param bI - The bigint to multiply
- * @param multiplier - The multiplication factor
+ * The multiplication is done in bigint arithmetic (the multiplier is converted
+ * to fixed point with 6 decimals), so values above Number.MAX_SAFE_INTEGER
+ * (2^53 - 1) keep full precision instead of being rounded through a float.
+ *
+ * @param bI - The (non-negative) bigint to multiply
+ * @param multiplier - The multiplication factor (finite, non-negative, up to 6 decimals of precision)
  * @returns The multiplied bigint
  */
-export const safeMultiplier = (bI: bigint, multiplier: number): bigint =>
-  BigInt(Math.round(Number(bI) * multiplier))
+export const safeMultiplier = (bI: bigint, multiplier: number): bigint => {
+  if (!Number.isFinite(multiplier) || multiplier < 0) {
+    throw new RangeError(`safeMultiplier: invalid multiplier ${multiplier}`)
+  }
+  const PRECISION = 1_000_000n
+  const scaled = BigInt(Math.round(multiplier * Number(PRECISION)))
+  return (bI * scaled + PRECISION / 2n) / PRECISION
+}
 
 export type EthersWallet = {
   signTransaction: (...args: AnyData[]) => Promise<AnyData>
