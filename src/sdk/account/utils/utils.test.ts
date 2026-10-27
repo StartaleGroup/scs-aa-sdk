@@ -2,7 +2,7 @@ import { ParamType, ethers } from "ethers"
 import { type AbiParameter, encodeAbiParameters } from "viem"
 import { generatePrivateKey } from "viem/accounts"
 import { describe, expect, test } from "vitest"
-import type { EthersWallet } from "./Utils"
+import { type EthersWallet, safeMultiplier } from "./Utils"
 import { toSigner } from "./toSigner"
 
 describe("utils", async () => {
@@ -98,5 +98,34 @@ describe("utils", async () => {
       }
     })
     expect(sig).toBeDefined()
+  })
+
+  describe("safeMultiplier", () => {
+    test("applies common gas buffers exactly", () => {
+      expect(safeMultiplier(100n, 1)).toBe(100n)
+      expect(safeMultiplier(100n, 1.3)).toBe(130n)
+      expect(safeMultiplier(1_000_000n, 1.6)).toBe(1_600_000n)
+      expect(safeMultiplier(0n, 1.5)).toBe(0n)
+    })
+
+    test("rounds half up", () => {
+      expect(safeMultiplier(3n, 1.5)).toBe(5n)
+      // 750 * 1.15 = 862.5 exactly; float math gives 862.4999999999999
+      expect(safeMultiplier(750n, 1.15)).toBe(863n)
+    })
+
+    test("keeps full precision above Number.MAX_SAFE_INTEGER", () => {
+      const big = 2n ** 60n + 1n
+      expect(safeMultiplier(big, 1)).toBe(big)
+      expect(safeMultiplier(big, 2)).toBe(big * 2n)
+    })
+
+    test("rejects invalid multipliers", () => {
+      expect(() => safeMultiplier(1n, Number.NaN)).toThrow(RangeError)
+      expect(() => safeMultiplier(1n, Number.POSITIVE_INFINITY)).toThrow(
+        RangeError
+      )
+      expect(() => safeMultiplier(1n, -1)).toThrow(RangeError)
+    })
   })
 })
