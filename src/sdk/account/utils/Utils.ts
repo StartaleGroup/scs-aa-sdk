@@ -4,17 +4,19 @@ import {
   type Hash,
   type Hex,
   type PublicClient,
+  type SignableMessage,
   type TypedData,
   type TypedDataDomain,
   type TypedDataParameter,
   concat,
   decodeFunctionResult,
+  domainSeparator,
   encodeAbiParameters,
   encodeFunctionData,
   erc20Abi,
+  hashMessage,
   hexToBytes,
   keccak256,
-  parseAbi,
   parseAbiParameters,
   publicActions,
   stringToBytes,
@@ -27,6 +29,7 @@ import {
   ACCOUNT_DOMAIN_VERSION,
   MOCK_MULTI_MODULE_ADDRESS,
   MODULE_ENABLE_MODE_TYPE_HASH,
+  PERSONAL_SIGN_TYPEHASH,
   STARTALE_TOKEN_PAYMASTER
 } from "../../account/utils/Constants"
 import { EIP1271Abi } from "../../constants/abi"
@@ -35,7 +38,7 @@ import {
   type ModuleType,
   moduleTypeIds
 } from "../../modules/utils/Types"
-import type { AccountMetadata, EIP712DomainReturn } from "./Types"
+import type { AccountDomain, AccountMetadata } from "./Types"
 
 /**
  * Type guard to check if a value is null or undefined.
@@ -328,20 +331,59 @@ export function toHexString(byteArray: Uint8Array): string {
     .join("") // Join all hex values together into a single string
 }
 
+/**
+ * Reads the account's EIP-712 domain.
+ *
+ * An undeployed account (or an EOA not yet delegated via EIP-7702) cannot answer
+ * `eip712Domain()`, so the implementation's domain is read instead, keeping the
+ * account as `verifyingContract`, which is what the account reports once live.
+ *
+ * @param publicClient - The public client
+ * @param accountAddress - The account address
+ * @param accountImplementationAddress - Fallback for accounts without code
+ * @returns The account's EIP-712 domain
+ */
+export const getAccountDomain = async (
+  publicClient: PublicClient,
+  accountAddress: Address,
+  accountImplementationAddress?: Address
+): Promise<AccountDomain> => {
+  const readDomain = (address: Address) =>
+    publicClient.readContract({
+      address,
+      abi: EIP1271Abi,
+      functionName: "eip712Domain"
+    })
+
+  try {
+    const [, name, version, chainId, verifyingContract, salt] =
+      await readDomain(accountAddress)
+    return { name, version, chainId, verifyingContract, salt }
+  } catch (error) {
+    // Only an account without code may borrow its implementation's domain.
+    if (
+      !accountImplementationAddress ||
+      (await publicClient.getCode({ address: accountAddress }))
+    )
+      throw error
+    const [, name, version, chainId, , salt] = await readDomain(
+      accountImplementationAddress
+    )
+    return { name, version, chainId, verifyingContract: accountAddress, salt }
+  }
+}
+
 export const getAccountDomainStructFields = async (
   publicClient: PublicClient,
-  accountAddress: Address
+  accountAddress: Address,
+  accountImplementationAddress?: Address
 ) => {
-  const accountDomainStructFields = (await publicClient.readContract({
-    address: accountAddress,
-    abi: parseAbi([
-      "function eip712Domain() public view returns (bytes1 fields, string memory name, string memory version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] memory extensions)"
-    ]),
-    functionName: "eip712Domain"
-  })) as EIP712DomainReturn
-
-  const [, name, version, chainId, verifyingContract, salt] =
-    accountDomainStructFields
+  const { name, version, chainId, verifyingContract, salt } =
+    await getAccountDomain(
+      publicClient,
+      accountAddress,
+      accountImplementationAddress
+    )
 
   const params = parseAbiParameters([
     "bytes32",
@@ -358,6 +400,34 @@ export const getAccountDomainStructFields = async (
     verifyingContract,
     salt
   ])
+}
+
+/**
+ * Computes the ERC-7739 `PersonalSign` digest of a message for an account:
+ * `keccak256(0x1901 ‖ accountDomainSeparator ‖ hashStruct(PersonalSign(hashMessage(message))))`.
+ *
+ * Binding the digest to the account's domain keeps message signatures
+ * domain-separated from user operation signatures.
+ *
+ * @param message - The message, as accepted by `personal_sign`
+ * @param domain - The account's EIP-712 domain
+ * @returns The digest to sign
+ */
+export const toPersonalSignHash = (
+  message: SignableMessage,
+  { name, version, chainId, verifyingContract }: AccountDomain
+): Hex => {
+  const personalSignStructHash = keccak256(
+    encodeAbiParameters(parseAbiParameters("bytes32, bytes32"), [
+      keccak256(toBytes(PERSONAL_SIGN_TYPEHASH)),
+      hashMessage(message)
+    ])
+  )
+  // The salt is not part of the account domain the validator rebuilds.
+  const accountDomainSeparator = domainSeparator({
+    domain: { name, version, chainId, verifyingContract }
+  })
+  return eip712WrapHash(personalSignStructHash, accountDomainSeparator)
 }
 
 export const inProduction = () => {
