@@ -43,6 +43,20 @@ const smartAccountClient = createSmartAccountClient({
 
 ```
 
+### Signing messages
+
+Set `personalSignMode: "erc7739"` to sign messages under the ERC-7739 `PersonalSign` wrapper, bound to the account's EIP-712 domain. This is recommended for any message that comes from a dapp: it keeps message signatures domain-separated from user operation signatures, and the result also verifies through on-chain ERC-1271. The default is `"eip191"`, a plain EIP-191 signature over the message.
+
+```typescript
+const account = await toStartaleSmartAccount({
+      signer, chain, transport: http(),
+      personalSignMode: "erc7739"
+})
+
+// Verifies through ERC-1271 on- and off-chain, e.g. with viem's verifyMessage
+const signature = await account.signMessage({ message: "hello" })
+```
+
 ## ✨ Features
 
 - 🔐 **Account Abstraction**: Full support for ERC4337 Account Abstraction
