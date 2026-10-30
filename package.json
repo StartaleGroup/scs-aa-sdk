@@ -1,6 +1,6 @@
 {
   "name": "@startale-scs/aa-sdk",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "SCS",
   "repository": {
     "type": "git",
@@ -98,7 +98,7 @@
   "scripts": {
     "format": "biome format . --write",
     "lint": "biome check .",
-    "lint:fix": "pnpm run lint --apply",
+    "lint:fix": "pnpm run lint --write",
     "dev": "pnpm run build && concurrently \"pnpm run esm:watch\" \"pnpm run cjs:watch\" \"pnpm run esm:watch:aliases\" \"pnpm run cjs:watch:aliases\"",
     "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
     "prepack": "pnpm run build",

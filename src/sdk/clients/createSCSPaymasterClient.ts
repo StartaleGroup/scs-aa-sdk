@@ -15,6 +15,7 @@ import {
   type GetTokenPaymasterQuotesParameters,
   getTokenPaymasterQuotes
 } from "./decorators/tokenPaymaster/getTokenPaymasterQuotes"
+import { guardPaymaster } from "./userOperationIntegrity"
 
 export type SCSPaymasterClient = PaymasterClient & TokenPaymasterActions
 
@@ -165,5 +166,17 @@ export const createSCSPaymasterClient = (
     return nativeGetPaymasterStubData(params)
   }
 
-  return { ...baseClient, getPaymasterStubData }
+  // Also guarded here so the check applies when this client is passed to
+  // viem's own `createBundlerClient` instead of `createSmartAccountClient`.
+  const { getPaymasterStubData: guardedStubData, getPaymasterData } =
+    guardPaymaster(
+      { getPaymasterStubData, getPaymasterData: baseClient.getPaymasterData },
+      baseClient
+    )
+
+  return {
+    ...baseClient,
+    getPaymasterStubData: guardedStubData,
+    getPaymasterData
+  }
 }

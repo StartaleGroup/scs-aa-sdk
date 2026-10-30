@@ -74,7 +74,7 @@ export type GetTokenPaymasterQuotesParameters = {
  * Normalizes the authorization object to ensure yParity, chainId, and nonce are properly converted to hex.
  * This is important for EIP-7702 authorization compatibility.
  */
-const normalizeAuthorization = (authorization: any) => {
+const normalizeAuthorization = (authorization: AnyData) => {
   if (!authorization || typeof authorization !== "object") {
     return authorization
   }
