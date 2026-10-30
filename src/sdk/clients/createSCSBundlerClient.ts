@@ -15,6 +15,7 @@ import {
   type SendUserOperationParameters,
   type SmartAccount,
   createBundlerClient,
+  prepareUserOperation,
   sendUserOperation
 } from "viem/account-abstraction"
 import type { StartaleSmartAccountImplementation } from "../account"
@@ -30,7 +31,7 @@ import {
   type PrepareTokenPaymasterUserOpParameters,
   prepareTokenPaymasterUserOp
 } from "./decorators/smartAccount/prepareTokenPaymasterUserOp"
-import { prepareCheckedUserOperation } from "./userOperationIntegrity"
+import { guardFeeHook, guardPaymaster } from "./userOperationIntegrity"
 
 /**
  * Startale Account Client type
@@ -156,7 +157,7 @@ export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
     ...parameters,
     transport: defaultedTransport,
     paymasterContext: defaultedPaymasterContext,
-    userOperation: defaultedUserOperation
+    userOperation: guardFeeHook(defaultedUserOperation)
   })
     .extend((client: AnyData) => ({ ...client, mock }))
     .extend((client: AnyData) => ({
@@ -173,7 +174,16 @@ export const createSCSBundlerClient = (parameters: SCSBundlerClientConfig) => {
             authorization
           }
         }
-        return await prepareCheckedUserOperation(client, _args)
+        // viem merges whole paymaster responses into the UserOperation, so
+        // check them before that happens (see guardPaymaster).
+        const paymaster = guardPaymaster(
+          _args.paymaster ?? client.paymaster,
+          client
+        )
+        return await prepareUserOperation(
+          client,
+          paymaster === undefined ? _args : ({ ..._args, paymaster } as AnyData)
+        )
       }
     }))
     .extend((client: AnyData) => ({

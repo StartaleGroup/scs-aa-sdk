@@ -86,6 +86,7 @@ import {
   signAuthorization as signAuthorizationAction
 } from "viem/actions"
 import { verifyAuthorization } from "viem/utils"
+import { UserOperationTamperedError } from "../clients/userOperationIntegrity"
 import { addressToEmptyAccount } from "./utils/addressToEmptyAccount"
 /**
  * Base module configuration type
@@ -738,9 +739,11 @@ export const toStartaleSmartAccount = async (
         requestedChainId !== undefined &&
         Number(requestedChainId) !== chainId
       ) {
-        throw new Error(
-          `signUserOperation: chainId ${requestedChainId} does not match the account's chain ${chainId}`
-        )
+        throw new UserOperationTamperedError({
+          field: "chainId",
+          source: "The signUserOperation request",
+          details: `signUserOperation: chainId ${requestedChainId} does not match the account's chain ${chainId}`
+        })
       }
       const address = await getAddress()
 

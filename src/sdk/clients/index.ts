@@ -4,6 +4,5 @@ export * from "./createHttpClient"
 export * from "./decorators"
 export {
   UserOperationTamperedError,
-  assertPaymasterResponseUnchanged,
   guardPaymaster
 } from "./userOperationIntegrity"

@@ -172,7 +172,7 @@ export const createSCSPaymasterClient = (
     guardPaymaster(
       { getPaymasterStubData, getPaymasterData: baseClient.getPaymasterData },
       baseClient
-    ) as Pick<SCSPaymasterClient, "getPaymasterStubData" | "getPaymasterData">
+    )
 
   return {
     ...baseClient,

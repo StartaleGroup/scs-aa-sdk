@@ -9,7 +9,10 @@ import {
   numberToHex,
   pad
 } from "viem"
-import { createBundlerClient } from "viem/account-abstraction"
+import {
+  createBundlerClient,
+  createPaymasterClient
+} from "viem/account-abstraction"
 import { privateKeyToAccount } from "viem/accounts"
 import { baseSepolia } from "viem/chains"
 import { describe, expect, test } from "vitest"
@@ -17,7 +20,10 @@ import { toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import type { AnyData } from "../modules/utils/Types"
 import { createSmartAccountClient } from "./createSCSBundlerClient"
 import { createSCSPaymasterClient } from "./createSCSPaymasterClient"
-import { UserOperationTamperedError } from "./userOperationIntegrity"
+import {
+  UserOperationTamperedError,
+  guardPaymaster
+} from "./userOperationIntegrity"
 
 // Offline: the public RPC, bundler and paymaster are all mocked, so nothing is
 // sent to a network.
@@ -143,13 +149,24 @@ const sendWithSdkAndViem = async ({
   return { sdk: sdkSent[0], viem: viemSent[0] }
 }
 
-const expectTampered = async (promise: Promise<unknown>, field: string) => {
+// Which check caught it: each layer must work on its own, so tests assert the
+// layer and not only that something threw.
+const PAYMASTER_CHECK = "Paymaster response"
+const FEE_HOOK_CHECK = "Fee estimation hook"
+const SIGNING_CHECK = "The signUserOperation request"
+
+const expectTampered = async (
+  promise: Promise<unknown>,
+  field: string,
+  source: string
+) => {
   const error = await promise.then(
     () => undefined,
     (e) => e
   )
   expect(error).toBeInstanceOf(UserOperationTamperedError)
   expect(error.field).toBe(field)
+  expect(error.shortMessage).toMatch(new RegExp(`^${source} changed`))
 }
 
 describe("userOperationIntegrity: honest paymasters behave exactly as before", () => {
@@ -256,6 +273,32 @@ describe("userOperationIntegrity: honest paymasters behave exactly as before", (
       userOperation: { estimateFeesPerGas: async () => FEES }
     })
     expect(sdk).toEqual(viem)
+  })
+
+  test("fee hook that echoes the request back", async () => {
+    const { sdk, viem } = await sendWithSdkAndViem({
+      paymaster: makePaymaster(),
+      args: { maxFeePerGas: undefined, maxPriorityFeePerGas: undefined },
+      userOperation: {
+        estimateFeesPerGas: async ({ userOperation }: AnyData) => ({
+          ...userOperation,
+          ...FEES
+        })
+      }
+    })
+    expect(sdk).toEqual(viem)
+  })
+
+  test("a userOperation config without a fee hook is left as-is", async () => {
+    // Wrapping it would change which fee estimation viem falls back to.
+    const { account, publicClient } = await makeAccount()
+    const client = createSmartAccountClient({
+      account,
+      client: publicClient,
+      transport: makeBundlerTransport([]),
+      userOperation: {}
+    })
+    expect(client.userOperation).toEqual({})
   })
 
   test("prepareUserOperation output matches viem, and can be spread into sendUserOperation", async () => {
@@ -384,7 +427,7 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
       const { result, sent } = await sendThroughSdk({
         paymaster: makePaymaster(() => ({ ...STUB, ...extra }))
       })
-      await expectTampered(result, field)
+      await expectTampered(result, field, PAYMASTER_CHECK)
       expect(sent).toHaveLength(0)
     })
 
@@ -393,7 +436,44 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
       const { result, sent } = await sendThroughSdk({
         paymaster: makePaymaster(undefined, () => ({ ...DATA, ...extra }))
       })
-      await expectTampered(result, field)
+      await expectTampered(result, field, PAYMASTER_CHECK)
+      expect(sent).toHaveLength(0)
+    })
+
+    // `authorization` and `initCode` are only covered by the paymaster check,
+    // so the `paymaster: true` branch is tested for every field.
+    test(`paymaster: true (bundler serves pm_* methods) injecting ${field}`, async () => {
+      const extra = await inject()
+      const sent: AnyData[] = []
+      const { account, publicClient } = await makeAccount()
+      const client = createSmartAccountClient({
+        account,
+        client: publicClient,
+        transport: makeBundlerTransport(sent, (method) =>
+          method === "pm_getPaymasterStubData"
+            ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+            : { ...DATA, ...extra }
+        ),
+        paymaster: true
+      })
+      await expectTampered(
+        client.sendUserOperation({ calls: CALLS, ...FEES }),
+        field,
+        PAYMASTER_CHECK
+      )
+      expect(sent).toHaveLength(0)
+    })
+
+    // No paymaster: only the fee hook check can catch this.
+    test(`fee hook injecting ${field}`, async () => {
+      const extra = await inject()
+      const { result, sent } = await sendThroughSdk({
+        args: { maxFeePerGas: undefined, maxPriorityFeePerGas: undefined },
+        userOperation: {
+          estimateFeesPerGas: async () => ({ ...FEES, ...extra })
+        }
+      })
+      await expectTampered(result, field, FEE_HOOK_CHECK)
       expect(sent).toHaveLength(0)
     })
   }
@@ -405,40 +485,7 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
         paymaster: makePaymaster(undefined, () => ({ ...DATA, callData: evil }))
       }
     })
-    await expectTampered(result, "callData")
-    expect(sent).toHaveLength(0)
-  })
-
-  test("paymaster: true (bundler serves pm_* methods) is checked too", async () => {
-    const evil = await evilCallData()
-    const sent: AnyData[] = []
-    const { account, publicClient } = await makeAccount()
-    const client = createSmartAccountClient({
-      account,
-      client: publicClient,
-      transport: makeBundlerTransport(sent, (method) =>
-        method === "pm_getPaymasterStubData"
-          ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
-          : { ...DATA, callData: evil }
-      ),
-      paymaster: true
-    })
-    await expectTampered(
-      client.sendUserOperation({ calls: CALLS, ...FEES }),
-      "callData"
-    )
-    expect(sent).toHaveLength(0)
-  })
-
-  test("a fee hook that changes callData is caught by the end-to-end check", async () => {
-    const evil = await evilCallData()
-    const { result, sent } = await sendThroughSdk({
-      args: { maxFeePerGas: undefined, maxPriorityFeePerGas: undefined },
-      userOperation: {
-        estimateFeesPerGas: async () => ({ ...FEES, callData: evil })
-      }
-    })
-    await expectTampered(result, "callData")
+    await expectTampered(result, "callData", PAYMASTER_CHECK)
     expect(sent).toHaveLength(0)
   })
 
@@ -466,9 +513,58 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
     })
     await expectTampered(
       client.sendUserOperation({ calls: CALLS, ...FEES }),
-      "callData"
+      "callData",
+      PAYMASTER_CHECK
     )
     expect(sent).toHaveLength(0)
+  })
+
+  test("guardPaymaster around viem's createPaymasterClient, with plain viem", async () => {
+    // The fix for apps that use viem's createBundlerClient directly.
+    const evil = await evilCallData()
+    const sent: AnyData[] = []
+    const { account, publicClient } = await makeAccount()
+    const paymaster = createPaymasterClient({
+      transport: makeBundlerTransport([], (method) =>
+        method === "pm_getPaymasterStubData"
+          ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+          : { ...DATA, callData: evil }
+      )
+    })
+    const client = createBundlerClient({
+      account,
+      client: publicClient,
+      transport: makeBundlerTransport(sent),
+      paymaster: guardPaymaster(paymaster, publicClient)
+    })
+    await expectTampered(
+      client.sendUserOperation({ calls: CALLS, ...FEES }),
+      "callData",
+      PAYMASTER_CHECK
+    )
+    expect(sent).toHaveLength(0)
+  })
+
+  test("without guardPaymaster, plain viem signs and sends the tampered callData", async () => {
+    // Documents the gap: the SDK's checks don't run on plain viem clients, so
+    // apps must wrap their paymaster (see the test above).
+    const evil = await evilCallData()
+    const sent: AnyData[] = []
+    const { account, publicClient } = await makeAccount()
+    const client = createBundlerClient({
+      account,
+      client: publicClient,
+      transport: makeBundlerTransport(sent),
+      paymaster: createPaymasterClient({
+        transport: makeBundlerTransport([], (method) =>
+          method === "pm_getPaymasterStubData"
+            ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+            : { ...DATA, callData: evil }
+        )
+      })
+    })
+    await client.sendUserOperation({ calls: CALLS, ...FEES })
+    expect(sent[0].callData).toBe(evil)
   })
 })
 
@@ -501,8 +597,11 @@ describe("signUserOperation pins the account's chain", () => {
     ).toBe(withoutChainId)
   })
 
-  test("throws for a different chainId", async () => {
+  test("throws UserOperationTamperedError for a different chainId", async () => {
     const { account } = await makeAccount()
+    const result = account.signUserOperation({ ...userOperation, chainId: 1 })
+    await expectTampered(result, "chainId", SIGNING_CHECK)
+    // The original message is kept for anyone matching on it.
     await expect(
       account.signUserOperation({ ...userOperation, chainId: 1 })
     ).rejects.toThrow(/does not match the account's chain/)
