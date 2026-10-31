@@ -59,7 +59,7 @@ export async function uninstallModule<
     maxFeePerGas,
     maxPriorityFeePerGas,
     nonce,
-    module: { address, initData, type }
+    module: { address, deInitData: disableModuleData, type }
   } = parameters
 
   if (!account_) {
@@ -85,7 +85,7 @@ export async function uninstallModule<
       { name: "prev", type: "address" },
       { name: "disableModuleData", type: "bytes" }
     ],
-    [prevModule, initData ?? "0x"]
+    [prevModule, disableModuleData ?? "0x"]
   )
 
   const calls = await toUninstallModuleCalls(account, {
