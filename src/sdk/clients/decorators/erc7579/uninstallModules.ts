@@ -31,8 +31,8 @@ export type UninstallModulesParameters<
  *
  * const userOpHash = await uninstallModules(startaleClient, {
  *   modules: [
- *     { type: 'executor', address: '0x...', context: '0x' },
- *     { type: 'validator', address: '0x...', context: '0x' }
+ *     { type: 'executor', address: '0x...', deInitData: '0x...' },
+ *     { type: 'validator', address: '0x...', deInitData: '0x...' }
  *   ]
  * })
  * console.log(userOpHash) // '0x...'

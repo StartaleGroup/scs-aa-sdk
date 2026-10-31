@@ -44,7 +44,7 @@ export type InstallModuleParameters<
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
- *     context: '0x'
+ *     initData: '0x'
  *   }
  * })
  * console.log(userOpHash) // '0x...'
