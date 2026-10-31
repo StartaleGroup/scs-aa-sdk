@@ -41,7 +41,7 @@ export type UninstallFallbackParameters<
  *   module: {
  *     type: 'fallback',
  *     address: '0x...',
- *     context: '0x'
+ *     deInitData: '0x...'
  *   }
  * })
  * console.log(userOpHash) // '0x...'

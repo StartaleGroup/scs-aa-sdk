@@ -68,7 +68,7 @@ const abi = [
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
- *     context: '0x'
+ *     initData: '0x'
  *   }
  * })
  * console.log(isInstalled) // true or false

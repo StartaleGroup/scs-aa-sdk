@@ -43,7 +43,7 @@ export type UninstallModuleParameters<
  *   module: {
  *     type: 'executor',
  *     address: '0x...',
- *     context: '0x'
+ *     deInitData: '0x'
  *   }
  * })
  * console.log(userOpHash) // '0x...'
