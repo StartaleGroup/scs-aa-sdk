@@ -41,7 +41,7 @@ export type UninstallFallbackParameters<
  *   module: {
  *     type: 'fallback',
  *     address: '0x...',
- *     context: '0x'
+ *     deInitData: '0x...'
  *   }
  * })
  * console.log(userOpHash) // '0x...'
@@ -84,7 +84,7 @@ export async function uninstallFallback<
 
 export const toUninstallFallbackCalls = async (
   account: ModularSmartAccount,
-  { address, initData, type }: ModuleMeta
+  { address, deInitData, type }: ModuleMeta
 ): Promise<Call[]> => [
   {
     to: account.address,
@@ -113,7 +113,7 @@ export const toUninstallFallbackCalls = async (
         }
       ],
       functionName: "uninstallFallback",
-      args: [parseModuleTypeId(type), getAddress(address), initData ?? "0x"]
+      args: [parseModuleTypeId(type), getAddress(address), deInitData ?? "0x"]
     })
   }
 ]
