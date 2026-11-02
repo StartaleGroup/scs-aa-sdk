@@ -54,7 +54,7 @@ import {
   type StartaleAccountVersion
 } from "../constants"
 // Constants
-import { EntrypointAbi } from "../constants/abi"
+import { AccountFactoryAbi, EntrypointAbi } from "../constants/abi"
 import { toEmptyHook } from "../modules/toEmptyHook"
 import type { Module } from "../modules/utils/Types"
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule"
@@ -347,6 +347,17 @@ export const toStartaleSmartAccount = async (
   }).extend(publicActions)
   const publicClient = createPublicClient({ chain, transport })
 
+  // Until it has code, the account's EIP-712 domain is that of the implementation
+  // it will run: the EIP-7702 delegate, or whatever its factory deploys.
+  const getUndeployedImplementation = async (): Promise<Address> =>
+    isEip7702
+      ? accountImplementationAddress
+      : await publicClient.readContract({
+          address: factoryAddress,
+          abi: AccountFactoryAbi,
+          functionName: "ACCOUNT_IMPLEMENTATION"
+        })
+
   const entryPointContract = getContract({
     address: ENTRY_POINT_ADDRESS,
     abi: EntrypointAbi,
@@ -604,7 +615,7 @@ export const toStartaleSmartAccount = async (
     const accountDomainStructFields = await getAccountDomainStructFields(
       publicClient,
       await getAddress(),
-      accountImplementationAddress
+      getUndeployedImplementation
     )
 
     const parentStructHash = keccak256(
@@ -746,7 +757,7 @@ export const toStartaleSmartAccount = async (
                 await getAccountDomain(
                   publicClient,
                   await getAddress(),
-                  accountImplementationAddress
+                  getUndeployedImplementation
                 )
               )
             })

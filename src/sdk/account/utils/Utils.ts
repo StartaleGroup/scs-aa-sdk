@@ -337,16 +337,19 @@ export function toHexString(byteArray: Uint8Array): string {
  * An undeployed account (or an EOA not yet delegated via EIP-7702) cannot answer
  * `eip712Domain()`, so the implementation's domain is read instead, keeping the
  * account as `verifyingContract`, which is what the account reports once live.
+ * That must be the implementation the account will run: for a counterfactual
+ * account, the one its factory deploys.
  *
  * @param publicClient - The public client
  * @param accountAddress - The account address
- * @param accountImplementationAddress - Fallback for accounts without code
+ * @param accountImplementation - Fallback for accounts without code, or a
+ *   function resolving it, called only when the fallback is needed
  * @returns The account's EIP-712 domain
  */
 export const getAccountDomain = async (
   publicClient: PublicClient,
   accountAddress: Address,
-  accountImplementationAddress?: Address
+  accountImplementation?: Address | (() => Promise<Address>)
 ): Promise<AccountDomain> => {
   const readDomain = (address: Address) =>
     publicClient.readContract({
@@ -362,12 +365,14 @@ export const getAccountDomain = async (
   } catch (error) {
     // Only an account without code may borrow its implementation's domain.
     if (
-      !accountImplementationAddress ||
+      !accountImplementation ||
       (await publicClient.getCode({ address: accountAddress }))
     )
       throw error
     const [, name, version, chainId, , salt] = await readDomain(
-      accountImplementationAddress
+      typeof accountImplementation === "function"
+        ? await accountImplementation()
+        : accountImplementation
     )
     return { name, version, chainId, verifyingContract: accountAddress, salt }
   }
@@ -376,14 +381,10 @@ export const getAccountDomain = async (
 export const getAccountDomainStructFields = async (
   publicClient: PublicClient,
   accountAddress: Address,
-  accountImplementationAddress?: Address
+  accountImplementation?: Address | (() => Promise<Address>)
 ) => {
   const { name, version, chainId, verifyingContract, salt } =
-    await getAccountDomain(
-      publicClient,
-      accountAddress,
-      accountImplementationAddress
-    )
+    await getAccountDomain(publicClient, accountAddress, accountImplementation)
 
   const params = parseAbiParameters([
     "bytes32",
