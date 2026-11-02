@@ -7,7 +7,7 @@ import {
   getAccount,
   getRemoveOwnableValidatorOwnerAction
 } from "../../../../constants"
-import type { ModularSmartAccount } from "../../../utils/Types"
+import type { AnyData, ModularSmartAccount } from "../../../utils/Types"
 
 /**
  * Parameters for removing an owner from a smart account.
@@ -97,7 +97,7 @@ export const toRemoveOwnerCalls = async (
       address: account.address,
       type: "erc7579-implementation"
     }),
-    client: account.client as any,
+    client: account.client as AnyData,
     owner: parameters.owner
   })
 

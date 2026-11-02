@@ -302,4 +302,4 @@ export const topUp = async (
 
 // Todo: Update based on chainId and public bundler endpoint
 export const getBundlerUrl = (chainId: number) =>
-  `https://soneium-minato.bundler.scs.startale.com?apikey=admin`
+  "https://soneium-minato.bundler.scs.startale.com?apikey=admin"

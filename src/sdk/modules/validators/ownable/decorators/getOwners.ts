@@ -2,7 +2,7 @@ import type { Address, Chain, Client, PublicClient, Transport } from "viem"
 import { parseAccount } from "viem/utils"
 import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound"
 import { getAccount, getOwnableValidatorOwners } from "../../../../constants"
-import type { ModularSmartAccount } from "../../../utils/Types"
+import type { AnyData, ModularSmartAccount } from "../../../utils/Types"
 
 /**
  * Parameters for retrieving the owners of a smart account.
@@ -57,6 +57,6 @@ export async function getOwners<
 
   return getOwnableValidatorOwners({
     account: startaleAccount,
-    client: publicClient as any
+    client: publicClient as AnyData
   })
 }

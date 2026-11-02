@@ -3,7 +3,7 @@ import type { GetSmartAccountParameter } from "viem/account-abstraction"
 import { parseAccount } from "viem/utils"
 import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound"
 import { getAccount, getOwnableValidatorThreshold } from "../../../../constants"
-import type { ModularSmartAccount } from "../../../utils/Types"
+import type { AnyData, ModularSmartAccount } from "../../../utils/Types"
 
 /**
  * Parameters for retrieving the threshold of a modular smart account.
@@ -71,6 +71,6 @@ export async function getThreshold<
 
   return await getOwnableValidatorThreshold({
     account: startaleAccount,
-    client: publicClient as any
+    client: publicClient as AnyData
   })
 }

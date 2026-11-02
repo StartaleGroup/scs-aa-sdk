@@ -4,7 +4,7 @@ import { getAction, parseAccount } from "viem/utils"
 import { AccountNotFoundError } from "../../../../account/utils/AccountNotFound"
 import type { Call } from "../../../../account/utils/Types"
 import { getAddOwnableValidatorOwnerAction } from "../../../../constants"
-import type { ModularSmartAccount } from "../../../utils/Types"
+import type { AnyData, ModularSmartAccount } from "../../../utils/Types"
 
 /**
  * Parameters for adding an owner to a smart account.
@@ -84,7 +84,7 @@ export const toAddOwnerCalls = async (
       deployedOnChains: [],
       type: "erc7579-implementation"
     },
-    client: account.client as any,
+    client: account.client as AnyData,
     owner: parameters.owner
   })
 
