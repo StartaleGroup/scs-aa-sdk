@@ -54,7 +54,7 @@ import {
   type StartaleAccountVersion
 } from "../constants"
 // Constants
-import { EntrypointAbi } from "../constants/abi"
+import { AccountFactoryAbi, EntrypointAbi } from "../constants/abi"
 import { toEmptyHook } from "../modules/toEmptyHook"
 import type { Module } from "../modules/utils/Types"
 import { toDefaultModule } from "../modules/validators/default/toDefaultModule"
@@ -73,9 +73,11 @@ import {
   type TypedDataWith712,
   addressEquals,
   eip712WrapHash,
+  getAccountDomain,
   getAccountDomainStructFields,
   getTypesForEIP712Domain,
   isNullOrUndefined,
+  toPersonalSignHash,
   typeToString
 } from "./utils/Utils"
 import { toInitData } from "./utils/toInitData"
@@ -106,6 +108,9 @@ export type GenericModuleConfig<
 export type PrevalidationHookModuleConfig = GenericModuleConfig & {
   hookType: bigint
 }
+/** How a Startale account signs personal messages. See `personalSignMode`. */
+export type PersonalSignMode = "eip191" | "erc7739"
+
 /**
  * Parameters for creating a Startale Smart Account
  */
@@ -175,6 +180,17 @@ export type ToStartaleSmartAccountParameters = {
   eip7702Auth?: SignAuthorizationReturnType | undefined
   /** Optional EIP-7702 Account */
   eip7702Account?: Signer
+  /**
+   * How `signMessage` signs personal messages. Defaults to `"eip191"`.
+   *
+   * - `"eip191"`: a plain EIP-191 signature over the message.
+   * - `"erc7739"`: a signature over the ERC-7739 `PersonalSign` digest bound to
+   *   this account's EIP-712 domain. Recommended for messages from dapps: it
+   *   keeps message signatures domain-separated from user operation signatures,
+   *   and it also verifies through on-chain ERC-1271. Requires a validator that
+   *   supports ERC-7739, such as the default validator.
+   */
+  personalSignMode?: PersonalSignMode
 } & Prettify<
   Pick<
     ClientConfig<Transport, Chain, Account, RpcSchema>,
@@ -305,7 +321,8 @@ export const toStartaleSmartAccount = async (
       factoryVersion
     ].implementationAddress,
     eip7702Auth,
-    eip7702Account
+    eip7702Account,
+    personalSignMode = "eip191"
   } = parameters
 
   // Note: we could also accept deliberate optional flag to enable EIP-7702
@@ -330,6 +347,17 @@ export const toStartaleSmartAccount = async (
     name
   }).extend(publicActions)
   const publicClient = createPublicClient({ chain, transport })
+
+  // Until it has code, the account's EIP-712 domain is that of the implementation
+  // it will run: the EIP-7702 delegate, or whatever its factory deploys.
+  const getUndeployedImplementation = async (): Promise<Address> =>
+    isEip7702
+      ? accountImplementationAddress
+      : await publicClient.readContract({
+          address: factoryAddress,
+          abi: AccountFactoryAbi,
+          functionName: "ACCOUNT_IMPLEMENTATION"
+        })
 
   const entryPointContract = getContract({
     address: ENTRY_POINT_ADDRESS,
@@ -587,7 +615,8 @@ export const toStartaleSmartAccount = async (
     const appDomainSeparator = domainSeparator({ domain })
     const accountDomainStructFields = await getAccountDomainStructFields(
       publicClient,
-      await getAddress()
+      await getAddress(),
+      getUndeployedImplementation
     )
 
     const parentStructHash = keccak256(
@@ -721,7 +750,19 @@ export const toStartaleSmartAccount = async (
      * @returns The signature
      */
     async signMessage({ message }: { message: SignableMessage }): Promise<Hex> {
-      const tempSignature = await module.signMessage(message)
+      const tempSignature =
+        personalSignMode === "erc7739"
+          ? await module.signMessage({
+              raw: toPersonalSignHash(
+                message,
+                await getAccountDomain(
+                  publicClient,
+                  await getAddress(),
+                  getUndeployedImplementation
+                )
+              )
+            })
+          : await module.signMessage(message)
       return encodePacked(["address", "bytes"], [module.module, tempSignature])
     },
     signTypedData,

@@ -111,6 +111,8 @@ export const ACCOUNT_DOMAIN_TYPEHASH =
 
 export const PARENT_TYPEHASH =
   "TypedDataSign(Contents contents,string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)Contents(bytes32 stuff)"
+/** ERC-7739 type for personal messages, bound to the account's EIP-712 domain */
+export const PERSONAL_SIGN_TYPEHASH = "PersonalSign(bytes prefixed)"
 export const eip1271MagicValue: Hex = "0x1626ba7e"
 
 export const EXECUTE_SINGLE = concat([

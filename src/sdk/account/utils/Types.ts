@@ -76,6 +76,15 @@ export type EIP712DomainReturn = [
   bigint[]
 ]
 
+/** An account's EIP-712 domain, as reported by `eip712Domain()` */
+export type AccountDomain = {
+  name: string
+  version: string
+  chainId: bigint
+  verifyingContract: Address
+  salt: Hex
+}
+
 export type AccountMetadata = {
   name: string
   version: string
