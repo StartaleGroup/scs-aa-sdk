@@ -29,7 +29,8 @@ export type UninstallModuleParameters<
 }
 
 /**
- * Uninstalls a module from a smart account.
+ * Uninstalls a validator from a smart account. The previous validator is looked
+ * up on the account, and `deInitData` is sent as the validator's own disable data.
  *
  * @param client - The client instance.
  * @param parameters - Parameters including the smart account, module to uninstall, and optional gas settings.
@@ -41,7 +42,7 @@ export type UninstallModuleParameters<
  *
  * const userOpHash = await uninstallModule(startaleClient, {
  *   module: {
- *     type: 'executor',
+ *     type: 'validator',
  *     address: '0x...',
  *     deInitData: '0x'
  *   }
