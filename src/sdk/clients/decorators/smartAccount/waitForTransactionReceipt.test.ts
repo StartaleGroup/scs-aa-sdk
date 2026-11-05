@@ -93,4 +93,23 @@ describe("waitForTransactionReceipt", () => {
 
     expect(wait).toHaveBeenCalledExactlyOnceWith({ hash })
   })
+
+  test("preserves a hash provided by a prototype getter", async () => {
+    const { client, wait } = makeClient()
+    class ReceiptWaitOptions {
+      get hash(): Hash {
+        return hash
+      }
+
+      timeout = 25
+    }
+    const parameters: WaitForTransactionReceiptParameters =
+      new ReceiptWaitOptions()
+
+    await expect(waitForTransactionReceipt(client, parameters)).resolves.toBe(
+      receipt
+    )
+
+    expect(wait).toHaveBeenCalledExactlyOnceWith({ hash, timeout: 25 })
+  })
 })
