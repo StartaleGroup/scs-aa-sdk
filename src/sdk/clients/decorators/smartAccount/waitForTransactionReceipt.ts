@@ -16,7 +16,7 @@ export async function waitForTransactionReceipt<
   client: Client<Transport, Chain | undefined, TAccount>,
   {
     account: account_ = client.account,
-    hash
+    ...parameters
   }: WaitForTransactionReceiptParameters & { account?: TAccount }
 ): Promise<WaitForTransactionReceiptReturnType> {
   if (!account_)
@@ -29,5 +29,5 @@ export async function waitForTransactionReceipt<
 
   if (!accountClient) throw new Error("Requires a Public Client")
 
-  return accountClient.waitForTransactionReceipt({ hash })
+  return accountClient.waitForTransactionReceipt(parameters)
 }
