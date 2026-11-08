@@ -12,7 +12,7 @@ const extractFailedOpError = (message: string): string | null => {
       // Extract the hex data starting after the first 32 bytes (position of string)
       const hexData = aa23Match[2].slice(130)
       // Convert hex to ASCII, removing null bytes, control characters, and padding
-      const decoded = Buffer.from(hexData.replace(/00+$/, ""), "hex")
+      const decoded = Buffer.from(hexData.replace(/(?:00)+$/, ""), "hex")
         .toString()
         // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
         .replace(/[\u0000-\u001F]/g, "") // Remove all control characters
