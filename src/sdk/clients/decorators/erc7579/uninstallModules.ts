@@ -7,7 +7,10 @@ import type {
   ModularSmartAccount,
   ModuleMeta
 } from "../../../modules/utils/Types"
-import { toUninstallModuleCalls } from "./uninstallModule"
+import {
+  toUninstallDeInitData,
+  toUninstallModuleCalls
+} from "./uninstallModule"
 
 export type UninstallModulesParameters<
   TSmartAccount extends SmartAccount | undefined
@@ -19,11 +22,13 @@ export type UninstallModulesParameters<
 }
 
 /**
- * Uninstalls multiple modules from a smart account.
+ * Uninstalls multiple modules from a smart account in one user operation.
  *
- * Each module's `deInitData` is passed to the account unchanged. For validators
- * and executors, the account expects it encoded as `(address prev, bytes disableModuleData)`,
- * where `prev` is the module before this one in the account's linked list.
+ * Each module's `deInitData` is encoded the same way as in `uninstallModule`:
+ * validators and executors get `abi.encode(prev, deInitData)`, with `prev` read
+ * from the account and adjusted for the modules removed before it in the same
+ * batch; a fallback's `deInitData` must start with its selector; hooks get
+ * their `deInitData` as is.
  *
  * @param client - The client instance.
  * @param parameters - Parameters including the smart account, modules to uninstall, and optional gas settings.
@@ -31,16 +36,15 @@ export type UninstallModulesParameters<
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
- * import { encodeAbiParameters } from 'viem'
  * import { uninstallModules } from '@startale-scs/aa-sdk'
  *
- * const deInitData = encodeAbiParameters(
- *   [{ type: 'address' }, { type: 'bytes' }],
- *   [prevModule, '0x'] // previous module in the list, then the module's own disable data
- * )
- *
  * const userOpHash = await uninstallModules(startaleClient, {
- *   modules: [{ type: 'validator', address: '0x...', deInitData }]
+ *   modules: [
+ *     { type: 'validator', address: '0x...', deInitData: '0x' },
+ *     { type: 'executor', address: '0x...', deInitData: '0x' },
+ *     // selector the handler was installed for, then the handler's own data
+ *     { type: 'fallback', address: '0x...', deInitData: '0x12345678' }
+ *   ]
  * })
  * console.log(userOpHash) // '0x...'
  */
@@ -65,9 +69,16 @@ export async function uninstallModules<
   }
 
   const account = parseAccount(account_) as unknown as ModularSmartAccount
+  const deInitData = await toUninstallDeInitData(client, account, modules)
   const calls = (
     await Promise.all(
-      modules.flatMap((module) => toUninstallModuleCalls(account, module))
+      modules.map(({ address, type }, i) =>
+        toUninstallModuleCalls(account, {
+          address,
+          type,
+          deInitData: deInitData[i]
+        })
+      )
     )
   ).flat()
 
