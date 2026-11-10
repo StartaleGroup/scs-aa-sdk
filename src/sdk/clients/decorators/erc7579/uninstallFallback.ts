@@ -1,11 +1,4 @@
-import {
-  type Chain,
-  type Client,
-  type Hex,
-  type Transport,
-  encodeFunctionData,
-  getAddress
-} from "viem"
+import type { Chain, Client, Hex, Transport } from "viem"
 import { type SmartAccount, sendUserOperation } from "viem/account-abstraction"
 import { getAction } from "viem/utils"
 import { parseAccount } from "viem/utils"
@@ -15,7 +8,7 @@ import type {
   ModularSmartAccount,
   ModuleMeta
 } from "../../../modules/utils/Types"
-import { parseModuleTypeId } from "./supportsModule"
+import { toFallbackDeInitData, toUninstallModuleCalls } from "./uninstallModule"
 
 export type UninstallFallbackParameters<
   TSmartAccount extends SmartAccount | undefined
@@ -27,7 +20,12 @@ export type UninstallFallbackParameters<
 }
 
 /**
- * Uninstalls a fallback module from a smart account.
+ * Uninstalls a fallback handler from a smart account by calling the account's
+ * `uninstallModule` with module type 3.
+ *
+ * `deInitData` must start with the 4-byte selector the handler was installed
+ * for. The account clears the handler for that selector and passes the rest of
+ * `deInitData` to the handler's `onUninstall`.
  *
  * @param client - The client instance.
  * @param parameters - Parameters including the smart account, module to uninstall, and optional gas settings.
@@ -41,7 +39,7 @@ export type UninstallFallbackParameters<
  *   module: {
  *     type: 'fallback',
  *     address: '0x...',
- *     context: '0x'
+ *     deInitData: '0x12345678' // the selector the handler was installed for
  *   }
  * })
  * console.log(userOpHash) // '0x...'
@@ -84,36 +82,10 @@ export async function uninstallFallback<
 
 export const toUninstallFallbackCalls = async (
   account: ModularSmartAccount,
-  { address, initData, type }: ModuleMeta
-): Promise<Call[]> => [
-  {
-    to: account.address,
-    value: BigInt(0),
-    data: encodeFunctionData({
-      abi: [
-        {
-          name: "uninstallFallback",
-          type: "function",
-          stateMutability: "nonpayable",
-          inputs: [
-            {
-              type: "uint256",
-              name: "moduleTypeId"
-            },
-            {
-              type: "address",
-              name: "module"
-            },
-            {
-              type: "bytes",
-              name: "deInitData"
-            }
-          ],
-          outputs: []
-        }
-      ],
-      functionName: "uninstallFallback",
-      args: [parseModuleTypeId(type), getAddress(address), initData ?? "0x"]
-    })
-  }
-]
+  { address, deInitData }: ModuleMeta
+): Promise<Call[]> =>
+  toUninstallModuleCalls(account, {
+    address,
+    type: "fallback",
+    deInitData: toFallbackDeInitData(deInitData)
+  })
