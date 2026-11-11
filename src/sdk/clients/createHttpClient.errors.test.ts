@@ -7,7 +7,7 @@ describe("createHttpClient error messages", () => {
     vi.unstubAllGlobals()
   })
 
-  test("preserves the final character of an AA23 revert reason", async () => {
+  test("preserves the decoded AA23 reason without ABI header bytes", async () => {
     const revertData = encodeErrorResult({
       abi: [
         {
@@ -17,7 +17,7 @@ describe("createHttpClient error messages", () => {
         }
       ],
       errorName: "Error",
-      args: ["stop"]
+      args: ["ERC20: transfer amount exceeds balance"]
     })
     const fetch = vi.fn().mockResolvedValue(
       new Response(
@@ -31,7 +31,7 @@ describe("createHttpClient error messages", () => {
 
     await expect(
       createHttpClient("https://offline.invalid").request({ path: "simulate" })
-    ).rejects.toThrow(/^stop$/)
+    ).rejects.toThrow(/^ERC20: transfer amount exceeds balance$/)
     expect(fetch).toHaveBeenCalledOnce()
   })
 })

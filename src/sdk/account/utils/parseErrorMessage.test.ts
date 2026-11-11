@@ -22,8 +22,17 @@ describe("utils.parseErrorMessage", () => {
     )
   })
 
-  test.each(["stop", "@", "P", "`", `${"a".repeat(31)}p`])(
-    "should preserve the final byte of an AA23 revert reason: %s",
+  test.each([
+    "stop",
+    "@",
+    "P",
+    "`",
+    `${"a".repeat(31)}p`,
+    `${"a".repeat(32)}p`,
+    "ERC20: transfer amount exceeds balance",
+    `${"a".repeat(320)}p`
+  ])(
+    "should decode an AA23 revert reason without header or padding bytes: %s",
     (message) => {
       const revertData = encodeErrorResult({
         abi: [

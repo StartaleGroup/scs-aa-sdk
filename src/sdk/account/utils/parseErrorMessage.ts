@@ -9,10 +9,14 @@ const extractFailedOpError = (message: string): string | null => {
   if (aa23Match) {
     // If it's an AA23 error, return the decoded message
     try {
-      // Extract the hex data starting after the first 32 bytes (position of string)
-      const hexData = aa23Match[2].slice(130)
-      // Convert hex to ASCII, removing null bytes, control characters, and padding
-      const decoded = Buffer.from(hexData.replace(/(?:00)+$/, ""), "hex")
+      const hexData = aa23Match[2]
+      // Error(string) has a selector, an offset word, and a string-length word.
+      const messageLength = Number.parseInt(hexData.slice(74, 138), 16)
+      // Decode only the declared string bytes, excluding the header and padding.
+      const decoded = Buffer.from(
+        hexData.slice(138, 138 + messageLength * 2),
+        "hex"
+      )
         .toString()
         // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
         .replace(/[\u0000-\u001F]/g, "") // Remove all control characters

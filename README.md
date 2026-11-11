@@ -65,7 +65,7 @@ const signature = await account.signMessage({ message: "hello" })
 - 🔌 **Modular Design**: Flexible and extensible architecture
 - 🌐 **Cross-Chain Support**: Compatible with multiple EVM chains
 
-HTTP request failures expose human-readable errors, including the inner revert reason for AA23 failures. Hexadecimal padding is removed as whole bytes so the final character of the reason is preserved.
+HTTP request failures expose human-readable errors, including the inner revert reason for AA23 failures. The ABI string length determines which bytes are decoded, excluding the header and padding while preserving the final character of the reason.
 
 ## 📖 Documentation
 
