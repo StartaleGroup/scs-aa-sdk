@@ -1,3 +1,4 @@
+import { encodeErrorResult } from "viem"
 import { describe, expect, test } from "vitest"
 import { parseErrorMessage } from "./parseErrorMessage"
 
@@ -20,6 +21,37 @@ describe("utils.parseErrorMessage", () => {
       "EIP2612: invalid signature"
     )
   })
+
+  test.each([
+    "stop",
+    "@",
+    "P",
+    "`",
+    `${"a".repeat(31)}p`,
+    `${"a".repeat(32)}p`,
+    "ERC20: transfer amount exceeds balance",
+    `${"a".repeat(320)}p`
+  ])(
+    "should decode an AA23 revert reason without header or padding bytes: %s",
+    (message) => {
+      const revertData = encodeErrorResult({
+        abi: [
+          {
+            type: "error",
+            name: "Error",
+            inputs: [{ name: "message", type: "string" }]
+          }
+        ],
+        errorName: "Error",
+        args: [message]
+      })
+      const error = {
+        errors: [`errorArgs=[0,"AA23 reverted","${revertData}"]`]
+      }
+
+      expect(parseErrorMessage(error)).toBe(message)
+    }
+  )
 
   test("should return the correct parsedError message for revertExceptionMessageThree", () => {
     const error = new Error(revertExceptionMessageThree)
