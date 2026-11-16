@@ -5,18 +5,21 @@ import {
   type Transport,
   encodeAbiParameters,
   encodeFunctionData,
-  getAddress
+  getAddress,
+  size
 } from "viem"
 import { type SmartAccount, sendUserOperation } from "viem/account-abstraction"
 import { getAction } from "viem/utils"
 import { parseAccount } from "viem/utils"
-import { getInstalledValidators, getPreviousModule } from "."
 import { AccountNotFoundError } from "../../../account/utils/AccountNotFound"
 import type { Call } from "../../../account/utils/Types"
 import type {
   ModularSmartAccount,
   ModuleMeta
 } from "../../../modules/utils/Types"
+import { getInstalledExecutors } from "./getInstalledExecutors"
+import { getInstalledValidators } from "./getInstalledValidators"
+import { getPreviousModule } from "./getPreviousModule"
 import { parseModuleTypeId } from "./supportsModule"
 
 export type UninstallModuleParameters<
@@ -29,8 +32,16 @@ export type UninstallModuleParameters<
 }
 
 /**
- * Uninstalls a validator from a smart account. The previous validator is looked
- * up on the account, and `deInitData` is sent as the validator's own disable data.
+ * Uninstalls a module from a smart account.
+ *
+ * `deInitData` is the module's own data and is encoded the way the account
+ * expects for the module type:
+ * - validator, executor: `abi.encode(prev, deInitData)`, where `prev` is the
+ *   module before this one in the account's list of that type, read from the
+ *   account
+ * - fallback: sent as is; it must start with the 4-byte selector the handler
+ *   was installed for, followed by the handler's own data
+ * - hook: sent as is
  *
  * @param client - The client instance.
  * @param parameters - Parameters including the smart account, module to uninstall, and optional gas settings.
@@ -42,7 +53,7 @@ export type UninstallModuleParameters<
  *
  * const userOpHash = await uninstallModule(startaleClient, {
  *   module: {
- *     type: 'validator',
+ *     type: 'executor',
  *     address: '0x...',
  *     deInitData: '0x'
  *   }
@@ -60,7 +71,7 @@ export async function uninstallModule<
     maxFeePerGas,
     maxPriorityFeePerGas,
     nonce,
-    module: { address, deInitData: disableModuleData, type }
+    module: { address, type }
   } = parameters
 
   if (!account_) {
@@ -70,24 +81,9 @@ export async function uninstallModule<
   }
 
   const account = parseAccount(account_) as ModularSmartAccount
-  const [installedValidators] = await getInstalledValidators(client)
-
-  const prevModule = await getPreviousModule(client, {
-    module: {
-      address,
-      type
-    },
-    installedValidators,
-    account
-  })
-
-  const deInitData = encodeAbiParameters(
-    [
-      { name: "prev", type: "address" },
-      { name: "disableModuleData", type: "bytes" }
-    ],
-    [prevModule, disableModuleData ?? "0x"]
-  )
+  const [deInitData] = await toUninstallDeInitData(client, account, [
+    parameters.module
+  ])
 
   const calls = await toUninstallModuleCalls(account, {
     address,
@@ -106,6 +102,79 @@ export async function uninstallModule<
     nonce,
     account
   })
+}
+
+/**
+ * Builds the `deInitData` the account's `uninstallModule` decodes for each
+ * module, in order. Validators and executors are kept in linked lists, so they
+ * get `abi.encode(prev, deInitData)`. `prev` is looked up in the account's
+ * installed list of that type, as it will be once the modules before it in
+ * `modules` are removed, so several modules from one list can be uninstalled
+ * in the same batch. A fallback's `deInitData` must start with its selector.
+ * Hooks get their `deInitData` as is.
+ */
+export const toUninstallDeInitData = async (
+  client: Client<Transport, Chain | undefined, SmartAccount | undefined>,
+  account: ModularSmartAccount,
+  modules: ModuleMeta[]
+): Promise<Hex[]> => {
+  const installed: { validator?: Hex[]; executor?: Hex[] } = {}
+  const result: Hex[] = []
+
+  for (const { address, type, deInitData = "0x" } of modules) {
+    if (type === "fallback") {
+      result.push(toFallbackDeInitData(deInitData))
+      continue
+    }
+    if (type === "hook") {
+      result.push(deInitData)
+      continue
+    }
+
+    if (!installed[type]) {
+      const [modulesOfType] =
+        type === "validator"
+          ? await getInstalledValidators(client, { account })
+          : await getInstalledExecutors(client, { account })
+      installed[type] = [...modulesOfType]
+    }
+    const installedOfType = installed[type]
+
+    const prevModule = await getPreviousModule(client, {
+      module: { address, type },
+      ...(type === "validator"
+        ? { installedValidators: installedOfType }
+        : { installedExecutors: installedOfType }),
+      account
+    })
+    installedOfType.splice(installedOfType.indexOf(getAddress(address)), 1)
+
+    result.push(
+      encodeAbiParameters(
+        [
+          { name: "prev", type: "address" },
+          { name: "disableModuleData", type: "bytes" }
+        ],
+        [prevModule, deInitData]
+      )
+    )
+  }
+
+  return result
+}
+
+/**
+ * The account finds a fallback handler by the selector in the first 4 bytes of
+ * `deInitData` and passes the rest to the handler's `onUninstall`. Without a
+ * selector the account reverts with `ModuleNotInstalled`.
+ */
+export const toFallbackDeInitData = (deInitData: Hex = "0x"): Hex => {
+  if (size(deInitData) < 4) {
+    throw new Error(
+      `A fallback's deInitData must start with the 4-byte selector it handles, got ${deInitData}`
+    )
+  }
+  return deInitData
 }
 
 export const toUninstallModuleCalls = async (
