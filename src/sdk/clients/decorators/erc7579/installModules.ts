@@ -34,8 +34,8 @@ export type InstallModulesParameters<
  *
  * const userOpHash = await installModules(startaleClient, {
  *   modules: [
- *     { type: 'executor', address: '0x...', context: '0x' },
- *     { type: 'validator', address: '0x...', context: '0x' }
+ *     { type: 'executor', address: '0x...', data: '0x' },
+ *     { type: 'validator', address: '0x...', data: '0x...' }
  *   ]
  * })
  * console.log(userOpHash) // '0x...'
@@ -63,7 +63,9 @@ export async function installModules<
   const account = parseAccount(account_) as unknown as ModularSmartAccount
   const calls = (
     await Promise.all(
-      modules.flatMap((module) => toInstallWithSafeSenderCalls(account, module))
+      modules.flatMap(({ address, data, type }) =>
+        toInstallWithSafeSenderCalls(account, { address, type, initData: data })
+      )
     )
   ).flat()
 

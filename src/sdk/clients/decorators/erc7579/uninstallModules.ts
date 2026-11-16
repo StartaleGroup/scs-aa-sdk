@@ -21,19 +21,26 @@ export type UninstallModulesParameters<
 /**
  * Uninstalls multiple modules from a smart account.
  *
+ * Each module's `deInitData` is passed to the account unchanged. For validators
+ * and executors, the account expects it encoded as `(address prev, bytes disableModuleData)`,
+ * where `prev` is the module before this one in the account's linked list.
+ *
  * @param client - The client instance.
  * @param parameters - Parameters including the smart account, modules to uninstall, and optional gas settings.
  * @returns The hash of the user operation as a hexadecimal string.
  * @throws {AccountNotFoundError} If the account is not found.
  *
  * @example
+ * import { encodeAbiParameters } from 'viem'
  * import { uninstallModules } from '@startale-scs/aa-sdk'
  *
+ * const deInitData = encodeAbiParameters(
+ *   [{ type: 'address' }, { type: 'bytes' }],
+ *   [prevModule, '0x'] // previous module in the list, then the module's own disable data
+ * )
+ *
  * const userOpHash = await uninstallModules(startaleClient, {
- *   modules: [
- *     { type: 'executor', address: '0x...', context: '0x' },
- *     { type: 'validator', address: '0x...', context: '0x' }
- *   ]
+ *   modules: [{ type: 'validator', address: '0x...', deInitData }]
  * })
  * console.log(userOpHash) // '0x...'
  */

@@ -29,7 +29,8 @@ export type UninstallModuleParameters<
 }
 
 /**
- * Uninstalls a module from a smart account.
+ * Uninstalls a validator from a smart account. The previous validator is looked
+ * up on the account, and `deInitData` is sent as the validator's own disable data.
  *
  * @param client - The client instance.
  * @param parameters - Parameters including the smart account, module to uninstall, and optional gas settings.
@@ -41,9 +42,9 @@ export type UninstallModuleParameters<
  *
  * const userOpHash = await uninstallModule(startaleClient, {
  *   module: {
- *     type: 'executor',
+ *     type: 'validator',
  *     address: '0x...',
- *     context: '0x'
+ *     deInitData: '0x'
  *   }
  * })
  * console.log(userOpHash) // '0x...'
@@ -59,7 +60,7 @@ export async function uninstallModule<
     maxFeePerGas,
     maxPriorityFeePerGas,
     nonce,
-    module: { address, initData, type }
+    module: { address, deInitData: disableModuleData, type }
   } = parameters
 
   if (!account_) {
@@ -85,7 +86,7 @@ export async function uninstallModule<
       { name: "prev", type: "address" },
       { name: "disableModuleData", type: "bytes" }
     ],
-    [prevModule, initData ?? "0x"]
+    [prevModule, disableModuleData ?? "0x"]
   )
 
   const calls = await toUninstallModuleCalls(account, {
