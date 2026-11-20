@@ -44,6 +44,7 @@ import {
   toSCSSponsoredPaymasterContext,
   toSCSTokenPaymasterContext
 } from "./createSCSPaymasterClient"
+import { UserOperationTamperedError } from "./userOperationIntegrity"
 
 // TODO: review, update and unskip the test
 
@@ -530,5 +531,45 @@ describe("createSCSPaymasterClient - getPaymasterStubData routing", () => {
 
     expect(result.paymasterVerificationGasLimit).toBeDefined()
     expect(result.paymasterPostOpGasLimit).toBeDefined()
+  })
+
+  test("single-phase response keeps the paymaster's UserOperation gas limits", async () => {
+    mockRequest.mockResolvedValueOnce({
+      ...MOCK_DATA_RESPONSE,
+      callGasLimit: "0x1",
+      verificationGasLimit: "0x2",
+      preVerificationGas: "0x3"
+    })
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    const result = await client.getPaymasterStubData({
+      ...MINIMAL_STUB_PARAMS,
+      context: { calculateGasLimits: true }
+    })
+
+    expect(result).toMatchObject({
+      callGasLimit: "0x1",
+      verificationGasLimit: "0x2",
+      preVerificationGas: "0x3"
+    })
+  })
+
+  test("single-phase response that changes callData is rejected", async () => {
+    mockRequest.mockResolvedValueOnce({
+      ...MOCK_DATA_RESPONSE,
+      callData: "0xbad0"
+    })
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    await expect(
+      client.getPaymasterStubData({
+        ...MINIMAL_STUB_PARAMS,
+        context: { calculateGasLimits: true }
+      })
+    ).rejects.toBeInstanceOf(UserOperationTamperedError)
   })
 })
