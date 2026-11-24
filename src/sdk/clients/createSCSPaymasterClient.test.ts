@@ -550,10 +550,50 @@ describe("createSCSPaymasterClient - getPaymasterStubData routing", () => {
     })
 
     expect(result).toMatchObject({
-      callGasLimit: "0x1",
-      verificationGasLimit: "0x2",
-      preVerificationGas: "0x3"
+      callGasLimit: 1n,
+      verificationGasLimit: 2n,
+      preVerificationGas: 3n
     })
+  })
+
+  test.each([
+    ["single-phase stub", "getPaymasterStubData", true],
+    ["two-phase stub", "getPaymasterStubData", false],
+    ["two-phase data", "getPaymasterData", false]
+  ] as const)(
+    "%s response drops fee fields",
+    async (_, method, calculateGasLimits) => {
+      mockRequest.mockResolvedValueOnce({
+        ...MOCK_DATA_RESPONSE,
+        maxFeePerGas: "0xffff",
+        maxPriorityFeePerGas: "0xffff"
+      })
+      const client = createSCSPaymasterClient({
+        transport: custom({ request: mockRequest })
+      })
+
+      const result = await client[method]({
+        ...MINIMAL_STUB_PARAMS,
+        context: { calculateGasLimits }
+      })
+
+      expect(result).not.toHaveProperty("maxFeePerGas")
+      expect(result).not.toHaveProperty("maxPriorityFeePerGas")
+    }
+  )
+
+  test("two-phase data response drops UserOperation gas limits", async () => {
+    mockRequest.mockResolvedValueOnce({
+      ...MOCK_DATA_RESPONSE,
+      callGasLimit: "0xffff"
+    })
+    const client = createSCSPaymasterClient({
+      transport: custom({ request: mockRequest })
+    })
+
+    const result = await client.getPaymasterData(MINIMAL_STUB_PARAMS)
+
+    expect(result).not.toHaveProperty("callGasLimit")
   })
 
   test("single-phase response that changes callData is rejected", async () => {

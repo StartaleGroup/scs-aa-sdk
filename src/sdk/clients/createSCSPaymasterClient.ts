@@ -94,6 +94,39 @@ export const toSCSTokenPaymasterContext = (
   }
 }
 
+// Only these fields are merged into the UserOperation, as in viem 2.57.18+.
+// Fee fields never come from the paymaster.
+const PAYMASTER_FIELDS = [
+  "paymaster",
+  "paymasterData",
+  "paymasterAndData",
+  "paymasterVerificationGasLimit",
+  "paymasterPostOpGasLimit"
+] as const
+const STUB_FIELDS = [...PAYMASTER_FIELDS, "isFinal", "sponsor"] as const
+// Single-phase: the paymaster sets and signs these instead of the bundler.
+const SINGLE_PHASE_GAS_FIELDS: readonly string[] = [
+  "callGasLimit",
+  "verificationGasLimit",
+  "preVerificationGas"
+]
+
+/** Keeps only `fields` of a paymaster response, gas limits as bigint. */
+const pickPaymasterFields = (
+  response: AnyData,
+  fields: readonly string[]
+): AnyData => {
+  const picked: AnyData = {}
+  for (const field of fields) {
+    const value = response?.[field]
+    if (value === undefined) continue
+    picked[field] = SINGLE_PHASE_GAS_FIELDS.includes(field)
+      ? BigInt(value)
+      : value
+  }
+  return picked
+}
+
 /**
  * Calls `method` and returns the whole paymaster response. Since 2.57.18,
  * viem's own actions drop everything but the paymaster fields, which loses the
@@ -222,8 +255,27 @@ export const createSCSPaymasterClient = (
 
   // Also guarded here so the check applies when this client is passed to
   // viem's own `createBundlerClient` instead of `createSmartAccountClient`.
+  // The check runs on the whole response, before it is narrowed below.
+  const guarded = guardPaymaster(
+    { getPaymasterStubData, getPaymasterData },
+    baseClient
+  )
+
   return {
     ...baseClient,
-    ...guardPaymaster({ getPaymasterStubData, getPaymasterData }, baseClient)
+    getPaymasterStubData: (async (params) => {
+      const context = params.context as SCSPaymasterContext | undefined
+      return pickPaymasterFields(
+        await guarded.getPaymasterStubData(params),
+        context?.calculateGasLimits === true
+          ? [...STUB_FIELDS, ...SINGLE_PHASE_GAS_FIELDS]
+          : STUB_FIELDS
+      )
+    }) as SCSPaymasterClient["getPaymasterStubData"],
+    getPaymasterData: (async (params) =>
+      pickPaymasterFields(
+        await guarded.getPaymasterData(params),
+        PAYMASTER_FIELDS
+      )) as SCSPaymasterClient["getPaymasterData"]
   }
 }
