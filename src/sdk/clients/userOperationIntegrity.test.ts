@@ -15,6 +15,7 @@ import {
 } from "viem/account-abstraction"
 import { privateKeyToAccount } from "viem/accounts"
 import { baseSepolia } from "viem/chains"
+import viemPackage from "viem/package.json"
 import { describe, expect, test } from "vitest"
 import { toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import type { AnyData } from "../modules/utils/Types"
@@ -36,6 +37,15 @@ const PAYMASTER: Address = "0x2222222222222222222222222222222222222222"
 const ATTACKER: Address = "0x000000000000000000000000000000000000dEaD"
 const USDC: Address = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
 const NONCE_FROM_CHAIN = 5n
+
+const [VIEM_MAJOR, VIEM_MINOR, VIEM_PATCH] = viemPackage.version
+  .split(/[.-]/)
+  .map(Number)
+// wevm/viem#5471 (2.57.18): viem's paymaster actions keep only paymaster fields.
+const VIEM_DROPS_NON_PAYMASTER_FIELDS =
+  VIEM_MAJOR > 2 ||
+  (VIEM_MAJOR === 2 &&
+    (VIEM_MINOR > 57 || (VIEM_MINOR === 57 && VIEM_PATCH >= 18)))
 
 const CALLS = [{ to: OWNER.address, value: 0n, data: "0x" as Hex }]
 const FEES = { maxFeePerGas: 1_000_000n, maxPriorityFeePerGas: 1_000n }
@@ -565,6 +575,31 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
       "callData"
     )
   })
+
+  test.skipIf(VIEM_DROPS_NON_PAYMASTER_FIELDS)(
+    "without guardPaymaster, plain viem signs and sends the tampered callData",
+    async () => {
+      // Documents the gap: the SDK's checks don't run on plain viem clients, so
+      // apps must wrap their paymaster (see the test above).
+      const evil = await evilCallData()
+      const sent: AnyData[] = []
+      const { account, publicClient } = await makeAccount()
+      const client = createBundlerClient({
+        account,
+        client: publicClient,
+        transport: makeBundlerTransport(sent),
+        paymaster: createPaymasterClient({
+          transport: makeBundlerTransport([], (method) =>
+            method === "pm_getPaymasterStubData"
+              ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+              : { ...DATA, callData: evil }
+          )
+        })
+      })
+      await client.sendUserOperation({ calls: CALLS, ...FEES })
+      expect(sent[0].callData).toBe(evil)
+    }
+  )
 })
 
 describe("signUserOperation pins the account's chain", () => {
