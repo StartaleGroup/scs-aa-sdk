@@ -1,9 +1,19 @@
-import { http, type Address, type OneOf, type Transport } from "viem"
 import {
+  http,
+  type Address,
+  type Client,
+  type OneOf,
+  type Transport,
+  hexToBigInt,
+  numberToHex
+} from "viem"
+import {
+  type GetPaymasterDataParameters,
   type PaymasterClient,
   type PaymasterClientConfig,
   type SmartAccount,
-  createPaymasterClient
+  createPaymasterClient,
+  formatUserOperationRequest
 } from "viem/account-abstraction"
 import type { StartaleSmartAccountImplementation } from "../account"
 import type { AnyData } from "../modules/utils/Types"
@@ -84,6 +94,78 @@ export const toSCSTokenPaymasterContext = (
   }
 }
 
+// Only these fields are merged into the UserOperation, as in viem 2.57.18+.
+// Fee fields never come from the paymaster.
+const PAYMASTER_FIELDS = [
+  "paymaster",
+  "paymasterData",
+  "paymasterAndData",
+  "paymasterVerificationGasLimit",
+  "paymasterPostOpGasLimit"
+] as const
+const STUB_FIELDS = [...PAYMASTER_FIELDS, "isFinal", "sponsor"] as const
+// Single-phase: the paymaster sets and signs these instead of the bundler.
+const SINGLE_PHASE_GAS_FIELDS: readonly string[] = [
+  "callGasLimit",
+  "verificationGasLimit",
+  "preVerificationGas"
+]
+
+/** Keeps only `fields` of a paymaster response, gas limits as bigint. */
+const pickPaymasterFields = (
+  response: AnyData,
+  fields: readonly string[]
+): AnyData => {
+  const picked: AnyData = {}
+  for (const field of fields) {
+    const value = response?.[field]
+    if (value === undefined) continue
+    picked[field] = SINGLE_PHASE_GAS_FIELDS.includes(field)
+      ? BigInt(value)
+      : value
+  }
+  return picked
+}
+
+/**
+ * Calls `method` and returns the whole paymaster response. Since 2.57.18,
+ * viem's own actions drop everything but the paymaster fields, which loses the
+ * gas limits of single-phase sponsorship and the echoed UserOperation fields
+ * that `guardPaymaster` checks.
+ */
+const requestPaymaster = async (
+  client: Client,
+  method: "pm_getPaymasterStubData" | "pm_getPaymasterData",
+  parameters: GetPaymasterDataParameters
+): Promise<AnyData> => {
+  const { chainId, entryPointAddress, context, ...userOperation } = parameters
+  const request = formatUserOperationRequest(userOperation)
+  const { paymasterPostOpGasLimit, paymasterVerificationGasLimit, ...rest } =
+    await client.request<AnyData>({
+      method,
+      params: [
+        {
+          ...request,
+          callGasLimit: request.callGasLimit ?? "0x0",
+          verificationGasLimit: request.verificationGasLimit ?? "0x0",
+          preVerificationGas: request.preVerificationGas ?? "0x0"
+        },
+        entryPointAddress,
+        numberToHex(chainId),
+        context
+      ]
+    })
+  return {
+    ...rest,
+    ...(paymasterPostOpGasLimit && {
+      paymasterPostOpGasLimit: hexToBigInt(paymasterPostOpGasLimit)
+    }),
+    ...(paymasterVerificationGasLimit && {
+      paymasterVerificationGasLimit: hexToBigInt(paymasterVerificationGasLimit)
+    })
+  }
+}
+
 /**
  * Creates a SCS Paymaster Client.
  *
@@ -128,55 +210,72 @@ export const createSCSPaymasterClient = (
           `https://paymaster.scs.startale.com/v1?apikey=${parameters.apiKey}`
         )
 
-  const { getPaymasterStubData: nativeGetPaymasterStubData, ...baseClient } =
-    createPaymasterClient({
-      ...parameters,
-      transport: defaultedTransport
-    })
-      .extend((client: AnyData) => ({
-        getTokenPaymasterQuotes: async (
-          args: GetTokenPaymasterQuotesParameters
-        ) => {
-          const _args = args
-          if (args.userOp?.authorization) {
-            const authorization =
-              args.userOp.authorization ||
-              (await (
-                client.account as SmartAccount<StartaleSmartAccountImplementation>
-              )?.eip7702Authorization?.())
-            args.userOp.authorization = authorization
-          }
-          return await getTokenPaymasterQuotes(client, _args)
+  const baseClient = createPaymasterClient({
+    ...parameters,
+    transport: defaultedTransport
+  })
+    .extend((client: AnyData) => ({
+      getTokenPaymasterQuotes: async (
+        args: GetTokenPaymasterQuotesParameters
+      ) => {
+        const _args = args
+        if (args.userOp?.authorization) {
+          const authorization =
+            args.userOp.authorization ||
+            (await (
+              client.account as SmartAccount<StartaleSmartAccountImplementation>
+            )?.eip7702Authorization?.())
+          args.userOp.authorization = authorization
         }
-      }))
-      .extend(scsTokenPaymasterActions())
+        return await getTokenPaymasterQuotes(client, _args)
+      }
+    }))
+    .extend(scsTokenPaymasterActions())
 
-  const getPaymasterStubData: typeof nativeGetPaymasterStubData = async (
-    params
-  ) => {
+  const getPaymasterData = ((params) =>
+    requestPaymaster(
+      baseClient,
+      "pm_getPaymasterData",
+      params
+    )) as SCSPaymasterClient["getPaymasterData"]
+
+  const getPaymasterStubData = ((params) => {
     const context = params.context as SCSPaymasterContext | undefined
-    if (context?.calculateGasLimits === true) {
-      // Single-phase: paymaster estimates gas internally, bundler estimation skipped
-      return baseClient.getPaymasterData(params) as ReturnType<
-        typeof nativeGetPaymasterStubData
-      >
-    }
+    // Single-phase: paymaster estimates gas internally, bundler estimation skipped.
     // Two-phase (default): pm_getPaymasterStubData returns stub + gas limits,
     // bundler estimates gas, pm_getPaymasterData signs only
-    return nativeGetPaymasterStubData(params)
-  }
+    return requestPaymaster(
+      baseClient,
+      context?.calculateGasLimits === true
+        ? "pm_getPaymasterData"
+        : "pm_getPaymasterStubData",
+      params
+    )
+  }) as SCSPaymasterClient["getPaymasterStubData"]
 
   // Also guarded here so the check applies when this client is passed to
   // viem's own `createBundlerClient` instead of `createSmartAccountClient`.
-  const { getPaymasterStubData: guardedStubData, getPaymasterData } =
-    guardPaymaster(
-      { getPaymasterStubData, getPaymasterData: baseClient.getPaymasterData },
-      baseClient
-    )
+  // The check runs on the whole response, before it is narrowed below.
+  const guarded = guardPaymaster(
+    { getPaymasterStubData, getPaymasterData },
+    baseClient
+  )
 
   return {
     ...baseClient,
-    getPaymasterStubData: guardedStubData,
-    getPaymasterData
+    getPaymasterStubData: (async (params) => {
+      const context = params.context as SCSPaymasterContext | undefined
+      return pickPaymasterFields(
+        await guarded.getPaymasterStubData(params),
+        context?.calculateGasLimits === true
+          ? [...STUB_FIELDS, ...SINGLE_PHASE_GAS_FIELDS]
+          : STUB_FIELDS
+      )
+    }) as SCSPaymasterClient["getPaymasterStubData"],
+    getPaymasterData: (async (params) =>
+      pickPaymasterFields(
+        await guarded.getPaymasterData(params),
+        PAYMASTER_FIELDS
+      )) as SCSPaymasterClient["getPaymasterData"]
   }
 }

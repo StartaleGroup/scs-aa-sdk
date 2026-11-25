@@ -15,6 +15,7 @@ import {
 } from "viem/account-abstraction"
 import { privateKeyToAccount } from "viem/accounts"
 import { baseSepolia } from "viem/chains"
+import viemPackage from "viem/package.json"
 import { describe, expect, test } from "vitest"
 import { toStartaleSmartAccount } from "../account/toStartaleSmartAccount"
 import type { AnyData } from "../modules/utils/Types"
@@ -36,6 +37,15 @@ const PAYMASTER: Address = "0x2222222222222222222222222222222222222222"
 const ATTACKER: Address = "0x000000000000000000000000000000000000dEaD"
 const USDC: Address = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
 const NONCE_FROM_CHAIN = 5n
+
+const [VIEM_MAJOR, VIEM_MINOR, VIEM_PATCH] = viemPackage.version
+  .split(/[.-]/)
+  .map(Number)
+// wevm/viem#5471 (2.57.18): viem's paymaster actions keep only paymaster fields.
+const VIEM_DROPS_NON_PAYMASTER_FIELDS =
+  VIEM_MAJOR > 2 ||
+  (VIEM_MAJOR === 2 &&
+    (VIEM_MINOR > 57 || (VIEM_MINOR === 57 && VIEM_PATCH >= 18)))
 
 const CALLS = [{ to: OWNER.address, value: 0n, data: "0x" as Hex }]
 const FEES = { maxFeePerGas: 1_000_000n, maxPriorityFeePerGas: 1_000n }
@@ -167,6 +177,32 @@ const expectTampered = async (
   expect(error).toBeInstanceOf(UserOperationTamperedError)
   expect(error.field).toBe(field)
   expect(error.shortMessage).toMatch(new RegExp(`^${source} changed`))
+}
+
+/**
+ * Since 2.57.18, viem's own paymaster actions drop everything but the
+ * paymaster fields, so with those a tampered response either throws (older
+ * viem) or never reaches the UserOperation. Either way, nothing tampered is
+ * sent: `send(extra)` must throw or send the same as `send({})`.
+ */
+const expectTamperedOrDropped = async (
+  send: (extra: AnyData, sent: AnyData[]) => Promise<unknown>,
+  extra: AnyData,
+  field: string
+) => {
+  const honest: AnyData[] = []
+  await send({}, honest)
+  const sent: AnyData[] = []
+  const error = await send(extra, sent).then(
+    () => undefined,
+    (e) => e
+  )
+  if (error) {
+    await expectTampered(Promise.reject(error), field, PAYMASTER_CHECK)
+    expect(sent).toHaveLength(0)
+  } else {
+    expect(sent).toEqual(honest)
+  }
 }
 
 describe("userOperationIntegrity: honest paymasters behave exactly as before", () => {
@@ -443,25 +479,22 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
     // `authorization` and `initCode` are only covered by the paymaster check,
     // so the `paymaster: true` branch is tested for every field.
     test(`paymaster: true (bundler serves pm_* methods) injecting ${field}`, async () => {
-      const extra = await inject()
-      const sent: AnyData[] = []
       const { account, publicClient } = await makeAccount()
-      const client = createSmartAccountClient({
-        account,
-        client: publicClient,
-        transport: makeBundlerTransport(sent, (method) =>
-          method === "pm_getPaymasterStubData"
-            ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
-            : { ...DATA, ...extra }
-        ),
-        paymaster: true
-      })
-      await expectTampered(
-        client.sendUserOperation({ calls: CALLS, ...FEES }),
-        field,
-        PAYMASTER_CHECK
+      await expectTamperedOrDropped(
+        (extra, sent) =>
+          createSmartAccountClient({
+            account,
+            client: publicClient,
+            transport: makeBundlerTransport(sent, (method) =>
+              method === "pm_getPaymasterStubData"
+                ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+                : { ...DATA, ...extra }
+            ),
+            paymaster: true
+          }).sendUserOperation({ calls: CALLS, ...FEES }),
+        await inject(),
+        field
       )
-      expect(sent).toHaveLength(0)
     })
 
     // No paymaster: only the fee hook check can catch this.
@@ -521,51 +554,52 @@ describe("userOperationIntegrity: tampering throws before anything is signed or 
 
   test("guardPaymaster around viem's createPaymasterClient, with plain viem", async () => {
     // The fix for apps that use viem's createBundlerClient directly.
-    const evil = await evilCallData()
-    const sent: AnyData[] = []
     const { account, publicClient } = await makeAccount()
-    const paymaster = createPaymasterClient({
-      transport: makeBundlerTransport([], (method) =>
-        method === "pm_getPaymasterStubData"
-          ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
-          : { ...DATA, callData: evil }
-      )
-    })
-    const client = createBundlerClient({
-      account,
-      client: publicClient,
-      transport: makeBundlerTransport(sent),
-      paymaster: guardPaymaster(paymaster, publicClient)
-    })
-    await expectTampered(
-      client.sendUserOperation({ calls: CALLS, ...FEES }),
-      "callData",
-      PAYMASTER_CHECK
+    await expectTamperedOrDropped(
+      (extra, sent) => {
+        const paymaster = createPaymasterClient({
+          transport: makeBundlerTransport([], (method) =>
+            method === "pm_getPaymasterStubData"
+              ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+              : { ...DATA, ...extra }
+          )
+        })
+        return createBundlerClient({
+          account,
+          client: publicClient,
+          transport: makeBundlerTransport(sent),
+          paymaster: guardPaymaster(paymaster, publicClient)
+        }).sendUserOperation({ calls: CALLS, ...FEES })
+      },
+      { callData: await evilCallData() },
+      "callData"
     )
-    expect(sent).toHaveLength(0)
   })
 
-  test("without guardPaymaster, plain viem signs and sends the tampered callData", async () => {
-    // Documents the gap: the SDK's checks don't run on plain viem clients, so
-    // apps must wrap their paymaster (see the test above).
-    const evil = await evilCallData()
-    const sent: AnyData[] = []
-    const { account, publicClient } = await makeAccount()
-    const client = createBundlerClient({
-      account,
-      client: publicClient,
-      transport: makeBundlerTransport(sent),
-      paymaster: createPaymasterClient({
-        transport: makeBundlerTransport([], (method) =>
-          method === "pm_getPaymasterStubData"
-            ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
-            : { ...DATA, callData: evil }
-        )
+  test.skipIf(VIEM_DROPS_NON_PAYMASTER_FIELDS)(
+    "without guardPaymaster, plain viem signs and sends the tampered callData",
+    async () => {
+      // Documents the gap: the SDK's checks don't run on plain viem clients, so
+      // apps must wrap their paymaster (see the test above).
+      const evil = await evilCallData()
+      const sent: AnyData[] = []
+      const { account, publicClient } = await makeAccount()
+      const client = createBundlerClient({
+        account,
+        client: publicClient,
+        transport: makeBundlerTransport(sent),
+        paymaster: createPaymasterClient({
+          transport: makeBundlerTransport([], (method) =>
+            method === "pm_getPaymasterStubData"
+              ? { ...STUB, paymasterVerificationGasLimit: "0x186a0" }
+              : { ...DATA, callData: evil }
+          )
+        })
       })
-    })
-    await client.sendUserOperation({ calls: CALLS, ...FEES })
-    expect(sent[0].callData).toBe(evil)
-  })
+      await client.sendUserOperation({ calls: CALLS, ...FEES })
+      expect(sent[0].callData).toBe(evil)
+    }
+  )
 })
 
 describe("signUserOperation pins the account's chain", () => {
